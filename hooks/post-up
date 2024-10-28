@@ -1,0 +1,307 @@
+#!/usr/bin/env zsh
+
+set -ex -o pipefail
+
+USR_HOME="${USR_HOME:-$HOME/usr/local}"
+
+if [ "$SKIP_INSTALL" != "false" ]; then
+  echo "Skipping install..."
+  exit 0
+fi
+
+if [ ! -e "$HOME"/.vim/autoload/plug.vim ]; then
+  curl -fLo "$HOME"/.vim/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
+
+if [ -f "$HOME/.git_template/HEAD" ] && \
+  [ "$(cat "$HOME/.git_template/HEAD")" = "ref: refs/heads/main" ]; then
+  echo "Removing ~/.git_template/HEAD in favor of defaultBranch" >&2
+  rm -f ~/.git_template/HEAD
+fi
+
+# asdf
+alias asdf="$HOME/.asdf/bin/asdf"
+if asdf info > /dev/null; then
+  if ! asdf plugin list | grep java > /dev/null 2>&1; then
+    asdf plugin-add java https://github.com/halcyon/asdf-java.git
+    asdf install java latest:temurin-20
+    asdf global java latest:temurin-20
+  fi
+  if ! asdf plugin list | grep golang > /dev/null 2>&1; then
+    asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+    asdf install golang latest
+    asdf global golang latest
+  fi
+  if ! asdf plugin list | grep nodejs > /dev/null 2>&1; then
+    asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+    asdf install nodejs latest
+    asdf global nodejs latest
+  fi
+  if ! asdf plugin list | grep mvnd > /dev/null 2>&1; then
+    asdf plugin-add mvnd https://github.com/joschi/asdf-mvnd.git
+    asdf install mvnd latest
+    asdf global mvnd latest
+  fi
+  asdf reshim
+fi
+unalias asdf
+
+os="$(uname | tr '[:upper:]' '[:lower:]')"
+arch="$(uname -m)"
+[ "$arch" = "x86_64" ] && arch=amd64
+
+# kubectl
+if ! kubectl version --client > /dev/null 2>&1; then
+  curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/$os/$arch/kubectl" -o ~/.bin/kubectl
+  chmod +x ~/.bin/kubectl
+fi
+
+# Install applications
+export PATH=$USR_HOME/bin:$PATH
+
+mkdir -p $USR_HOME/src
+
+# Install nvim
+export NVIM_VERSION=${NVIM_VERSION:-0.9.5}
+if [ -n "${INSTALL_NVIM}" ]; then
+  if ! which nvim; then
+    echo "Installing nvim ${NVIM_VERSION}..."
+    curl -sL https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-macos.tar.gz -o /tmp/nvim.tar.gz
+    xattr -c /tmp/nvim.tar.gz
+    mkdir -p $USR_HOME/nvim && tar -xzvf /tmp/nvim.tar.gz --strip-component=1 -C $USR_HOME/nvim
+  fi
+fi
+
+# Install m4
+export M4_VERSION=${M4_VERSION:-1.4.19}
+if ! m4 --version | grep "$M4_VERSION" > /dev/null; then
+  echo "Installing m4 ${M4_VERSION}..."
+  curl https://ftp.gnu.org/gnu/m4/m4-${M4_VERSION}.tar.xz | tar -xf - -C $USR_HOME/src
+  cd $USR_HOME/src/m4-${M4_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install autoconf
+export AUTOCONF_VERSION=${AUTOCONF_VERSION:-2.72}
+if ! which autoconf > /dev/null; then
+  echo "Installing autoconf ${AUTOCONF_VERSION}..."
+  curl -sL https://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VERSION}.tar.gz | tar -zxvf - -C $USR_HOME/src
+  cd $USR_HOME/src/autoconf-${AUTOCONF_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install automake
+export AUTOMAKE_VERSION=${AUTOMAKE_VERSION:-1.16.5}
+if ! which automake > /dev/null; then
+  echo "Installing automake ${AUTOMAKE_VERSION}..."
+  curl -sL https://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VERSION}.tar.xz | tar -xf - -C $USR_HOME/src
+  cd $USR_HOME/src/automake-${AUTOMAKE_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install pkg-config
+export PKG_CONFIG_VERSION=${PKG_CONFIG_VERSION:-0.29.2}
+if ! which pkg-config > /dev/null; then
+  echo "Installing pkg-config ${PKG_CONFIG_VERSION}..."
+  curl -sL https://pkg-config.freedesktop.org/releases/pkg-config-${PKG_CONFIG_VERSION}.tar.gz | tar -zxvf - -C $USR_HOME/src
+  cd $USR_HOME/src/pkg-config-${PKG_CONFIG_VERSION}
+  CFLAGS="-Wno-int-conversion" CXXFLAGS="-Wno-int-conversion" ./configure --prefix=$USR_HOME --with-internal-glib && make && make install
+fi
+
+# Install openssl
+export OPENSSL_VERSION=${OPENSSL_VERSION:-3.1.2}
+if ! ls $USR_HOME/lib*/pkgconfig/openssl.pc 2>&1 > /dev/null; then
+  echo "Installing openssl ${OPENSSL_VERSION}..."
+  curl -sL https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz | tar -zxvf - -C $USR_HOME/src
+  cd $USR_HOME/src/openssl-${OPENSSL_VERSION}
+  ./Configure --prefix=$USR_HOME/ --prefix=$USR_HOME --openssldir=$USR_HOME/ssl && make && make install
+fi
+
+# Install libevent
+export LIBEVENT_VERSION=${LIBEVENT_VERSION:-2.1.12-stable}
+if ! ls $USR_HOME/lib/libevent_core.a > /dev/null; then
+  echo "Installing libevent ${LIBEVENT_VERSION}..."
+
+  curl -sL https://github.com/libevent/libevent/releases/download/release-${LIBEVENT_VERSION}/libevent-${LIBEVENT_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
+  cd $USR_HOME/src/libevent-${LIBEVENT_VERSION}
+  PKG_CONFIG_PATH=$USR_HOME/lib/pkgconfig/ ./configure --prefix=$USR_HOME/ --enable-shared && make && make install
+fi
+
+# Install ncurses
+export NCURSES_VERSION=${NCURSES_VERSION:-6.5}
+if ! ls $USR_HOME/include/ncursesw > /dev/null; then
+  echo "Installing ncurses ${NCURSES_VERSION}..."
+
+  curl -sL https://ftp.gnu.org/pub/gnu/ncurses/ncurses-${NCURSES_VERSION}.tar.gz | tar -zxvf - -C $USR_HOME/src
+  cd $USR_HOME/src/ncurses-${NCURSES_VERSION}
+  ./configure --prefix=$USR_HOME --with-shared --with-termlib --with-ticlib --enable-pc-files --with-pkg-config-libdir=$USR_HOME/lib/pkgconfig && make && make install
+fi
+
+# Install utf8proc
+export UTF8PROC_VERSION=${UTF8PROC_VERSION:-2.9.0}
+if ! ls $USR_HOME/lib/libutf8proc.dylib 2>&1 > /dev/null; then
+  echo "Installing utf8proc ${UTF8PROC_VERSION}..."
+
+  curl -sL https://github.com/JuliaStrings/utf8proc/archive/refs/tags/v${UTF8PROC_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
+  cd $USR_HOME/src/utf8proc-${UTF8PROC_VERSION}
+  make install prefix=$USR_HOME/
+fi
+
+# Install tmux
+export TMUX_VERSION=${TMUX_VERSION:-3.5a}
+if ! which tmux > /dev/null; then
+  echo "Installing tmux ${TMUX_VERSION}..."
+
+  curl -sL https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
+  cd $USR_HOME/src/tmux-${TMUX_VERSION}
+  PKG_CONFIG_PATH=$USR_HOME/lib/pkgconfig ./configure --prefix=$USR_HOME/ --enable-utf8proc --enable-sixel \
+    CFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses" \
+    LDFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses -L$USR_HOME/lib -lresolv -lutf8proc" \
+    && make && make install
+fi
+
+
+# Install gettext
+export GETTEXT_VERSION=${GETTEXT_VERSION:-0.22}
+if ! which gettext > /dev/null; then
+  echo "Installing gettext ${GETTEXT_VERSION}..."
+
+  curl -sL https://ftp.gnu.org/gnu/gettext/gettext-${GETTEXT_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
+  cd $USR_HOME/src/gettext-${GETTEXT_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install libgpg-error
+export LIBGPG_ERROR_VERSION=${LIBGPG_ERROR_VERSION:-1.49}
+if ! ls $USR_HOME/lib/libgpg-error* > /dev/null; then
+  echo "Installing libgpg-error ${LIBGPG_ERROR_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-${LIBGPG_ERROR_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/libgpg-error-${LIBGPG_ERROR_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install libgcrypt
+export LIBGCRYPT_VERSION=${LIBGCRYPT_VERSION:-1.10.3}
+if ! ls $USR_HOME/lib/libgcrypt* > /dev/null; then
+  echo "Installing libgcrypt ${LIBGCRYPT_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-${LIBGCRYPT_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/libgcrypt-${LIBGCRYPT_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install libassuan
+export LIBASSUAN_VERSION=${LIBASSUAN_VERSION:-2.5.7}
+if ! ls $USR_HOME/lib/libassuan* > /dev/null; then
+  echo "Installing libassuan ${LIBASSUAN_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/libassuan/libassuan-${LIBASSUAN_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/libassuan-${LIBASSUAN_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install libksba
+export LIBKSBA_VERSION=${LIBKSBA_VERSION:-1.6.6}
+if ! ls $USR_HOME/lib/libksba* > /dev/null; then
+  echo "Installing libksba ${LIBKSBA_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/libksba/libksba-${LIBKSBA_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/libksba-${LIBKSBA_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install libnpth
+export LIBNPTH_VERSION=${LIBNPTH_VERSION:-1.7}
+if ! ls $USR_HOME/lib/libnpth* > /dev/null; then
+  echo "Installing libnpth ${LIBNPTH_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/npth/npth-${LIBNPTH_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/npth-${LIBNPTH_VERSION}
+  ./configure --prefix=$USR_HOME/ && make && make install
+fi
+
+# Install texinfo
+export TEXINFO_VERSION=${TEXINFO_VERSION:-7.1}
+if ! which makeinfo > /dev/null; then
+  echo "Installing texinfo ${TEXINFO_VERSION}..."
+
+  curl -sL https://ftp.gnu.org/gnu/texinfo/texinfo-${TEXINFO_VERSION}.tar.xz | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/texinfo-${TEXINFO_VERSION}
+  ./configure --disable-dependency-tracking --disable-install-warnings --prefix=$USR_HOME/ \
+    CFLAGS="-I$USR_HOME/include \
+    -I$USR_HOME/include/ncurses" \
+    LDFLAGS="-L$USR_HOME/include \
+    -L$USR_HOME/include/ncurses \
+    -L$USR_HOME/lib" && make && make install
+fi
+
+# Install pinentry
+export PINENTRY_VERSION=${PINENTRY_VERSION:-1.1.1.1}
+if uname | grep Darwin && ! ls $USR_HOME/src/pinentry-${PINENTRY_VERSION}/macosx/pinentry-mac > /dev/null; then
+  echo "Installing pinentry-mac ${PINENTRY_VERSION}..."
+
+  curl -sL https://github.com/GPGTools/pinentry/archive/refs/tags/v${PINENTRY_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
+
+  cd $USR_HOME/src/pinentry-${PINENTRY_VERSION}
+
+  autoreconf -fiv && autoconf && ./configure --disable-ncurses --enable-maintainer-mode --prefix=$USR_HOME/ \
+    CFLAGS="-I$USR_HOME/include \
+    -I$USR_HOME/include/ncurses" \
+    LDFLAGS="-L$USR_HOME/include \
+    -L$USR_HOME/include/ncurses \
+    -L$USR_HOME/lib" && make && make install
+fi
+
+# Install gpg
+export GPG_VERSION=${GPG_VERSION:-2.4.5}
+if ! which gpg > /dev/null; then
+  echo "Installing gpg ${GPG_VERSION}..."
+
+  curl -sL https://gnupg.org/ftp/gcrypt/gnupg/gnupg-${GPG_VERSION}.tar.bz2 | tar -jxf - -C $USR_HOME/src
+  cd $USR_HOME/src/gnupg-${GPG_VERSION} && rm -rf build && mkdir build && cd build
+
+  ../configure --prefix=$USR_HOME/ \
+    --disable-silent-rule --with-pinentry-pgm=$USR_HOME/bin/pinentry \
+    CFLAGS="-I$USR_HOME/include \
+    -I$USR_HOME/include/ncurses" \
+    LDFLAGS="-L$USR_HOME/include \
+    -L$USR_HOME/include/ncurses \
+    -L$USR_HOME/lib" && make && make install
+fi
+
+
+# Install fzf
+if ! which fzf > /dev/null; then
+  echo "Installing fzf..."
+
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
+
+# Install dark-notify
+if ! which dark-notify > /dev/null; then
+  echo "Installing dark-notify..."
+
+  curl -sL https://github.com/cormacrelf/dark-notify/releases/download/v0.1.2/dark-notify-v0.1.2.tar.gz | tar -zxf - -C ~/.bin
+  chmod +x ~/.bin/dark-notify
+fi
+
+if ! which luajit 2>&1 > /dev/null; then
+  echo "Installing luajit"
+
+  git clone https://luajit.org/git/luajit.git $USR_HOME/src/luagit && cd $USR_HOME/src/luajit
+  git checkout v2.1
+  export MACOSX_DEPLOYMENT_TARGET=14.5
+  make && make install PREFIX=$USR_HOME
+fi
+
+
+export FD_VERSION=${FD_VERSION:-10.1.0}
+if ! which fd 2>&1 > /dev/null; then
+  echo "Installing fd"
+
+  curl -sL https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-aarch64-apple-darwin.tar.gz | tar -zxf - --strip-components=1 -C ~/.bin fd-v${FD_VERSION}-aarch64-apple-darwin/fd 
+  chmod +x ~/.bin/fd
+fi

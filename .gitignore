@@ -1,0 +1,4 @@
+!bin
+clash/cache.db
+.venv
+config/v2ray

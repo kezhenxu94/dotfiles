@@ -1,0 +1,37 @@
+#!/bin/sh
+
+if ! grep -q "host.docker.internal" /etc/hosts; then
+  echo "host.docker.internal not found in /etc/hosts"
+  exit 1
+fi
+
+ENV_FILE="$HOME/.zshrc.local" # Make sure this is sourced in the ~/.zshrc or ~/.zshenv
+
+setup() {
+  networksetup -setwebproxy Wi-Fi host.docker.internal 7890
+  networksetup -setsecurewebproxy Wi-Fi host.docker.internal 7890
+  networksetup -setsocksfirewallproxy Wi-Fi host.docker.internal 7891
+  networksetup -setproxybypassdomains wi-Fi host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.*
+
+  cat <<EOF >>"$ENV_FILE"
+export HTTPS_PROXY=http://host.docker.internal:7890
+export HTTP_PROXY=http://host.docker.internal:7890
+export ALL_PROXY=socks5://host.docker.internal:7891
+export NO_PROXY="host.docker.internal,127.0.0.1,*.apple.com,localhost,local-docker-registry,.$(seq -s ',.' 0 254)255" # Don't proxy *.apple.com for "Translate" application to work
+EOF
+}
+
+teardown() {
+  networksetup -setwebproxystate wi-fi off
+  networksetup -setsecurewebproxystate wi-fi off
+  networksetup -setsocksfirewallproxystate wi-fi off
+  networksetup -setproxybypassdomains wi-fi Empty
+
+  /usr/bin/sed -i '' '/export HTTP_PROXY/d; /export HTTPS_PROXY/d; /export ALL_PROXY/d; /export NO_PROXY/d' "$ENV_FILE"
+}
+
+trap teardown EXIT
+
+setup
+
+~/usr/local/v2ray/v2ray run -c ~/.config/v2ray/config.json

@@ -1,0 +1,24 @@
+[submodule "asdf"]
+	path = asdf
+	url = https://github.com/asdf-vm/asdf.git
+[submodule "zsh/plugins/zsh-syntax-highlighting"]
+	path = zsh/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "zsh/plugins/zsh-vi-mode"]
+	path = zsh/plugins/zsh-vi-mode
+	url = https://github.com/jeffreytse/zsh-vi-mode.git
+[submodule "zsh/plugins/cappuccin"]
+	path = zsh/plugins/cappuccin
+	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
+[submodule "zsh/plugins/per-directory-history"]
+	path = zsh/plugins/per-directory-history
+	url = git@github.com:jimhester/per-directory-history.git
+[submodule "config/tmux/plugins/tmux-resurrect"]
+	path = config/tmux/plugins/tmux-resurrect
+	url = git@github.com:tmux-plugins/tmux-resurrect.git
+[submodule "config/tmux/plugins/vim-tmux-navigator"]
+	path = config/tmux/plugins/vim-tmux-navigator
+	url = git@github.com:christoomey/vim-tmux-navigator.git
+[submodule "config/tmux/plugins/tmux-continuum"]
+	path = config/tmux/plugins/tmux-continuum
+	url = git@github.com:tmux-plugins/tmux-continuum.git

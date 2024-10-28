@@ -1,0 +1,22 @@
+#!/bin/env zsh
+# Load .env file into shell session for environment variables
+
+function envup() {
+  envfile="${1:-.env}"
+  if [ -f "$envfile" ]; then
+    while IFS= read -r line; do
+      if [ -z "$line" ]; then
+        continue
+      fi
+      if [[ "$line" == \#* ]]; then
+        continue
+      fi
+      key=$(echo "$line" | cut -d'=' -f1)
+      value=$(echo "$line" | cut -d'=' -f2-)
+      export "$key"="$value"
+    done < "$envfile"
+  else
+    echo 'No .env file found' 1>&2
+    return 1
+  fi
+}

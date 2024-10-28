@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+BASE_DIR="$XDG_CONFIG_HOME/v2ray"
+
+launchctl unload -w "$BASE_DIR/io.kezhenxu94.v2ray.plist" || true

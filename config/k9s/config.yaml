@@ -1,0 +1,26 @@
+k9s:
+  refreshRate: 1
+  maxConnRetry: 15
+  readOnly: false
+  ui:
+    enableMouse: false
+    headless: true
+    logoless: true
+    crumbsless: true
+    noIcons: true
+    skin: catppuccin-latte-transparent
+  logger:
+    tail: 200
+    buffer: 1000
+    sinceSeconds: 600
+    fullScreen: true
+    textWrap: false
+    showTime: false
+  thresholds:
+    cpu:
+      critical: 90
+      warn: 80
+    memory:
+      critical: 90
+      warn: 80
+  screenDumpDir: /tmp

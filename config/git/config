@@ -1,0 +1,49 @@
+[init]
+  defaultBranch = main
+
+[user]
+  name = "kezhenxu94"
+  email = "kezhenxu94@apache.org"
+  signingkey = F5B319063296F6B8207748D58BD99F552D9F33D7
+
+[core]
+  pager = less -FRSX
+  whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+
+[merge]
+  tool = vimdiff
+
+[alias]
+  co  = checkout
+  cp  = cherry-pick
+  pl  = pull
+  ps  = push
+  st  = status
+  sub = submodule
+  wt  = worktree
+
+[url "git@github.com:"]
+  insteadOf = git://github.com/
+  insteadOf = https://github.com/
+
+[gpg]
+  program = gpg
+
+[commit]
+  gpgsign = true
+
+[pull]
+  ff = only
+
+[push]
+  autoSetupRemote = true
+  default = current
+
+[advice]
+  skippedCherryPicks = false

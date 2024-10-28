@@ -1,0 +1,10 @@
+#!/bin/env zsh
+# No arguments: `docker ps`
+# With arguments: acts like `docker`
+d() {
+  if [[ $# -gt 0 ]]; then
+    docker "$@"
+  else
+    docker ps --format "table {{.Image}}\t{{.Ports}}\t{{.Names}}"
+  fi
+}
