@@ -1,0 +1,11 @@
+Include ~/.orbstack/ssh/config
+Include ~/.ssh/config_*.local
+
+SendEnv THEME
+
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+
+Host *
+  ServerAliveInterval 30

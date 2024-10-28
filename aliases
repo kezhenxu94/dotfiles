@@ -1,0 +1,14 @@
+# Unix
+alias ll="ls -al"
+alias ln="ln -v"
+alias svn="docker run -it --rm -v \$PWD:/workspace -w /workspace python:3 svn"
+alias c="clear"
+
+alias k='kubectl'
+alias n='nvim'
+alias nn='nvim-nightly'
+
+# Include custom aliases
+if [[ -f ~/.aliases.local ]]; then
+  source ~/.aliases.local
+fi

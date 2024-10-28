@@ -1,0 +1,120 @@
+:root {
+  --font: 'JetBrains Mono';
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: local('JetBrains Mono') format('truetype');
+  src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* GitHub */
+.logged-in * {
+  font-family: var(--font) !important;
+}
+
+.diff-table * {
+  font-family: var(--font) !important;
+}
+
+/* Slack */
+html[data-cdn*="slack"] * {
+  font-family: var(--font) !important;
+}
+
+/* Twitter */
+#react-root * {
+  font-family: var(--font) !important;
+}
+
+
+/* Google */
+#printButton.goog-toolbar-button {
+  display: none !important;
+}
+
+/* DrawIO */
+.geEditor {
+  font-family: var(--font) !important;
+}
+
+body#gsr * {
+  font-family: var(--font) !important;
+}
+
+/* Stack Overflow */
+.question-page * {
+  font-family: var(--font) !important;
+}
+
+
+.vsonline-serverless-workbench * {
+  font-family: var(--font) !important;
+}
+
+.body--serp * {
+  font-family: var(--font) !important;
+}
+
+/* DuckDuckGo */
+#__next *:not([class*="icon"]) {
+  font-family: var(--font) !important;
+}
+
+/* Google Cloud */
+.cfc-focus-indicators-enabled *:not([class*="icon"]) {
+  font-family: var(--font) !important;
+}
+
+.app-grafana * {
+  font-family: var(--font) !important;
+}
+
+/* UCloud */
+[uch-skeleton-wrapper] *:not([class*="icon"], [class^=icon]) {
+  font-family: var(--font) !important;
+}
+
+#jira * {
+  font-family: var(--font) !important;
+}
+
+#react-app * {
+  font-family: var(--font) !important;
+}
+
+/* Feishu */
+body[class*="lark-web"] *:not([class*="icon"]) {
+  font-family: var(--font) !important;
+}
+
+/* YouTube */
+ytd-app * {
+  font-family: var(--font) !important;
+}
+
+.skin-aria-ng * {
+  font-family: var(--font) !important;
+}
+
+*[data-jp-theme-name] {
+  font-family: var(--font) !important;
+}
+
+body.qc-lang-zh-intl {
+  font-family: var(--font) !important;
+}
+
+kd-root *:not([class*="icon"]) {
+  font-family: var(--font) !important;
+}
+
+.gl-browser-safari * {
+  font-family: var(--font) !important;
+}
+
+/**:not([class*="icon"]) {*/
+/*  font-family: var(--font) !important;*/
+/*}*/
