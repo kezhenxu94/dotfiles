@@ -28,6 +28,12 @@ return {
       dashboard = {
         enabled = false,
       },
+      scratch = {
+        enabled = false,
+      },
+      terminal = {
+        enabled = false,
+      },
     },
   },
   {
