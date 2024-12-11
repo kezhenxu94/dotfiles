@@ -17,7 +17,7 @@ setup() {
 export HTTPS_PROXY=http://host.docker.internal:7890
 export HTTP_PROXY=http://host.docker.internal:7890
 export ALL_PROXY=socks5://host.docker.internal:7891
-export NO_PROXY="host.docker.internal,127.0.0.1,*.apple.com,localhost,local-docker-registry,.$(seq -s ',.' 0 254)255" # Don't proxy *.apple.com for "Translate" application to work
+export NO_PROXY="host.docker.internal,127.0.0.1,*.apple.com,.local,localhost,local-docker-registry,.$(seq -s ',.' 0 254)255" # Don't proxy *.apple.com for "Translate" application to work
 EOF
 }
 
