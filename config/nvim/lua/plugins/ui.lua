@@ -25,15 +25,11 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
-      dashboard = {
-        enabled = false,
-      },
-      scratch = {
-        enabled = false,
-      },
-      terminal = {
-        enabled = false,
-      },
+      dashboard = { enabled = false },
+      scratch = { enabled = false },
+      terminal = { enabled = false },
+      scroll = { enabled = false },
+      indent = { enabled = false },
     },
   },
   {
@@ -68,12 +64,6 @@ return {
     },
   },
   {
-    "lukas-reineke/indent-blankline.nvim",
-    opts = {
-      enabled = false,
-    },
-  },
-  {
     "folke/tokyonight.nvim",
     enabled = false,
   },
@@ -86,7 +76,7 @@ return {
     },
   },
   {
-    "catppuccin/nvim",
+    "catppuccin",
     opts = {
       transparent_background = true,
     },
@@ -94,7 +84,6 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      preset = "helix",
       show_help = false,
       show_keys = false,
     },
