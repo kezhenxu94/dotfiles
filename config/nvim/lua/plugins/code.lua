@@ -37,19 +37,19 @@ return {
             runtimes = {
               {
                 name = "JavaSE-11",
-                path = vim.fn.expand("~/.asdf/installs/java/temurin-11.0.18+10"),
+                path = vim.fn.expand("~/.local/share/mise/installs/java/11/"),
               },
               {
                 name = "JavaSE-17",
-                path = vim.fn.expand("~/.asdf/installs/java/temurin-17.0.5+8"),
+                path = vim.fn.expand("~/.local/share/mise/installs/java/17/"),
               },
               {
                 name = "JavaSE-20",
-                path = vim.fn.expand("~/.asdf/installs/java/temurin-20.0.1+9"),
+                path = vim.fn.expand("~/.local/share/mise/installs/java/20/"),
               },
               {
                 name = "JavaSE-21",
-                path = vim.fn.expand("~/.asdf/installs/java/temurin-21.0.1+12.0.LTS/"),
+                path = vim.fn.expand("~/.local/share/mise/installs/java/21/"),
               },
             },
           },

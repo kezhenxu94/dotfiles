@@ -60,3 +60,6 @@ fi
 if [[ "$TERM_PROGRAM" = "Apple_Terminal" ]]; then
   tmux attach
 fi
+
+eval "$(~/.local/bin/mise activate zsh)"
+

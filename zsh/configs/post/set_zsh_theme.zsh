@@ -26,5 +26,6 @@ function _set_zsh_syntax_highlighting() {
   fi
 }
 
+autoload -U add-zsh-hook
 add-zsh-hook precmd _set_zsh_theme
 add-zsh-hook precmd _set_zsh_syntax_highlighting
