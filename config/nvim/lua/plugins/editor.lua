@@ -25,7 +25,7 @@ return {
               return
             end
           end
-          if vim.fn.argc() == 0 and not vim.g.started_with_stdin then
+          if vim.fn.argc() == 0 and not vim.g.started_with_stdin and vim.api.nvim_eval("v:servername") ~= "" then
             require("persistence").load()
           else
             require("persistence").stop()
