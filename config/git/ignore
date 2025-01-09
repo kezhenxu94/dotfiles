@@ -22,3 +22,4 @@ __debug_bin*
 .gonvim
 .vim
 .lazy.lua
+mise.toml
