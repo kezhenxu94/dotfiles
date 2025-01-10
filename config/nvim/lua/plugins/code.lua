@@ -150,8 +150,7 @@ return {
   {
     "kezhenxu94/kube.nvim",
     config = function()
-      _G.__is_log = true
-      require("kube").setup()
+      require("kube").setup({})
     end,
   },
 }
