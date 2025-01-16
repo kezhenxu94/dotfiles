@@ -30,6 +30,18 @@ return {
       terminal = { enabled = false },
       scroll = { enabled = false },
       indent = { enabled = false },
+      picker = {
+        sources = {
+          grep = {
+            hidden = true,
+          },
+        },
+        icons = {
+          ui = {
+            selected = "+ ",
+          },
+        },
+      },
     },
   },
   {
@@ -65,7 +77,13 @@ return {
   },
   {
     "folke/tokyonight.nvim",
-    enabled = false,
+    opts = {
+      transparent = true,
+      styles = {
+        sidebars = "transparent",
+        floats = "transparent",
+      },
+    },
   },
   {
     "akinsho/bufferline.nvim",
@@ -73,12 +91,6 @@ return {
       options = {
         mode = "tabs",
       },
-    },
-  },
-  {
-    "catppuccin",
-    opts = {
-      transparent_background = true,
     },
   },
   {
