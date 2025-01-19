@@ -12,23 +12,6 @@ return {
     },
   },
   {
-    "rcarriga/nvim-dap-ui",
-    opts = {
-      layouts = {
-        {
-          elements = {
-            {
-              id = "repl",
-              size = 1,
-            },
-          },
-          position = "bottom",
-          size = 15,
-        },
-      },
-    },
-  },
-  {
     "mfussenegger/nvim-jdtls",
     dependencies = {
       "williamboman/mason.nvim",
@@ -143,8 +126,21 @@ return {
   },
   {
     "mfussenegger/nvim-dap",
+    dependencies = {
+      {
+        "rcarriga/nvim-dap-ui",
+        enabled = false,
+      },
+    },
     keys = {
       { "<leader>dr", false },
+      {
+        "<leader>du",
+        function()
+          local height = vim.v.count ~= 0 and vim.v.count or 18
+          require("dap").repl.toggle({ height = height })
+        end,
+      },
     },
   },
   {
