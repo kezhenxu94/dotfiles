@@ -83,6 +83,43 @@ return {
         sidebars = "transparent",
         floats = "transparent",
       },
+      on_colors = function(colors)
+        -- taken from https://github.com/tokyo-night/tokyo-night-vscode-theme/blob/c751c3e87b920cc0232939521e65cbf763846d30/README.md?plain=1#L165
+        if vim.o.background == "light" then
+          colors.bg = "#e6e7ed"
+          colors.bg_dark = "#d6d8df"
+          colors.bg_dark1 = "#dcdee3"
+          colors.bg_highlight = "#e8e9ed"
+          colors.blue = "#2959aa"
+          colors.blue0 = "#3d59a1"
+          colors.blue1 = "#006c86"
+          colors.blue2 = "#0f4b6e"
+          colors.blue5 = "#2959aa"
+          colors.blue6 = "#3e6396"
+          colors.blue7 = "#637dbf"
+          colors.comment = "#6c6e75"
+          colors.cyan = "#006c86"
+          colors.dark3 = "#707280"
+          colors.dark5 = "#9da0ab"
+          colors.fg = "#343b58"
+          colors.fg_dark = "#363c4d"
+          colors.fg_gutter = "#9da0ab"
+          colors.green = "#385f0d"
+          colors.green1 = "#33635c"
+          colors.green2 = "#166775"
+          colors.magenta = "#7b43ba"
+          colors.magenta2 = "#65359d"
+          colors.orange = "#965027"
+          colors.purple = "#5a3e8e"
+          colors.red = "#8c4351"
+          colors.red1 = "#942f2f"
+          colors.teal = "#166775"
+          colors.yellow = "#8f5e15"
+          colors.git.add = "#71b6bd"
+          colors.git.change = "#637dbf"
+          colors.git.delete = "#a8626a"
+        end
+      end,
     },
   },
   {
