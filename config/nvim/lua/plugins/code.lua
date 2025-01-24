@@ -116,7 +116,10 @@ return {
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    opts = { show_help = false },
+    opts = {
+      model = "claude-3.5-sonnet",
+      show_help = false,
+    },
   },
   {
     "neovim/nvim-lspconfig",
@@ -141,6 +144,12 @@ return {
           require("dap").repl.toggle({ height = height, winfixheight = true, winfixwidth = true })
         end,
       },
+    },
+  },
+  {
+    "echasnovski/mini.pairs",
+    opts = {
+      modes = { insert = true, command = false, terminal = false },
     },
   },
   {
