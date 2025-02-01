@@ -7,9 +7,6 @@
 [submodule "zsh/plugins/cappuccin"]
 	path = zsh/plugins/cappuccin
 	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
-[submodule "zsh/plugins/per-directory-history"]
-	path = zsh/plugins/per-directory-history
-	url = git@github.com:jimhester/per-directory-history.git
 [submodule "config/tmux/plugins/tmux-resurrect"]
 	path = config/tmux/plugins/tmux-resurrect
 	url = git@github.com:tmux-plugins/tmux-resurrect.git
