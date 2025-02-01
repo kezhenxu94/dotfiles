@@ -10,9 +10,6 @@
 [submodule "config/tmux/plugins/tmux-resurrect"]
 	path = config/tmux/plugins/tmux-resurrect
 	url = git@github.com:tmux-plugins/tmux-resurrect.git
-[submodule "config/tmux/plugins/vim-tmux-navigator"]
-	path = config/tmux/plugins/vim-tmux-navigator
-	url = git@github.com:christoomey/vim-tmux-navigator.git
 [submodule "config/tmux/plugins/tmux-continuum"]
 	path = config/tmux/plugins/tmux-continuum
 	url = git@github.com:tmux-plugins/tmux-continuum.git

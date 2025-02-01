@@ -55,23 +55,11 @@ augroup END
 let g:NERDTreeShowHidden=1
 let g:NERDTreeMinimalUI=1
 
-" Font
-Plug 'ryanoasis/vim-devicons'
 set encoding=UTF-8
-
-Plug 'kezhenxu94/nerdtree-select-opened-file.vim'
-
-Plug 'catppuccin/vim', { 'as': 'catppuccin' }
-
-nnoremap <silent> <leader>1 :NERDTreeSelectOpenedFile<CR>
-" ==================== NERDtree configuration ====================
 
 if filereadable(expand("~/.vimrc.bundles.local"))
   source ~/.vimrc.bundles.local
 endif
-
-" Navigation between vim and tmux pane
-Plug 'christoomey/vim-tmux-navigator'
 
 " Status line
 Plug 'vim-airline/vim-airline'
