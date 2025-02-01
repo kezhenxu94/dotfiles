@@ -3,7 +3,6 @@
 -- Add any additional options here
 
 vim.o.clipboard = "unnamedplus"
-vim.o.background = os.getenv("THEME") or "light"
 
 local vim_info_dir = vim.fn.getcwd() .. "/.vim"
 vim.g.vim_info_dir = vim_info_dir
@@ -38,3 +37,26 @@ vim.filetype.add({
 vim.opt.listchars = {
   tab = "  ",
 }
+
+vim.diagnostic.config({ virtual_lines = true })
+
+-- System appearance detection
+if vim.fn.has("osx") == 1 then
+  local function update_background()
+    local handle = io.popen("defaults read -g AppleInterfaceStyle 2>/dev/null")
+    if handle then
+      local result = handle:read("*a")
+      handle:close()
+      vim.schedule(function()
+        vim.o.background = result:match("Dark") and "dark" or "light"
+      end)
+    end
+  end
+
+  local timer = vim.loop.new_timer()
+  timer:start(0, 1000, vim.schedule_wrap(update_background))
+
+  update_background()
+else
+  vim.o.background = os.getenv("THEME") or "light"
+end

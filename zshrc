@@ -40,8 +40,6 @@ _load_settings "$HOME/.zsh/configs"
 source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zvm_after_init() {
-  source $HOME/.zsh/plugins/per-directory-history/per-directory-history.zsh
-
   if [[ -f ~/.fzf.zsh ]]; then
     source ~/.fzf.zsh
   fi
@@ -62,4 +60,3 @@ if [[ "$TERM_PROGRAM" = "Apple_Terminal" ]]; then
 fi
 
 eval "$(~/.local/bin/mise activate zsh)"
-

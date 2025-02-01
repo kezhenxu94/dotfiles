@@ -1,8 +1,27 @@
+local solid_bar = "│"
+local dashed_bar = "┊"
+
 return {
   {
     "lewis6991/gitsigns.nvim",
     opts = {
       current_line_blame = true,
+      signs = {
+        add = { text = solid_bar },
+        untracked = { text = solid_bar },
+        change = { text = solid_bar },
+        delete = { text = solid_bar },
+        topdelete = { text = solid_bar },
+        changedelete = { text = solid_bar },
+      },
+      signs_staged = {
+        add = { text = dashed_bar },
+        untracked = { text = dashed_bar },
+        change = { text = dashed_bar },
+        delete = { text = dashed_bar },
+        topdelete = { text = dashed_bar },
+        changedelete = { text = dashed_bar },
+      },
     },
   },
   {
@@ -70,13 +89,8 @@ return {
             },
           },
         },
-
         lualine_y = {},
-        lualine_z = {
-          {
-            require("kube.utils").lualine,
-          },
-        },
+        lualine_z = {},
       },
       extensions = {
         "fugitive",
@@ -88,7 +102,7 @@ return {
     opts = {
       windows = {
         preview = true,
-        width_focus = 40,
+        width_focus = 25,
         width_preview = 80,
       },
       options = {
