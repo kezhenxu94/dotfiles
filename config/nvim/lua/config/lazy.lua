@@ -17,7 +17,7 @@ require("lazy").setup({
     {
       "LazyVim/LazyVim",
       import = "lazyvim.plugins",
-      opts = { colorscheme = "tokyonight" },
+      opts = { colorscheme = "catppuccin" },
     },
     { import = "plugins" },
   },
@@ -27,7 +27,7 @@ require("lazy").setup({
     lazy = false,
     version = false,
   },
-  install = { colorscheme = { "tokyonight" } },
+  install = { colorscheme = { "catppuccin" } },
   checker = { enabled = false, notify = false },
   change_detection = { enabled = true, notify = false },
   performance = {

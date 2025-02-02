@@ -8,6 +8,7 @@ return {
       scroll = { enabled = false },
       indent = { enabled = false },
       picker = {
+        prompt = " 󰍉 ",
         sources = {
           grep = {
             hidden = true,
@@ -16,6 +17,28 @@ return {
         icons = {
           ui = {
             selected = "+ ",
+          },
+        },
+        layout = {
+          layout = {
+            box = "horizontal",
+            width = 0.8,
+            min_width = 120,
+            height = 0.8,
+            {
+              box = "vertical",
+              border = "vpad",
+              title = "{title} {live} {flags}",
+              { win = "input", height = 1, border = "none" },
+              { win = "list", border = "vpad" },
+            },
+            {
+              win = "preview",
+              title = "{preview}",
+              title_pos = "center",
+              border = "vpad",
+              width = 0.5,
+            },
           },
         },
       },
@@ -53,13 +76,21 @@ return {
     },
   },
   {
-    "folke/tokyonight.nvim",
+    "catppuccin",
     opts = {
-      transparent = true,
-      styles = {
-        sidebars = "transparent",
-        floats = "transparent",
-      },
+      transparent_background = true,
+      custom_highlights = function(c)
+        return {
+          SnacksPickerBorder = { fg = c.base, bg = c.base },
+          SnacksPickerInput = { bg = c.base },
+          SnacksPickerInputBorder = { fg = c.base, bg = c.base },
+          SnacksPickerTitle = { bg = c.surface0 },
+          SnacksPickerList = { bg = c.base },
+          SnacksPickerPreviewTitle = { bg = c.surface0 },
+          SnacksPickerPreview = { bg = c.mantle },
+          SnacksPickerPreviewBorder = { bg = c.mantle, fg = c.mantle },
+        }
+      end,
     },
   },
   {
