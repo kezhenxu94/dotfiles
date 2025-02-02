@@ -28,10 +28,6 @@
   sub = submodule
   wt  = worktree
 
-[url "git@github.com:"]
-  insteadOf = git://github.com/
-  insteadOf = https://github.com/
-
 [gpg]
   program = gpg
 

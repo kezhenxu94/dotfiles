@@ -14,6 +14,9 @@
 .logged-in * {
   font-family: var(--font) !important;
 }
+.github-light *, .github-dark * {
+  font-family: var(--font) !important;
+}
 
 .diff-table * {
   font-family: var(--font) !important;

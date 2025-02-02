@@ -26,4 +26,3 @@ git -C "$SCRIPT_DIR" ls-files | while read file; do
   mkdir -p "$(dirname "$target")"
   ln -sf "$SCRIPT_DIR/$file" "$target"
 done
-
