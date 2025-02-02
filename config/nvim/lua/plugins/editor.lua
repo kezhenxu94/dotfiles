@@ -138,8 +138,4 @@ return {
       { "<leader>fM", false },
     },
   },
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    enabled = false,
-  },
 }

@@ -77,12 +77,4 @@ return {
       show_keys = false,
     },
   },
-  {
-    "catppuccin",
-    enabled = false,
-  },
-  {
-    "vim-dadbod-ui",
-    enabled = false,
-  },
 }

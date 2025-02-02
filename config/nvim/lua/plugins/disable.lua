@@ -1,10 +1,22 @@
 return {
   {
-    "MagicDuck/grug-far.nvim",
+    "grug-far.nvim",
     enabled = false,
   },
   {
-    "folke/flash.nvim",
+    "flash.nvim",
+    enabled = false,
+  },
+  {
+    "neo-tree.nvim",
+    enabled = false,
+  },
+  {
+    "catppuccin",
+    enabled = false,
+  },
+  {
+    "vim-dadbod-ui",
     enabled = false,
   },
 }
