@@ -12,13 +12,6 @@
   chsh -s $(which zsh)
   ```
 
-* Install [rcm](https://github.com/thoughtbot/rcm):
-
-  ```shell
-  curl -LO https://thoughtbot.github.io/rcm/dist/rcm-1.3.6.tar.gz && tar -xvf rcm-1.3.6.tar.gz && cd rcm-1.3.6
-  ./configure && make && sudo make install
-  ```
-
 ## Install
 
 Clone onto your laptop:
@@ -30,12 +23,12 @@ git clone --recurse-submodules git@github.com:kezhenxu94/dotfiles.git ~/dotfiles
 Install the dotfiles
 
 ```shell
-env RCRC=$HOME/dotfiles/rcrc rcup
+~/dotfiles/install.sh
 ```
 
 Update the dotfiles:
 
 ```shell
 git -C ~/dotfiles pull
-rcup
+~/dotfiles/install.sh
 ```

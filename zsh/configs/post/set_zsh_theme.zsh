@@ -2,7 +2,7 @@
 
 function _set_zsh_theme() {
   if ! which dark-notify > /dev/null; then
-    if tmux showenv -g THEME 2>&1 > /dev/null; then
+    if which tmux > /dev/null && tmux showenv -g THEME 2>&1 > /dev/null; then
       export THEME=$(tmux showenv -g THEME | cut -d= -f2)
     else
       export THEME=light

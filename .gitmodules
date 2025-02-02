@@ -9,7 +9,7 @@
 	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
 [submodule "config/tmux/plugins/tmux-resurrect"]
 	path = config/tmux/plugins/tmux-resurrect
-	url = git@github.com:tmux-plugins/tmux-resurrect.git
+	url = https://github.com/tmux-plugins/tmux-resurrect.git
 [submodule "config/tmux/plugins/tmux-continuum"]
 	path = config/tmux/plugins/tmux-continuum
-	url = git@github.com:tmux-plugins/tmux-continuum.git
+	url = https://github.com/tmux-plugins/tmux-continuum.git

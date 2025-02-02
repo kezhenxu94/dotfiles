@@ -1,0 +1,11 @@
+# Ignore README and documentation
+README.md
+docs/*
+hooks/*
+vim/undo/*
+
+# Ignore specific files
+.gitignore
+.gitmodules
+.installignore
+install.sh

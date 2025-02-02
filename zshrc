@@ -52,11 +52,15 @@ if [[ -f .env ]] ; then
 fi
 
 if which gh > /dev/null; then
-  eval "$(gh copilot alias -- zsh)"
+  if gh extension list | grep -q copilot; then
+    eval "$(gh copilot alias -- zsh)"
+  fi
 fi
 
 if [[ "$TERM_PROGRAM" = "Apple_Terminal" ]]; then
   tmux attach
 fi
 
-eval "$(~/.local/bin/mise activate zsh)"
+if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+fi

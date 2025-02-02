@@ -6,7 +6,6 @@ alias c="clear"
 
 alias k='kubectl'
 alias n='nvim'
-alias nn='nvim-nightly'
 
 # Include custom aliases
 if [[ -f ~/.aliases.local ]]; then
