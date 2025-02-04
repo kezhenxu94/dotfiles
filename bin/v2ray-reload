@@ -2,8 +2,7 @@
 
 set -e -o pipefail
 
-BASE_DIR="$XDG_CONFIG_HOME/v2ray"
-PLIST_FILE="$BASE_DIR/io.kezhenxu94.v2ray.plist"
+PLIST_FILE=~/Library/LaunchAgents/io.kezhenxu94.v2ray.plist
 
 if launchctl list | grep -q io.kezhenxu94.v2ray >/dev/null 2>&1; then
   launchctl unload -w "$PLIST_FILE"

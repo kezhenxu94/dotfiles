@@ -2,6 +2,4 @@
 
 set -e
 
-BASE_DIR="$XDG_CONFIG_HOME/v2ray"
-
-launchctl unload -w "$BASE_DIR/io.kezhenxu94.v2ray.plist" || true
+launchctl unload -w ~/Library/LaunchAgents/io.kezhenxu94.v2ray.plist || true
