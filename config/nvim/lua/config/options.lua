@@ -2,6 +2,8 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
+vim.loop = vim.loop or vim.uv
+
 vim.o.clipboard = "unnamedplus"
 
 local vim_info_dir = vim.fn.getcwd() .. "/.vim"
@@ -38,8 +40,6 @@ vim.opt.listchars = {
   tab = "  ",
 }
 
-vim.diagnostic.config({ virtual_lines = true })
-
 -- System appearance detection
 if vim.fn.has("osx") == 1 then
   local function update_background()
@@ -54,9 +54,15 @@ if vim.fn.has("osx") == 1 then
   end
 
   local timer = vim.loop.new_timer()
-  timer:start(0, 1000, vim.schedule_wrap(update_background))
+  if timer then
+    timer:start(0, 1000, vim.schedule_wrap(update_background))
+  end
 
   update_background()
 else
   vim.o.background = os.getenv("THEME") or "light"
 end
+
+vim.o.statuscolumn = "%l%s%C"
+vim.o.numberwidth = 3
+vim.o.signcolumn = "yes:1"

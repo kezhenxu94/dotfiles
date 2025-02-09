@@ -8,7 +8,7 @@ return {
       scroll = { enabled = false },
       indent = { enabled = false },
       picker = {
-        prompt = " 󰍉 ",
+        prompt = "󰍉 ",
         sources = {
           grep = {
             hidden = true,
@@ -29,7 +29,7 @@ return {
               box = "vertical",
               border = "vpad",
               title = "{title} {live} {flags}",
-              { win = "input", height = 1, border = "none" },
+              { win = "input", height = 1, border = { "", "", "", "", "", "", "", " " } },
               { win = "list", border = "vpad" },
             },
             {

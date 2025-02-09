@@ -125,6 +125,26 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       inlay_hints = { enabled = false },
+      diagnostics = {
+        virtual_text = true,
+        virtual_lines = {
+          current_line = true,
+        },
+        signs = {
+          text = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN] = "",
+            [vim.diagnostic.severity.HINT] = "",
+            [vim.diagnostic.severity.INFO] = "",
+          },
+          numhl = {
+            [vim.diagnostic.severity.ERROR] = "ErrorMsg",
+            [vim.diagnostic.severity.WARN] = "WarningMsg",
+            [vim.diagnostic.severity.HINT] = "DiagnosticInfo",
+            [vim.diagnostic.severity.INFO] = "DiagnosticHint",
+          },
+        },
+      },
     },
   },
   {
@@ -156,6 +176,19 @@ return {
     "kezhenxu94/kube.nvim",
     config = function()
       require("kube").setup({})
+    end,
+  },
+  {
+    "saghen/blink.cmp",
+    dependencies = {
+      "kristijanhusak/vim-dadbod-completion",
+      enabled = false,
+    },
+    opts = function(_, opts)
+      opts.sources.default = vim.tbl_filter(function(source)
+        return source ~= "dadbod"
+      end, opts.sources.default)
+      opts.sources.providers["dadbod"] = nil
     end,
   },
 }

@@ -3,6 +3,10 @@ for function in ~/.zsh/functions/*; do
   source $function
 done
 
+if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+fi
+
 # extra files in ~/.zsh/configs/pre , ~/.zsh/configs , and ~/.zsh/configs/post
 # these are loaded first, second, and third, respectively.
 _load_settings() {
@@ -34,9 +38,6 @@ _load_settings() {
 }
 _load_settings "$HOME/.zsh/configs"
 
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
-[[ -f ~/.aliases ]] && source ~/.aliases
-
 source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zvm_after_init() {
@@ -61,6 +62,5 @@ if [[ "$TERM_PROGRAM" = "Apple_Terminal" ]]; then
   tmux attach
 fi
 
-if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
-  eval "$(~/.local/bin/mise activate zsh)"
-fi
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+[[ -f ~/.aliases ]] && source ~/.aliases
