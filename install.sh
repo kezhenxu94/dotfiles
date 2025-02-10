@@ -23,6 +23,9 @@ git -C "$SCRIPT_DIR" ls-files | while read file; do
   target="$HOME/.$file"
   [[ $file == .* ]] && target="$HOME/$file"
 
+  if [[ -d "$target" ]]; then
+    continue
+  fi
   mkdir -p "$(dirname "$target")"
   ln -sf "$SCRIPT_DIR/$file" "$target"
 done
