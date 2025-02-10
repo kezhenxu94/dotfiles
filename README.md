@@ -2,7 +2,7 @@
 
 | Dark | Light |
 | --- | --- |
-| ![Dark](https://github.com/user-attachments/assets/2c7975d3-102f-4c91-92fa-da6f8bf78a35) | ![Light](https://github.com/user-attachments/assets/ec58a6b2-2c65-4cad-9772-dca0fe551c9d) |
+| ![Dark](https://github.com/user-attachments/assets/663538fa-b779-46a9-91f0-0514843452ce) | ![Light](https://github.com/user-attachments/assets/13a33de4-4b06-4f42-9efc-64ebe9512e83) |
 
 ## Requirements
 
