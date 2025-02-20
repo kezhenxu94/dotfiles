@@ -1,6 +1,10 @@
 #!/usr/bin/env zsh
 
 function _set_zsh_theme() {
+  if [[ -z "$TMUX" ]]; then
+    export THEME=light
+    return
+  fi
   if ! which dark-notify > /dev/null; then
     if which tmux > /dev/null && tmux showenv -g THEME 2>&1 > /dev/null; then
       export THEME=$(tmux showenv -g THEME 2>/dev/null | cut -d= -f2)
