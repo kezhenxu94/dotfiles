@@ -5,7 +5,7 @@
         <server>
             <id>github</id>
             <username>${env.GITHUB_USERNAME}</username>
-            <password>${env.GITHUB_TOKEN}</password>
+            <password>${env.GITHUB_PAT}</password>
         </server>
         <server>
             <id>apache.snapshots.https</id>
