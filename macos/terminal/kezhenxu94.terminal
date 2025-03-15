@@ -1026,6 +1026,8 @@
 	<false/>
 	<key>EastAsianAmbiguousWide</key>
 	<false/>
+	<key>EscapeNonASCIICharacters</key>
+	<false/>
 	<key>Font</key>
 	<data>
 	YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMS
