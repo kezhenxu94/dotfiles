@@ -41,6 +41,11 @@ return {
             },
           },
         },
+        formatters = {
+          file = {
+            truncate = 80,
+          },
+        },
       },
     },
   },
