@@ -123,14 +123,19 @@ return {
       {
         "<leader>e",
         function()
-          require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
+          local buf_name = vim.api.nvim_buf_get_name(0)
+          if not buf_name:match("minifiles://") then
+            require("mini.files").open(buf_name)
+          else
+            require("mini.files").open(vim.uv.cwd())
+          end
         end,
         desc = "Open mini.files (Directory of Current File)",
       },
       {
         "<leader>E",
         function()
-          require("mini.files").open(vim.uv.cwd(), true)
+          require("mini.files").open(vim.uv.cwd())
         end,
         desc = "Open mini.files (cwd)",
       },

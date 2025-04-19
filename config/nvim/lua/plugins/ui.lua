@@ -48,6 +48,9 @@ return {
         },
       },
     },
+    keys = {
+      { "<leader><leader>", LazyVim.pick("files", { root = false }), desc = "Find Files (cwd)" },
+    },
   },
   {
     "folke/noice.nvim",

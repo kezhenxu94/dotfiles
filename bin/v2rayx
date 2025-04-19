@@ -12,12 +12,14 @@ setup() {
   networksetup -setsecurewebproxy Wi-Fi host.docker.internal 7890
   networksetup -setsocksfirewallproxy Wi-Fi host.docker.internal 7891
   networksetup -setproxybypassdomains wi-Fi host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.*
+  networksetup -setdnsservers Wi-Fi Empty    # 114.114.114.114 1.1.1.1 8.8.8.8 8.8.4.4
+  networksetup -setsearchdomains Wi-Fi Empty # 114.114.114.114 1.1.1.1 8.8.8.8 8.8.4.4
 
   cat <<EOF >>"$ENV_FILE"
 export HTTPS_PROXY=http://host.docker.internal:7890
 export HTTP_PROXY=http://host.docker.internal:7890
 export ALL_PROXY=socks5://host.docker.internal:7891
-export NO_PROXY="host.docker.internal,127.0.0.1,*.apple.com,.local,localhost,local-docker-registry,.$(seq -s ',.' 0 254)255" # Don't proxy *.apple.com for "Translate" application to work
+export NO_PROXY="127.0.0.1,192.168.0.0/16,10.0.0.0/8,host.docker.internal,*.apple.com,.local,localhost,local-docker-registry" # Don't proxy *.apple.com for "Translate" application to work
 EOF
 }
 
@@ -26,6 +28,8 @@ teardown() {
   networksetup -setsecurewebproxystate wi-fi off
   networksetup -setsocksfirewallproxystate wi-fi off
   networksetup -setproxybypassdomains wi-fi Empty
+  networksetup -setdnsservers Wi-Fi Empty
+  networksetup -setsearchdomains Wi-Fi Empty
 
   /usr/bin/sed -i '' '/export HTTP_PROXY/d; /export HTTPS_PROXY/d; /export ALL_PROXY/d; /export NO_PROXY/d' "$ENV_FILE"
 }
