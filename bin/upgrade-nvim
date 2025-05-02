@@ -1,0 +1,53 @@
+#!/bin/sh
+
+set -e -o pipefail
+
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m)
+
+if [[ "$OS" != "darwin" && "$OS" != "linux" ]]; then
+  echo "Unsupported OS: $OS"
+  exit 1
+fi
+
+if [[ "$OS" == "darwin" ]]; then
+  OS="macos"
+fi
+
+echo "OS: $OS, ARCH: $ARCH"
+
+echo "Getting latest release version..."
+
+if [[ -z "$LATEST_RELEASE" ]]; then
+  LATEST_RELEASE=$(curl -s https://api.github.com/repos/neovim/neovim/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+fi
+
+if [ -z "$LATEST_RELEASE" ]; then
+  echo "Failed to get latest release version"
+  exit 1
+fi
+
+echo "Latest release: $LATEST_RELEASE"
+
+echo "Getting nvim installation destination..."
+
+NVIM_DESTINATION=$(which nvim | sed 's#/bin/nvim$##')
+
+mkdir -p ${NVIM_DESTINATION}_temp
+echo "Downloading and extracting nvim to ${NVIM_DESTINATION}_temp..."
+
+DOWNLOAD_URL="https://github.com/neovim/neovim/releases/download/${LATEST_RELEASE}/nvim-${OS}-${ARCH}.tar.gz"
+
+echo "Downloading from $DOWNLOAD_URL"
+
+curl -sL "$DOWNLOAD_URL" | tar xzf - -C ${NVIM_DESTINATION}_temp --strip-components=1
+
+echo "Deleting old nvim..."
+
+rm -rf ${NVIM_DESTINATION}
+
+echo "Moving new nvim to ${NVIM_DESTINATION}..."
+
+mv ${NVIM_DESTINATION}_temp ${NVIM_DESTINATION}
+
+echo "Nvim upgraded to $LATEST_RELEASE"
