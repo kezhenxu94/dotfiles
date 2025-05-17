@@ -13,37 +13,56 @@ return {
           grep = {
             hidden = true,
           },
+          explorer = {
+            layout = {
+              layout = { preset = "left" },
+            },
+          },
         },
         icons = {
           ui = {
             selected = "+ ",
           },
         },
-        layout = {
-          layout = {
-            box = "horizontal",
-            width = 0.8,
-            min_width = 120,
-            height = 0.8,
-            {
-              box = "vertical",
-              border = "vpad",
-              title = "{title} {live} {flags}",
-              { win = "input", height = 1, border = { "", "", "", "", "", "", "", " " } },
-              { win = "list", border = "vpad" },
-            },
-            {
-              win = "preview",
-              title = "{preview}",
-              title_pos = "center",
-              border = "vpad",
-              width = 0.5,
+        layouts = {
+          default = {
+            layout = {
+              box = "horizontal",
+              width = 0.8,
+              min_width = 120,
+              height = 0.8,
+              {
+                box = "vertical",
+                border = "vpad",
+                title = "{title} {live} {flags}",
+                { win = "input", height = 1, border = { "", "", "", "", "", "", "", " " } },
+                { win = "list", border = "vpad" },
+              },
+              {
+                win = "preview",
+                title = "{preview}",
+                title_pos = "center",
+                border = "vpad",
+                width = 0.5,
+              },
             },
           },
         },
         formatters = {
           file = {
             truncate = 80,
+          },
+        },
+        win = {
+          input = {
+            keys = {
+              ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
+            },
+          },
+          list = {
+            keys = {
+              ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
+            },
           },
         },
       },

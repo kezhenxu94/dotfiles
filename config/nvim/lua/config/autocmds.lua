@@ -25,11 +25,3 @@ vim.api.nvim_create_autocmd("FileType", {
     end)
   end,
 })
-
-vim.api.nvim_create_autocmd("User", {
-  desc = "Add rounded corners to mini.files window",
-  pattern = "MiniFilesWindowOpen",
-  callback = function(args)
-    vim.api.nvim_win_set_config(args.data.win_id, { border = "rounded" })
-  end,
-})
