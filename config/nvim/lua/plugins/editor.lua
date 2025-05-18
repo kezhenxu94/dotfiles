@@ -60,6 +60,12 @@ return {
       options = {
         section_separators = {},
         component_separators = {},
+        globalstatus = false,
+        disabled_filetypes = {
+          statusline = {
+            "snacks_picker_list",
+          },
+        },
       },
       sections = {
         lualine_a = {

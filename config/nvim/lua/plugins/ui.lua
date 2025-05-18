@@ -17,6 +17,12 @@ return {
             layout = {
               layout = { preset = "left" },
             },
+            include = {
+              ".github",
+            },
+            exclude = {
+              ".git",
+            },
           },
         },
         icons = {
@@ -44,6 +50,29 @@ return {
                 title_pos = "center",
                 border = "vpad",
                 width = 0.5,
+              },
+            },
+          },
+          sidebar = {
+            preview = false,
+            layout = {
+              backdrop = false,
+              width = 40,
+              max_width = 80,
+              height = 0,
+              position = "left",
+              border = "none",
+              box = "vertical",
+              {
+                win = "input",
+                height = 1,
+                border = { " ", " ", " ", " ", "", "", "", " " },
+                title = "{title} {live} {flags}",
+                title_pos = "center",
+              },
+              { win = "list", border = "none" },
+              {
+                win = "preview",
               },
             },
           },
