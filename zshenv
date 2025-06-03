@@ -46,3 +46,6 @@ unset _old_path
 LC_CTYPE=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
+export MYSQL_HOME=~/usr/local/mysql
+export MYSQLCLIENT_CFLAGS="-I$MYSQL_HOME/include"
+export MYSQLCLIENT_LDFLAGS="-L$MYSQL_HOME/lib -lmysqlclient"
