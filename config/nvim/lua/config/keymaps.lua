@@ -13,7 +13,3 @@ vim.keymap.set("n", "<M-=>", "<C-w>=", { silent = true, desc = "Equalize window 
 vim.keymap.set("n", "<M->>", "<C-w>>", { silent = true, desc = "Increase window width" })
 vim.keymap.set("n", "<M-<>", "<C-w><", { silent = true, desc = "Decrease window width" })
 
-vim.keymap.set("n", "<C-j>", "<C-w>j", { silent = true, desc = "Move to next window" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { silent = true, desc = "Move to previous window" })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { silent = true, desc = "Move to left window" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { silent = true, desc = "Move to right window" })

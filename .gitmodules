@@ -13,3 +13,6 @@
 [submodule "config/tmux/plugins/tmux-continuum"]
 	path = config/tmux/plugins/tmux-continuum
 	url = https://github.com/tmux-plugins/tmux-continuum.git
+[submodule "config/tmux/plugins/tmux-navigator"]
+	path = config/tmux/plugins/tmux-navigator
+	url = https://github.com/christoomey/vim-tmux-navigator

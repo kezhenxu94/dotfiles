@@ -3,10 +3,6 @@ for function in ~/.zsh/functions/*; do
   source $function
 done
 
-if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
-  eval "$(~/.local/bin/mise activate zsh)"
-fi
-
 # extra files in ~/.zsh/configs/pre , ~/.zsh/configs , and ~/.zsh/configs/post
 # these are loaded first, second, and third, respectively.
 _load_settings() {
@@ -64,3 +60,7 @@ fi
 
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 [[ -f ~/.aliases ]] && source ~/.aliases
+
+if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+fi
