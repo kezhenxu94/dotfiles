@@ -61,6 +61,6 @@ fi
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 [[ -f ~/.aliases ]] && source ~/.aliases
 
-if [[ -d ~/.local/bin && -f ~/.local/bin/mise ]]; then
-  eval "$(~/.local/bin/mise activate zsh)"
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
 fi
