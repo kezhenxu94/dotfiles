@@ -64,3 +64,7 @@ fi
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
+
+if command -v rapture >/dev/null 2>&1; then
+  eval "$( command rapture shell-init )"
+fi
