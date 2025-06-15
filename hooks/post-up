@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-set -eux -o pipefail
+set -euo pipefail
 
 USR_HOME="${USR_HOME:-$HOME/usr/local}"
 
@@ -94,12 +94,12 @@ fi
 
 # Install libevent
 export LIBEVENT_VERSION=${LIBEVENT_VERSION:-2.1.12-stable}
-if ! ls $USR_HOME/lib/libevent_core.a > /dev/null; then
+if ! ls $USR_HOME/lib/libevent_core.a > /dev/null 2>&1; then
   echo "Installing libevent ${LIBEVENT_VERSION}..."
 
   curl -sL https://github.com/libevent/libevent/releases/download/release-${LIBEVENT_VERSION}/libevent-${LIBEVENT_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
   cd $USR_HOME/src/libevent-${LIBEVENT_VERSION}
-  PKG_CONFIG_PATH=$USR_HOME/lib/pkgconfig/ ./configure --prefix=$USR_HOME/ --enable-shared && make && make install
+  PKG_CONFIG_PATH="$USR_HOME/lib/pkgconfig/:$USR_HOME/lib64/pkgconfig/" ./configure --prefix=$USR_HOME/ --enable-shared && make && make install
 fi
 
 # Install ncurses
@@ -114,7 +114,7 @@ fi
 
 # Install utf8proc
 export UTF8PROC_VERSION=${UTF8PROC_VERSION:-2.9.0}
-if ! ls $USR_HOME/lib/libutf8proc.dylib 2>&1 > /dev/null; then
+if ! ls $USR_HOME/lib/libutf8proc.* > /dev/null 2>&1 ; then
   echo "Installing utf8proc ${UTF8PROC_VERSION}..."
 
   curl -sL https://github.com/JuliaStrings/utf8proc/archive/refs/tags/v${UTF8PROC_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
@@ -129,7 +129,7 @@ if ! which tmux > /dev/null; then
 
   curl -sL https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz | tar -zxf - -C $USR_HOME/src
   cd $USR_HOME/src/tmux-${TMUX_VERSION}
-  PKG_CONFIG_PATH=$USR_HOME/lib/pkgconfig ./configure --prefix=$USR_HOME/ --enable-utf8proc --enable-sixel \
+  PKG_CONFIG_PATH="$USR_HOME/lib/pkgconfig/:$USR_HOME/lib64/pkgconfig/" ./configure --prefix=$USR_HOME/ --enable-utf8proc --enable-sixel \
     CFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses" \
     LDFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses -L$USR_HOME/lib -lresolv -lutf8proc" \
     && make && make install
@@ -201,7 +201,7 @@ export TEXINFO_VERSION=${TEXINFO_VERSION:-7.1}
 if ! which makeinfo > /dev/null; then
   echo "Installing texinfo ${TEXINFO_VERSION}..."
 
-  curl -sL https://ftp.gnu.org/gnu/texinfo/texinfo-${TEXINFO_VERSION}.tar.xz | tar -jxf - -C $USR_HOME/src
+  curl -sL https://ftp.gnu.org/gnu/texinfo/texinfo-${TEXINFO_VERSION}.tar.xz | tar -Jxf - -C $USR_HOME/src
   cd $USR_HOME/src/texinfo-${TEXINFO_VERSION}
   ./configure --disable-dependency-tracking --disable-install-warnings --prefix=$USR_HOME/ \
     CFLAGS="-I$USR_HOME/include \
@@ -267,7 +267,7 @@ fi
 if ! which luajit 2>&1 > /dev/null; then
   echo "Installing luajit"
 
-  git clone https://luajit.org/git/luajit.git $USR_HOME/src/luagit && cd $USR_HOME/src/luajit
+  git clone https://luajit.org/git/luajit.git $USR_HOME/src/luajit && cd $USR_HOME/src/luajit
   git checkout v2.1
   export MACOSX_DEPLOYMENT_TARGET=14.5
   make && make install PREFIX=$USR_HOME

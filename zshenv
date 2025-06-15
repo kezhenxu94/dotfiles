@@ -8,7 +8,7 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export K9SCONFIG=~/.config/k9s
 export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 
-if [[ -f ~/usr/local/lib ]]; then
+if ls ~/usr/local/lib > /dev/null 2>&1; then
   export LD_LIBRARY_PATH=~/usr/local/lib:$LD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH=~/usr/local/lib:$DYLD_LIBRARY_PATH
 fi
