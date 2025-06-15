@@ -278,6 +278,6 @@ export FD_VERSION=${FD_VERSION:-10.1.0}
 if ! which fd 2>&1 > /dev/null; then
   echo "Installing fd"
 
-  curl -sL https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-aarch64-apple-darwin.tar.gz | tar -zxf - --strip-components=1 -C ~/.bin fd-v${FD_VERSION}-aarch64-apple-darwin/fd 
+  curl -sL https://github.com/sharkdp/fd/releases/download/v${FD_VERSION}/fd-v${FD_VERSION}-$(uname -m)-$([[ "$os" == "darwin" ]] && echo "apple-darwin" || echo "unknown-linux-gnu").tar.gz | tar -zxf - --strip-components=1 -C ~/.bin fd-v${FD_VERSION}-$(uname -m)-$([[ "$os" == "darwin" ]] && echo "apple-darwin" || echo "unknown-linux-gnu")/fd 
   chmod +x ~/.bin/fd
 fi
