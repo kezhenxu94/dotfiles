@@ -1,8 +1,10 @@
 #!/usr/bin/env zsh
 
-set -ex -o pipefail
+set -eux -o pipefail
 
 USR_HOME="${USR_HOME:-$HOME/usr/local}"
+
+os="$(uname | tr '[:upper:]' '[:lower:]')"
 
 if [ "$SKIP_INSTALL" != "false" ]; then
   echo "Skipping install..."
@@ -20,7 +22,6 @@ if [ -f "$HOME/.git_template/HEAD" ] && \
   rm -f ~/.git_template/HEAD
 fi
 
-os="$(uname | tr '[:upper:]' '[:lower:]')"
 arch="$(uname -m)"
 [ "$arch" = "x86_64" ] && arch=amd64
 
@@ -37,7 +38,7 @@ mkdir -p $USR_HOME/src
 
 # Install nvim
 export NVIM_VERSION=${NVIM_VERSION:-0.9.5}
-if [ -n "${INSTALL_NVIM}" ]; then
+if [ -n "${INSTALL_NVIM:-}" ]; then
   if ! which nvim; then
     echo "Installing nvim ${NVIM_VERSION}..."
     curl -sL https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-macos.tar.gz -o /tmp/nvim.tar.gz
@@ -50,7 +51,7 @@ fi
 export M4_VERSION=${M4_VERSION:-1.4.19}
 if ! m4 --version | grep "$M4_VERSION" > /dev/null; then
   echo "Installing m4 ${M4_VERSION}..."
-  curl https://ftp.gnu.org/gnu/m4/m4-${M4_VERSION}.tar.xz | tar -xf - -C $USR_HOME/src
+  curl https://ftp.gnu.org/gnu/m4/m4-${M4_VERSION}.tar.xz | tar -xJf - -C $USR_HOME/src
   cd $USR_HOME/src/m4-${M4_VERSION}
   ./configure --prefix=$USR_HOME/ && make && make install
 fi
@@ -68,7 +69,7 @@ fi
 export AUTOMAKE_VERSION=${AUTOMAKE_VERSION:-1.16.5}
 if ! which automake > /dev/null; then
   echo "Installing automake ${AUTOMAKE_VERSION}..."
-  curl -sL https://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VERSION}.tar.xz | tar -xf - -C $USR_HOME/src
+  curl -sL https://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VERSION}.tar.xz | tar -xJf - -C $USR_HOME/src
   cd $USR_HOME/src/automake-${AUTOMAKE_VERSION}
   ./configure --prefix=$USR_HOME/ && make && make install
 fi
@@ -253,12 +254,14 @@ if ! which fzf > /dev/null; then
   ~/.fzf/install
 fi
 
-# Install dark-notify
-if ! which dark-notify > /dev/null; then
-  echo "Installing dark-notify..."
+if [[ "$os" == "darwin" ]]; then
+  # Install dark-notify
+  if ! which dark-notify > /dev/null; then
+    echo "Installing dark-notify..."
 
-  curl -sL https://github.com/cormacrelf/dark-notify/releases/download/v0.1.2/dark-notify-v0.1.2.tar.gz | tar -zxf - -C ~/.bin
-  chmod +x ~/.bin/dark-notify
+    curl -sL https://github.com/cormacrelf/dark-notify/releases/download/v0.1.2/dark-notify-v0.1.2.tar.gz | tar -zxf - -C ~/.bin
+    chmod +x ~/.bin/dark-notify
+  fi
 fi
 
 if ! which luajit 2>&1 > /dev/null; then
