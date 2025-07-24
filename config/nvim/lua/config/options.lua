@@ -43,12 +43,12 @@ vim.opt.listchars = {
 -- System appearance detection
 if vim.fn.has("osx") == 1 then
   local function update_background()
-    local handle = io.popen("defaults read -g AppleInterfaceStyle 2>/dev/null")
+    local handle = io.popen("dark-notify -e 2>/dev/null")
     if handle then
       local result = handle:read("*a")
       handle:close()
       vim.schedule(function()
-        vim.o.background = result:match("Dark") and "dark" or "light"
+        vim.o.background = result:match("[dD]ark") and "dark" or "light"
       end)
     end
   end

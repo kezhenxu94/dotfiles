@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function chpwd {
+function chpwd_activate_venv {
   if [[ -f .env ]] ; then
     envup
   fi
@@ -28,3 +28,7 @@ function chpwd {
     fi
   fi
 }
+
+autoload -U add-zsh-hook
+add-zsh-hook chpwd chpwd_activate_venv
+
