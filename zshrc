@@ -68,3 +68,4 @@ fi
 if command -v rapture >/dev/null 2>&1; then
   eval "$( command rapture shell-init )"
 fi
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"

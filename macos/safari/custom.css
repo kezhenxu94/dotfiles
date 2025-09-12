@@ -66,11 +66,6 @@ body#gsr * {
   font-family: var(--font) !important;
 }
 
-/* Google Cloud */
-.cfc-focus-indicators-enabled *:not([class*="icon"]) {
-  font-family: var(--font) !important;
-}
-
 .app-grafana * {
   font-family: var(--font) !important;
 }

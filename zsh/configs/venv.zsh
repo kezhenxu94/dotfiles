@@ -22,9 +22,9 @@ function chpwd_activate_venv {
       return # no config file found
     fi
 
-    venv_filepath=$(cut -d '/' -f -2 <<< ${venv_cfg_filepath})
-    if [[ -d "$venv_filepath" ]] ; then
-      source "${venv_filepath}"/bin/activate
+    venv_filepath=$(dirname "${venv_cfg_filepath}")
+    if [[ -d "$venv_filepath" ]] && [[ -f "${venv_filepath}/bin/activate" ]] ; then
+      source "${venv_filepath}/bin/activate"
     fi
   fi
 }
