@@ -115,13 +115,6 @@ return {
     },
   },
   {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    opts = {
-      model = "claude-3.5-sonnet",
-      show_help = false,
-    },
-  },
-  {
     "neovim/nvim-lspconfig",
     opts = {
       inlay_hints = { enabled = false },
