@@ -14,7 +14,7 @@ return {
   {
     "mfussenegger/nvim-jdtls",
     dependencies = {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
     },
     opts = {
       cmd = {
@@ -84,7 +84,7 @@ return {
     },
   },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         "stylua",
@@ -96,6 +96,8 @@ return {
         "gh",
         "checkstyle",
         "actionlint",
+        "tree-sitter-cli",
+        "jdtls",
       },
     },
   },
@@ -160,16 +162,10 @@ return {
     },
   },
   {
-    "echasnovski/mini.pairs",
+    "nvim-mini/mini.pairs",
     opts = {
       modes = { insert = true, command = false, terminal = false },
     },
-  },
-  {
-    "kezhenxu94/kube.nvim",
-    config = function()
-      require("kube").setup({})
-    end,
   },
   {
     "saghen/blink.cmp",
