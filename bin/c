@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# Check if we're in a tmux session
+if [ -n "$TMUX" ]; then
+    # Clear screen and scrollback in tmux
+    clear && tmux clear-history
+else
+    # Just clear the screen normally
+    clear
+fi
+
