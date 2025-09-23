@@ -1,0 +1,220 @@
+#!/usr/bin/env zsh
+
+set -e +x
+
+# Navigation stack for managing fzf views
+declare -a VIEW_STACK=()
+declare -a SELECTION_STACK=()
+
+# Common kubectl operations for different resource types
+declare -A OPERATIONS=(
+  ["default"]="describe edit delete logs exec port-forward"
+  ["pods"]="describe edit delete logs exec port-forward top"
+  ["services"]="describe edit delete port-forward"
+  ["deployments"]="describe edit delete scale rollout"
+  ["configmaps"]="describe edit delete"
+  ["secrets"]="describe edit delete"
+  ["nodes"]="describe edit top cordon uncordon drain"
+  ["persistentvolumes"]="describe edit delete"
+  ["persistentvolumeclaims"]="describe edit delete"
+)
+
+# Function to get all resource types
+get_resource_types() {
+  kubectl api-resources --verbs=list -o name | sort
+}
+
+# Function to get resources of a specific type in wide format
+get_resources() {
+  local resource_type="$1"
+  kubectl get "$resource_type" -o wide 2>/dev/null | grep -v '^$' || true
+}
+
+# Function to parse resource name from wide mode output
+parse_resource_info() {
+  local resource_line="$1"
+  # Extract the first column (resource name) from the wide mode line
+  echo "$resource_line" | awk '{print $1}'
+}
+
+# Function to get operations for a resource type
+get_operations() {
+  local resource_type="$1"
+  local ops="${OPERATIONS[$resource_type]:-${OPERATIONS[default]}}"
+  echo "$ops" | tr ' ' '\n'
+}
+
+# Function to execute an operation
+execute_operation() {
+  local operation="$1"
+  local resource_type="$2"
+  local resource_name="$3"
+
+  case "$operation" in
+  "describe")
+    kubectl describe "$resource_type" "$resource_name"
+    ;;
+  "edit")
+    kubectl edit "$resource_type" "$resource_name"
+    ;;
+  "delete")
+    echo "Are you sure you want to delete $resource_type/$resource_name? (y/N)"
+    read -r confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      kubectl delete "$resource_type" "$resource_name"
+    fi
+    ;;
+  "logs")
+    kubectl logs "$resource_name" -f
+    ;;
+  "exec")
+    kubectl exec -it "$resource_name" -- /bin/bash || kubectl exec -it "$resource_name" -- /bin/sh
+    ;;
+  "port-forward")
+    echo -n "Enter local:remote port (e.g., 8080:80): "
+    read -r ports
+    kubectl port-forward "$resource_name" "$ports"
+    ;;
+  "scale")
+    echo "Enter replica count:"
+    read -r replicas
+    kubectl scale "$resource_type" "$resource_name" --replicas="$replicas"
+    ;;
+  "rollout")
+    echo "Select rollout action:"
+    action=$(echo -e "status\nhistory\nrestart\nundo" | fzf --prompt="Rollout Action> " --reverse)
+    kubectl rollout "$action" "$resource_type/$resource_name"
+    ;;
+  "top")
+    kubectl top "$resource_type" "$resource_name" 2>/dev/null || echo "Metrics not available"
+    ;;
+  "cordon" | "uncordon" | "drain")
+    kubectl "$operation" "$resource_name"
+    ;;
+  *)
+    echo "Unknown operation: $operation"
+    ;;
+  esac
+}
+
+# Function to show operations menu
+show_operations_menu() {
+  local resource_type="$1"
+  local resource_name="$2"
+
+  while true; do
+    local operations=()
+    operations+=()
+    while IFS= read -r op; do
+      operations+=("$op")
+    done < <(get_operations "$resource_type")
+
+    selected_op=$(printf '%s\n' "${operations[@]}" | fzf \
+      --bind='ctrl-d:abort' \
+      --prompt="Operation for $resource_type/$resource_name> " \
+      --header="Select operation to perform" \
+      --reverse \
+      --height=50% || echo "◀ Back")
+
+    if [[ "$selected_op" == "◀ Back" ]]; then
+      break
+    fi
+
+    execute_operation "$selected_op" "$resource_type" "$resource_name"
+    echo "Press Enter to continue..."
+    read -r
+  done
+}
+
+# Function to show resources menu
+show_resources_menu() {
+  local resource_type="$1"
+  local resource_name="$2"
+
+  while true; do
+    local resources=()
+    resources+=()
+
+    while IFS= read -r resource; do
+      [[ -n "$resource" ]] && resources+=("$resource")
+    done < <(get_resources "$resource_type")
+
+    if [[ ${#resources[@]} -eq 1 ]]; then
+      echo "No $resource_type found"
+      return
+    fi
+
+    selected_resource=$(printf '%s\n' "${resources[@]}" | fzf \
+      --bind='ctrl-d:abort' \
+      --prompt="$resource_type> " \
+      --header-lines=1 \
+      --query="$resource_name" \
+      --reverse \
+      --height=50% || echo "◀ Back")
+
+    if [[ "$selected_resource" == "◀ Back" ]]; then
+      break
+    fi
+
+    resource_name=$(parse_resource_info "$selected_resource")
+
+    show_operations_menu "$resource_type" "$resource_name"
+  done
+}
+
+# Function to show resource types menu
+show_resource_types_menu() {
+  while true; do
+    local resource_types=()
+    while IFS= read -r rt; do
+      [[ -n "$rt" ]] && resource_types+=("$rt")
+    done < <(get_resource_types)
+
+    local selected_type
+    selected_type=$(printf '%s\n' "${resource_types[@]}" | fzf \
+      --bind='ctrl-d:abort' \
+      --prompt="Resource Type> " \
+      --header="Select Kubernetes resource type" \
+      --reverse \
+      --height=50% || echo "")
+
+    [[ -z "$selected_type" ]] && break
+
+    show_resources_menu "$selected_type"
+  done
+}
+
+# Main function
+main() {
+  # Check if kubectl is available
+  if ! command -v kubectl >/dev/null 2>&1; then
+    echo "Error: kubectl is not installed or not in PATH"
+    exit 1
+  fi
+
+  # Check if fzf is available
+  if ! command -v fzf >/dev/null 2>&1; then
+    echo "Error: fzf is not installed or not in PATH"
+    exit 1
+  fi
+
+  # Check kubectl connectivity
+  if ! kubectl cluster-info >/dev/null 2>&1; then
+    echo "Error: Cannot connect to Kubernetes cluster"
+    exit 1
+  fi
+
+  if [[ $# -eq 0 ]]; then
+    # No arguments - show resource types menu
+    show_resource_types_menu
+  else
+    # Resource type provided - show resources directly
+    local resource_type="$1"
+    local resource_name="$2"
+    show_resources_menu "$resource_type" "$resource_name"
+  fi
+}
+
+# Run main function
+main "$@"
+
