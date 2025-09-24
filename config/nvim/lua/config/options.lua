@@ -63,6 +63,6 @@ else
   vim.o.background = os.getenv("THEME") or "light"
 end
 
-vim.o.statuscolumn = "%l%s%C"
+vim.o.statuscolumn = "%l%s"
 vim.o.numberwidth = 3
 vim.o.signcolumn = "yes:1"

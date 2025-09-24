@@ -1,0 +1,161 @@
+#!/usr/bin/env zsh
+
+set -e +x
+
+# Function to get all resource types
+get_resource_types() {
+  kubectl api-resources --verbs=list -o name | sort
+}
+
+__get_obj__(){
+  local resource_type="$1"
+
+  # Build kubectl command with preserved arguments
+  local cmd="kubectl get"
+  if [[ -n "${KUBECTL_BEFORE_ARGS[@]}" ]]; then
+    cmd="$cmd ${KUBECTL_BEFORE_ARGS[*]}"
+  fi
+  cmd="$cmd $resource_type"
+  if [[ -n "${KUBECTL_AFTER_ARGS[@]}" ]]; then
+    cmd="$cmd ${KUBECTL_AFTER_ARGS[*]}"
+  fi
+
+  export FZF_DEFAULT_COMMAND="$cmd"
+
+  fzf --layout=reverse -m --header-lines=1 --info=inline \
+    --prompt "[ $resource_type ] CL: $(kubectl config current-context | sed 's/-context$//') NS: $(kubectl config get-contexts | grep "*" | awk '{print $5}')> " \
+    --header $'>> CTRL-P (preview) || CTRL-D (describe) || CTRL-E (edit) || CTRL-X (delete) || CTRL-L (logs) || CTRL-F (port-forward) || CTRL-T (top) || CTRL-/ (change view) <<\n\n' \
+    --preview-window=hidden \
+    --bind 'ctrl-p:toggle-preview' \
+    --bind 'ctrl-/:change-preview-window(99%|70%|40%|right:50%)' \
+    --bind 'ctrl-r:reload:eval "$FZF_DEFAULT_COMMAND"' \
+    --bind "ctrl-d:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then kubectl describe $resource_type {2} -n {1} | less > /dev/tty; else kubectl describe $resource_type {1} | less > /dev/tty; fi; echo -n 'Press any key to continue:' && read" \
+    --bind "ctrl-e:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then kubectl edit $resource_type {2} -n {1} > /dev/tty; else kubectl edit $resource_type {1} > /dev/tty; fi" \
+    --bind "ctrl-x:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then echo 'Delete $resource_type/{2} in namespace {1}? (y/N)' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && kubectl delete $resource_type {2} -n {1}; else echo 'Delete $resource_type/{1}? (y/N)' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && kubectl delete $resource_type {1}; fi" \
+    --bind "ctrl-l:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then kubectl logs {2} -n {1} -f > /dev/tty; else kubectl logs {1} -f > /dev/tty; fi; echo -n 'Press any key to continue:' && read" \
+    --bind "ctrl-f:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {2} -n {1} \$ports > /dev/tty; else echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {1} \$ports > /dev/tty; fi" \
+    --bind "ctrl-t:execute:if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then kubectl top $resource_type {2} -n {1} > /dev/tty; else kubectl top $resource_type {1} > /dev/tty; fi; echo -n 'Press any key to continue:' && read" \
+    --bind 'enter:accept' \
+    --preview "if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then kubectl describe $resource_type {2} -n {1}; else kubectl describe $resource_type {1}; fi"
+}
+
+# Function to show resources menu
+show_resources_menu() {
+  KUBECTL_AFTER_ARGS="-A"
+  local resource_type="$1"
+  __get_obj__ "$resource_type"
+}
+
+# Function to show resource types menu
+show_resource_types_menu() {
+  while true; do
+    local resource_types=()
+    while IFS= read -r rt; do
+      [[ -n "$rt" ]] && resource_types+=("$rt")
+    done < <(get_resource_types)
+
+    local selected_type
+    selected_type=$(printf '%s\n' "${resource_types[@]}" | fzf \
+      --bind='ctrl-d:abort' \
+      --prompt="Resource Type> " \
+      --header="Select Kubernetes resource type" \
+      --reverse \
+      --height=50% || echo "")
+
+    [[ -z "$selected_type" ]] && break
+
+    show_resources_menu "$selected_type"
+  done
+}
+
+# Main kubectl wrapper function
+k() {
+  # Store all original arguments
+  local cmd="$1"
+
+  case "$cmd" in
+    "config" )
+      if [[ "$2" == "use-context" ]]; then
+        kubectl config use-context $(kubectl config get-contexts | fzf  --layout=reverse --header-lines=1 | sed -r 's/^\*?\s*([-0-9a-zA-Z]*).*/\1/')
+      elif [[ "$2" == "set" ]] && [[ "$3" == "ns" ]]; then
+        CURRENT_CONTEXT=$(kubectl config current-context)
+        kubectl config set contexts.${CURRENT_CONTEXT}.namespace $(kubectl get ns | fzf --layout=reverse --header-lines=1 | sed -r 's/^\*?\s*([-0-9a-zA-Z]*).*/\1/')
+      else
+        kubectl "$@"
+      fi
+      ;;
+    "get" )
+      # Check if using output format - if so, pass through to kubectl
+      if [[ "$*" == *"-o "* ]] || [[ "$*" == *"--output"* ]] && [[ "$*" != *"-owide" ]] && [[ "$*" != *"-o wide"* ]] && [[ "$*" != *"--output wide"* ]]; then
+        kubectl "$@"
+        return
+      fi
+
+      # Find the resource type (first non-flag argument after 'get')
+      local args=("$@")
+      local resource_type=""
+      local before_resource=()
+      local after_resource=()
+      local found_resource=false
+
+      # Skip 'get' command and collect arguments
+      for ((i=2; i<=${#args[@]}; i++)); do
+        local arg="${args[i]}"
+        if [[ -z "$resource_type" && "$arg" != -* ]]; then
+          resource_type="$arg"
+          found_resource=true
+        elif [[ "$found_resource" == "false" ]]; then
+          before_resource+=("$arg")
+        else
+          after_resource+=("$arg")
+        fi
+      done
+
+      # Store the full command for reconstruction
+      export KUBECTL_BASE_CMD="kubectl get"
+      export KUBECTL_BEFORE_ARGS=("${before_resource[@]}")
+      export KUBECTL_AFTER_ARGS=("${after_resource[@]}")
+      export KUBECTL_RESOURCE_TYPE="$resource_type"
+
+      # Use single function - it will handle -A flag automatically
+      __get_obj__ "$resource_type"
+      ;;
+    "explain" )
+      if [[ -z "$2" ]]; then
+        kubectl api-resources | fzf --header-lines=1 --preview 'kubectl explain {1}' | awk '{print $1}' | xargs -I {} kubectl explain {}
+      else
+        kubectl "$@"
+      fi
+      ;;
+    *)
+      kubectl "$@"
+      ;;
+  esac
+}
+
+# Main function
+main() {
+  # Check if kubectl is available
+  if ! command -v kubectl >/dev/null 2>&1; then
+    echo "Error: kubectl is not installed or not in PATH"
+    exit 1
+  fi
+
+  # Check if fzf is available
+  if ! command -v fzf >/dev/null 2>&1; then
+    echo "Error: fzf is not installed or not in PATH"
+    exit 1
+  fi
+
+  if [[ $# -eq 0 ]]; then
+    # No arguments - show resource types menu
+    show_resource_types_menu
+  else
+    # Arguments provided - use kubectl wrapper
+    k "$@"
+  fi
+}
+
+# Run main function
+main "$@"
+
