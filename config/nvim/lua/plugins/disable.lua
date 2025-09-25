@@ -19,4 +19,8 @@ return {
     "vim-dadbod-ui",
     enabled = false,
   },
+  {
+    "linux-cultist/venv-selector.nvim",
+    enabled = false,
+  },
 }
