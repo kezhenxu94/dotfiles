@@ -98,6 +98,7 @@ return {
         "actionlint",
         "tree-sitter-cli",
         "jdtls",
+        "prettier",
       },
     },
   },
@@ -159,12 +160,6 @@ return {
           require("dap").repl.toggle({ height = height, winfixheight = true, winfixwidth = true })
         end,
       },
-    },
-  },
-  {
-    "nvim-mini/mini.pairs",
-    opts = {
-      modes = { insert = true, command = false, terminal = false },
     },
   },
   {

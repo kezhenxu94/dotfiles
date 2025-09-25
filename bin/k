@@ -27,20 +27,20 @@ __get_obj__(){
     --bind 'ctrl-r:reload:eval "$FZF_DEFAULT_COMMAND"' \
     --bind "ctrl-i:execute:
       if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl describe $resource_type {2} -n {1} | less > /dev/tty;
+        kubectl describe $resource_type {2} -n {1} | ${EDITOR:-vim} - +'setlocal buftype=nofile';
       elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl describe $resource_type {1} -n $KUBECTL_NAMESPACE | less > /dev/tty;
+        kubectl describe $resource_type {1} -n $KUBECTL_NAMESPACE | ${EDITOR:-vim} - +'setlocal buftype=nofile';
       else
-        kubectl describe $resource_type {1} | less > /dev/tty;
+        kubectl describe $resource_type {1} | ${EDITOR:-vim} - +'setlocal buftype=nofile';
       fi;
     " \
     --bind "ctrl-y:execute:
       if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl get $resource_type {2} -n {1} -o yaml | less > /dev/tty;
+        kubectl get $resource_type {2} -n {1} -o yaml | ${EDITOR:-vim} - -c 'setlocal buftype=nofile | setlocal filetype=yaml';
       elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl get $resource_type {1} -n $KUBECTL_NAMESPACE -o yaml | less > /dev/tty;
+        kubectl get $resource_type {1} -n $KUBECTL_NAMESPACE -o yaml | ${EDITOR:-vim} - +'setlocal buftype=nofile | setlocal filetype=yaml';
       else
-        kubectl get $resource_type {1} -o yaml | less > /dev/tty;
+        kubectl get $resource_type {1} -o yaml | ${EDITOR:-vim} - +'setlocal buftype=nofile | setlocal filetype=yaml';
       fi;
     " \
     --bind "ctrl-e:execute:

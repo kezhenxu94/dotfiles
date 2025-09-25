@@ -33,9 +33,10 @@ return {
         home .. "/Downloads",
         "/private/tmp",
       }
+      local persistence_group = vim.api.nvim_create_augroup("Persistence", { clear = true })
 
       vim.api.nvim_create_autocmd({ "VimEnter" }, {
-        group = vim.api.nvim_create_augroup("Persistence", { clear = true }),
+        group = persistence_group,
         callback = function()
           local cwd = vim.fn.getcwd()
           for _, path in pairs(disabled_dirs) do
@@ -51,6 +52,12 @@ return {
           end
         end,
         nested = true,
+      })
+      vim.api.nvim_create_autocmd({ "StdinReadPre" }, {
+        group = persistence_group,
+        callback = function()
+          vim.g.started_with_stdin = true
+        end,
       })
     end,
   },
