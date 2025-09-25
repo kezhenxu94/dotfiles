@@ -10,7 +10,7 @@ __get_obj__(){
   local display_namespace="$KUBECTL_NAMESPACE"
   if [[ -z "$display_namespace" ]]; then
     if [[ "$cmd" == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-      display_namespace="All"
+      display_namespace="all"
     else
       display_namespace=$(kubectl config get-contexts | grep "*" | awk '{print $5}')
     fi
@@ -19,8 +19,8 @@ __get_obj__(){
   export FZF_DEFAULT_COMMAND="$cmd"
 
   fzf --layout=reverse -m --header-lines=1 --info=inline \
-    --prompt "[ $resource_type ] ctx: $(kubectl config current-context | sed 's/-context$//') ns: $display_namespace > " \
-    --header $'>> CTRL-P (preview) || CTRL-I (describe) || CTRL-E (edit) || CTRL-X (delete) || CTRL-R (reload) || CTRL-L (logs) || CTRL-F (port-forward) <<\n\n' \
+    --prompt "[ ctx: $(kubectl config current-context | sed 's/-context$//') ns: $display_namespace ] $resource_type > " \
+    --header $'>> ctrl-p (preview) || ctrl-i (describe) || ctrl-e (edit) || ctrl-x (delete) || ctrl-r (reload) || ctrl-l (logs) || ctrl-f (port-forward) <<\n\n' \
     --preview-window=hidden \
     --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
     --bind 'ctrl-r:reload:eval "$FZF_DEFAULT_COMMAND"' \
@@ -63,13 +63,23 @@ __get_obj__(){
           delete $resource_type {1};
       fi
     " \
+    --bind "ctrl-s:execute:
+      echo -n 'Enter the replicas for $resource_type/{2} in namespace {1}: ' && read replicas && [[ \$replicas =~ ^[0-9]+\$ ]] || return
+      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
+        kubectl scale --replicas=\$replicas $resource_type {2} -n {1}
+      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
+        kubectl scale --replicas=\$replicas  $resource_type {1} -n $KUBECTL_NAMESPACE;
+      else
+        kubectl scale --replicas=\$replicas  $resource_type {1};
+      fi
+    " \
     --bind "ctrl-l:execute:
       if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl logs {2} -n {1} -f > /dev/tty;
+        kubectl logs $resource_type/{2} -n {1} -f > /dev/tty;
       elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl logs {1} -n $KUBECTL_NAMESPACE -f > /dev/tty;
+        kubectl logs $resource_type/{1} -n $KUBECTL_NAMESPACE -f > /dev/tty;
       else
-        kubectl logs {1} -f > /dev/tty;
+        kubectl logs $resource_type/{1} -f > /dev/tty;
       fi;
       echo -n 'Press any key to continue:' && read
     " \
@@ -82,7 +92,7 @@ __get_obj__(){
         echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {1} \$ports > /dev/tty;
       fi
     " \
-    --bind 'enter:accept' \
+    --bind 'enter:ignore' \
     --preview "
       if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
         kubectl describe $resource_type {2} -n {1};

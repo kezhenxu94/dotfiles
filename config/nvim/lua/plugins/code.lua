@@ -107,17 +107,6 @@ return {
     event = "VeryLazy",
   },
   {
-    "zbirenbaum/copilot.lua",
-    opts = {
-      panel = { enabled = false },
-      filetypes = {
-        yaml = true,
-        markdown = true,
-        help = true,
-      },
-    },
-  },
-  {
     "neovim/nvim-lspconfig",
     opts = {
       inlay_hints = { enabled = false },

@@ -38,6 +38,7 @@ source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zvm_after_init() {
   if [[ -f ~/.fzf.zsh ]]; then
+    export FZF_DEFAULT_OPTS="--layout=reverse --inline-info"
     source ~/.fzf.zsh
   fi
 }
