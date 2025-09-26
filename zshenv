@@ -3,6 +3,7 @@ export PATH="$HOME/usr/local/nvim/bin:$PATH"
 export PATH="$HOME/usr/local/nvim-nightly/bin:$PATH"
 export PATH="$PATH:$HOME/.local/share/nvim/mason/bin"
 export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"
+export PATH="$PATH:$HOME/.fzf/bin"
 
 export XDG_CONFIG_HOME=~/.config
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
