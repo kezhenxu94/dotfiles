@@ -2,111 +2,30 @@
 
 set -e +x
 
-__display_namespace__() {
-  local display_namespace="$KUBECTL_NAMESPACE"
-  if [[ -z "$display_namespace" ]]; then
-    if [[ "$cmd" == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-      display_namespace="all"
-    else
-      display_namespace=$(kubectl config get-contexts | grep "*" | awk '{print $5}')
-    fi
-  fi
-  echo "$display_namespace"
-}
-
 __get_obj__() {
-  local resource_type="$1"
-  local after_args="$2"
-
-  # Build kubectl command with preserved arguments
-  local cmd="kubectl get ${KUBECTL_BEFORE_ARGS[@]} $resource_type ${KUBECTL_AFTER_ARGS[@]:-${after_args}}"
+  local ctx="$1"
+  local ns=$([[ "$2" == "all" ]] && echo "{1} " || echo "$2")
+  local name=$([[ "$2" == "all" ]] && echo "{2}" || echo "{1}")
+  local res="$3"
+  local cmd="kubectl ${@:4}"
 
   fzf --layout=reverse --header-lines=1 --info=inline --inline-info --ghost 'type to search...' \
-    --pointer ' ' --scrollbar '' --multi 1 --input-label " $resource_type " --preview-label " Describe " \
-    --prompt "[ ctx=$(kubectl config current-context) ns=$(eval __display_namespace__) ] $resource_type > " \
+    --pointer ' ' --scrollbar '' --multi 1 --input-label " $res " --preview-label " Describe " \
+    --prompt "[ ctx=$ctx ns=$namespace ] $res > " \
     --header $'>> ctrl-p (preview) || ctrl-i (describe) || ctrl-e (edit) || ctrl-x (delete) || ctrl-r (reload) || ctrl-l (logs) || ctrl-f (port-forward) <<\n\n' \
     --preview-window=hidden --preview-window right,border-left \
     --bind "start:reload:($cmd)" \
+    --bind 'enter:ignore' \
     --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
     --bind "ctrl-r:reload:($cmd)" \
-    --bind "ctrl-i:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl describe $resource_type {2} -n {1} | ${EDITOR:-vim} - +'setlocal buftype=nofile';
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl describe $resource_type {1} -n $KUBECTL_NAMESPACE | ${EDITOR:-vim} - +'setlocal buftype=nofile';
-      else
-        kubectl describe $resource_type {1} | ${EDITOR:-vim} - +'setlocal buftype=nofile';
-      fi;
-    " \
-    --bind "ctrl-y:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl get $resource_type {2} -n {1} -o yaml | ${EDITOR:-vim} - -c 'setlocal buftype=nofile | setlocal filetype=yaml';
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl get $resource_type {1} -n $KUBECTL_NAMESPACE -o yaml | ${EDITOR:-vim} - +'setlocal buftype=nofile | setlocal filetype=yaml';
-      else
-        kubectl get $resource_type {1} -o yaml | ${EDITOR:-vim} - +'setlocal buftype=nofile | setlocal filetype=yaml';
-      fi;
-    " \
-    --bind "ctrl-e:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl edit $resource_type {2} -n {1} > /dev/tty;
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl edit $resource_type {1} -n $KUBECTL_NAMESPACE > /dev/tty;
-      else
-        kubectl edit $resource_type {1} > /dev/tty;
-      fi
-    " \
-    --bind "ctrl-x:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        echo -n 'Delete $resource_type/{2} in namespace {1}? (y/N): ' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && \
-          kubectl delete $resource_type {2} -n {1};
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        echo -n 'Delete $resource_type/{1} in namespace $KUBECTL_NAMESPACE? (y/N): ' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && \
-          kubectl delete $resource_type {1} -n $KUBECTL_NAMESPACE;
-      else
-        echo -n 'Delete $resource_type/{1}? (y/N): ' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && kubectl \
-          delete $resource_type {1};
-      fi
-    " \
-    --bind "ctrl-s:execute:
-      echo -n 'Enter the replicas for $resource_type/{2} in namespace {1}: ' && read replicas && [[ \$replicas =~ ^[0-9]+\$ ]] || return
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl scale --replicas=\$replicas $resource_type {2} -n {1}
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl scale --replicas=\$replicas  $resource_type {1} -n $KUBECTL_NAMESPACE;
-      else
-        kubectl scale --replicas=\$replicas  $resource_type {1};
-      fi
-    " \
-    --bind "ctrl-l:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl logs $resource_type/{2} -n {1} -f > /dev/tty;
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        kubectl logs $resource_type/{1} -n $KUBECTL_NAMESPACE -f > /dev/tty;
-      else
-        kubectl logs $resource_type/{1} -f > /dev/tty;
-      fi;
-      echo -n 'Press any key to continue:' && read
-    " \
-    --bind "ctrl-f:execute:
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {2} -n {1} \$ports > /dev/tty;
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then
-        echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {1} -n $KUBECTL_NAMESPACE \$ports > /dev/tty;
-      else
-        echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl port-forward {1} \$ports > /dev/tty;
-      fi
-    " \
-    --bind 'enter:ignore' \
-    --preview "
-      if [[ '$cmd' == *'-A'* || '$cmd' == *'--all-namespaces'* ]]; then
-        kubectl describe $resource_type {2} -n {1};
-      elif [[ -n '$KUBECTL_NAMESPACE' ]]; then 
-        kubectl describe $resource_type {1} -n $KUBECTL_NAMESPACE;
-      else
-        kubectl describe $resource_type {1};
-      fi
-    "
+    --bind "ctrl-i:execute:kubectl --context $ctx describe $res $name -n $ns | ${EDITOR:-vim} - -c 'setlocal buftype=nofile'" \
+    --bind "ctrl-y:execute:kubectl --context $ctx get $res $name -n $ns -o yaml | ${EDITOR:-vim} - -c 'setlocal buftype=nofile | setlocal filetype=yaml'" \
+    --bind "ctrl-e:execute:kubectl --context $ctx edit $res $name -n $ns > /dev/tty" \
+    --bind "ctrl-x:execute:echo -n 'Delete $res/$name in namespace $ns? (y/N): ' && read confirm && [[ \$confirm =~ ^[Yy]\$ ]] && kubectl --context $ctx delete $res $name -n $ns" \
+    --bind "ctrl-s:execute:echo -n 'Enter the replicas for $res/$name in namespace $ns: ' && read replicas && [[ \$replicas =~ ^[0-9]+\$ ]] && kubectl --context $ctx scale --replicas=\$replicas $res $name -n $ns" \
+    --bind "ctrl-l:execute:kubectl --context $ctx logs $res/$name -n $ns -f > /dev/tty && echo -n 'Press any key to continue:' && read" \
+    --bind "ctrl-f:execute:echo -n 'Enter local:remote port (e.g., 8080:80): ' && read ports && kubectl --context $ctx port-forward $name -n $ns \$ports > /dev/tty" \
+    --preview "kubectl --context $ctx describe $res $name -n $ns"
 }
 
 # Function to show resource types
@@ -114,7 +33,7 @@ __list_resource_types() {
   local cmd="kubectl api-resources --verbs=list -o wide | sort"
 
   resource=$(fzf --layout=reverse -m --header-lines=1 --info=inline \
-    --prompt "[ ctx=$(kubectl config current-context) ns=$(eval __display_namespace__) ] resources > " \
+    --prompt "[ ctx=$(kubectl config current-context) ns=$namespace ] resources > " \
     --header=$'>> select Kubernetes resource type || CTRL-D (exit) <<\n\n' \
     --preview-window=hidden \
     --bind "start:reload:($cmd)" \
@@ -123,7 +42,11 @@ __list_resource_types() {
     --bind 'enter:become:(echo {1})' \
     --preview 'kubectl explain {1}')
 
-  [[ -n "$resource" ]] && __get_obj__ "$resource" "-A -o wide"
+  context="${context:-$(kubectl config current-context)}"
+  namespace="${namespace:-$(kubectl --context $context config view --minify --output 'jsonpath={..namespace}')}"
+  namespace="${namespace:-default}"
+
+  [[ -n "$resource" ]] && __get_obj__ "$context" "$namespace" "$resource" "get $resource -n $namespace -o wide"
 }
 
 # Main kubectl wrapper function
@@ -133,63 +56,102 @@ k() {
     return
   fi
 
-  # Store all original arguments
-  local cmd="$1"
+  local args=()
+  local context=""
+  local namespace=""
+  local resource_type=""
+  local output=""
+  local found_get=false
+  while [[ $# -gt 0 ]]; do
+    args+=("$1")
+    case $1 in
+      --context=*)
+        context="${1#--context=}"
+        shift
+        ;;
+      --context)
+        context="$2"
+        args+=("$2")
+        shift 2
+        ;;
+      --namespace=*|-n=*)
+        namespace="${1#--namespace=}"
+        namespace="${1#-n}"
+        shift
+        ;;
+      --namespace|-n)
+        namespace="$2"
+        args+=("$2")
+        shift 2
+        ;;
+      -A)
+        namespace=all
+        shift
+        ;;
+      --output=*|-o=*)
+        output="${1#--output=}"
+        output="${1#-o=}"
+        shift
+        ;;
+      --output|-o)
+        output="$2"
+        args+=("$2")
+        shift 2
+        ;;
+      -o*)
+        output="${1#-o}"
+        shift
+        ;;
+      -*|--*)
+        shift
+        ;;
+      get)
+        found_get=true
+        shift
+        ;;
+      *)
+        if [[ "$found_get" = true && -z "$resource_type" ]]; then
+          resource_type="$1"
+        fi
+        shift
+        ;;
+    esac
+  done
 
-  case "$cmd" in
-    "ctx" )
-      kubectl config use-context $(kubectl config get-contexts | fzf --layout=reverse --header-lines=1 --bind='enter:become:(echo {2})')
+  set -- "${args[@]}"
+  case "$1" in
+    ctx)
+      shift
+      local ctx=$(
+        kubectl config get-contexts "$@" |
+          fzf --layout=reverse --header-lines=1 \
+          --prompt "[ ctx=${context:-$(kubectl config current-context)} ns=${namespace:-$(kubectl config $@ view --minify --output 'jsonpath={..namespace}')}) ] contexts > " \
+          --bind='enter:become:(echo {1})'
+      )
+      [[ -n "$ctx" && "$ctx" != "*" ]] && kubectl config use-context $ctx "$@"
       ;;
-    "ns" )
-      kubectl config set contexts.$(kubectl config current-context).namespace $(kubectl get ns | fzf --layout=reverse --header-lines=1 | sed -r 's/^\*?\s*([-0-9a-zA-Z]*).*/\1/')
+    ns)
+      shift
+      local ctx="${context:-$(kubectl config current-context)}"
+      local ns=$(
+        kubectl get ns "$@" | 
+          fzf --layout=reverse --header-lines=1 \
+          --prompt "[ ctx=$ctx ns=${namespace:-$(kubectl config $@ view --minify --output 'jsonpath={..namespace}' || "default")} ] namespaces > " \
+          --bind='enter:become:(echo {1})'
+      )
+      [[ -n "$ns" ]] && kubectl config set contexts.$ctx.namespace $ns "$@"
       ;;
-    "get" )
-      # Check if using output formats other than -o wide - if so, pass through to kubectl
-      if [[ "$*" == *"-o "* ]] || [[ "$*" == *"--output"* ]] && [[ "$*" != *"-owide" ]] && [[ "$*" != *"-o wide"* ]] && [[ "$*" != *"--output wide"* ]]; then
+    get)
+      if [[ -n "$output" && "$output" != "wide" ]]; then
         kubectl "$@"
         return
       fi
 
-      # Find the resource type (first non-flag argument after 'get')
-      local args=("$@")
-      local resource_type=""
-      local before_resource=()
-      local after_resource=()
-      local found_resource=false
+      context="${context:-$(kubectl config current-context)}"
+      namespace="${namespace:-$(kubectl --context $context config view --minify --output 'jsonpath={..namespace}')}"
+      namespace="${namespace:-default}"
 
-      # Skip 'get' command and collect arguments
-      for ((i=2; i<=${#args[@]}; i++)); do
-        local arg="${args[i]}"
-        if [[ -z "$resource_type" && "$arg" != -* ]]; then
-          resource_type="$arg"
-          found_resource=true
-        elif [[ "$found_resource" == "false" ]]; then
-          before_resource+=("$arg")
-        else
-          after_resource+=("$arg")
-        fi
-      done
-
-      # Store the full command for reconstruction
-      export KUBECTL_BASE_CMD="kubectl get"
-      export KUBECTL_BEFORE_ARGS=("${before_resource[@]}")
-      export KUBECTL_AFTER_ARGS=("${after_resource[@]}")
-      export KUBECTL_RESOURCE_TYPE="$resource_type"
-      export KUBECTL_NAMESPACE=""
-
-      for arg in "${before_resource[@]}" "${after_resource[@]}"; do
-        if [[ "$arg" == "-n" ]]; then
-          found_n=1
-        elif [[ -n "$found_n" ]]; then
-          export KUBECTL_NAMESPACE="$arg"
-          break
-        elif [[ "$arg" == --namespace=* ]]; then
-          export KUBECTL_NAMESPACE="${arg#--namespace=}"
-          break
-        fi
-      done
-
-      __get_obj__ "$resource_type"
+      __get_obj__ "$context" "$namespace" "$resource_type" "$@"
       ;;
     *)
       kubectl "$@"
