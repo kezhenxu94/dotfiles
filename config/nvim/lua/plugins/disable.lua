@@ -23,4 +23,8 @@ return {
     "linux-cultist/venv-selector.nvim",
     enabled = false,
   },
+  {
+    "nvim-mini/mini.pairs",
+    enabled = false,
+  },
 }
