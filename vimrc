@@ -94,17 +94,6 @@ if filereadable($HOME . "/.vimrc.local")
 endif
 
 set cursorline
-hi CursorLine term=bold cterm=bold guibg=Grey40
-
-" color {
-let is_dark = system('defaults read -g AppleInterfaceStyle')
-if v:shell_error == 0
-  set background=dark
-else
-  set background=light
-endif
-  set background=dark
-" }
 
 " keymaps {
 

@@ -44,25 +44,21 @@ nnoremap <silent> <Leader><Leader> :Ag<CR>
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 " ==================== FZF configuration ====================
 
-" ==================== NERDtree configuration ====================
-Plug 'preservim/nerdtree'
-augroup nerdtree
-  autocmd!
-
-  autocmd StdinReadPre * let g:isReadingFromStdin = 1
-  autocmd VimEnter * if !argc() && !exists('g:isReadingFromStdin') | NERDTree | endif
-augroup END
-let g:NERDTreeShowHidden=1
-let g:NERDTreeMinimalUI=1
-
 set encoding=UTF-8
 
 if filereadable(expand("~/.vimrc.bundles.local"))
   source ~/.vimrc.bundles.local
 endif
 
-" Status line
-Plug 'vim-airline/vim-airline'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+
 call plug#end()
 
 set termguicolors
+
+let theme = system("dark-notify -e || echo \"$THEME\" | grep light 2>&1 > /dev/null")
+if theme == "dark"
+  colorscheme catppuccin_mocha
+else
+  colorscheme catppuccin_latte
+endif
