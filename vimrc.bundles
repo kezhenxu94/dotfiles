@@ -56,8 +56,8 @@ call plug#end()
 
 set termguicolors
 
-let theme = system("dark-notify -e || echo \"$THEME\" | grep light 2>&1 > /dev/null")
-if theme == "dark"
+let theme = system("dark-notify -e || echo \"$THEME\" | grep light")
+if theme != "dark"
   colorscheme catppuccin_mocha
 else
   colorscheme catppuccin_latte
