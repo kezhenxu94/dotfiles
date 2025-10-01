@@ -172,4 +172,8 @@ return {
       },
     },
   },
+  {
+    dir = "~/workspace/tsend",
+    opts = {},
+  },
 }
