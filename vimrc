@@ -96,3 +96,5 @@ endif
 set cursorline
 
 nnoremap <esc> :noh<CR>
+
+packadd! Cfilter
