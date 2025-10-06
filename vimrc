@@ -1,11 +1,15 @@
+" Leader
+let g:mapleader=" "
+let g:maplocalleader="\\"
+
 set nowrap
 set encoding=utf-8
 set hls
+set timeoutlen=300
+set ttimeout
+set ttimeoutlen=0
 
 set clipboard=unnamed
-
-" Leader
-let mapleader = " "
 
 set backspace=2   " Backspace deletes like most programs in insert mode
 set nobackup
@@ -61,7 +65,7 @@ set shiftround
 set expandtab
 
 " Display extra whitespace
-set list listchars=tab:»·,trail:·,nbsp:·
+set list listchars=tab:\ \ ,trail:·,nbsp:·
 
 " Use one space, not two, after punctuation.
 set nojoinspaces
@@ -79,6 +83,8 @@ set numberwidth=4
 set splitbelow
 set splitright
 
+set numberwidth=3
+
 " Quicker window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -95,36 +101,7 @@ endif
 
 set cursorline
 
-" keymaps {
+" Press <esc> to clear search highlighting
+nnoremap <esc> :noh<CR>
 
-" Toggle word wrap
-function! ToggleWrap()
-  set wrap! nolist!
-  if &wrap
-    set linebreak
-    nnoremap j gj
-    nnoremap k gk
-    nnoremap 0 g0
-    nnoremap ^ g^
-    nnoremap $ g$
-    vnoremap j gj
-    vnoremap k gk
-    vnoremap 0 g0
-    vnoremap ^ g^
-    vnoremap $ g$
-  else
-    set nolinebreak
-    unmap j
-    unmap k
-    unmap 0
-    unmap ^
-    unmap $
-  endif
-endfunction
-map <leader>w :call ToggleWrap()<CR>
-
-" Press Enter to clear search highlighting
-nnoremap <CR> :noh<CR><CR>
-
-" }
-
+packadd! cfilter

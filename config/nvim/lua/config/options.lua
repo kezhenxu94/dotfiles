@@ -2,9 +2,9 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
-vim.loop = vim.loop or vim.uv
+vim.cmd("source ~/.vimrc")
 
-vim.o.clipboard = "unnamedplus"
+vim.loop = vim.loop or vim.uv
 
 local vim_info_dir = vim.fn.getcwd() .. "/.vim"
 vim.g.vim_info_dir = vim_info_dir
@@ -36,33 +36,5 @@ vim.filetype.add({
   extension = { mdx = "markdown" },
 })
 
-vim.opt.listchars = {
-  tab = "  ",
-}
-
--- System appearance detection
-if vim.fn.has("osx") == 1 then
-  local function update_background()
-    local handle = io.popen("dark-notify -e 2>/dev/null")
-    if handle then
-      local result = handle:read("*a")
-      handle:close()
-      vim.schedule(function()
-        vim.o.background = result:match("[dD]ark") and "dark" or "light"
-      end)
-    end
-  end
-
-  local timer = vim.loop.new_timer()
-  if timer then
-    timer:start(0, 1000, vim.schedule_wrap(update_background))
-  end
-
-  update_background()
-else
-  vim.o.background = os.getenv("THEME") or "light"
-end
-
 vim.o.statuscolumn = "%l%s"
-vim.o.numberwidth = 3
 vim.o.signcolumn = "yes:1"
