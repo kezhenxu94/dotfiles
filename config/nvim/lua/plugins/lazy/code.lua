@@ -104,7 +104,7 @@ return {
   },
   {
     "tpope/vim-fugitive",
-    event = "VeryLazy",
+    cmd = { "G" },
   },
   {
     "neovim/nvim-lspconfig",
@@ -171,9 +171,5 @@ return {
         go = { "gofmt" },
       },
     },
-  },
-  {
-    dir = "~/workspace/tsend",
-    opts = {},
   },
 }

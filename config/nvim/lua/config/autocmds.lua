@@ -10,6 +10,7 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = {
     "dap-*",
     "git",
+    "fugitive",
   },
   callback = function(event)
     vim.bo[event.buf].buflisted = false

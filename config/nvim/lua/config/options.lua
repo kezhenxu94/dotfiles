@@ -4,7 +4,7 @@
 
 vim.loop = vim.loop or vim.uv
 
-vim.o.clipboard = "unnamedplus"
+vim.cmd("source ~/.vimrc")
 
 local vim_info_dir = vim.fn.getcwd() .. "/.vim"
 vim.g.vim_info_dir = vim_info_dir

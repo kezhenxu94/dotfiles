@@ -95,36 +95,4 @@ endif
 
 set cursorline
 
-" keymaps {
-
-" Toggle word wrap
-function! ToggleWrap()
-  set wrap! nolist!
-  if &wrap
-    set linebreak
-    nnoremap j gj
-    nnoremap k gk
-    nnoremap 0 g0
-    nnoremap ^ g^
-    nnoremap $ g$
-    vnoremap j gj
-    vnoremap k gk
-    vnoremap 0 g0
-    vnoremap ^ g^
-    vnoremap $ g$
-  else
-    set nolinebreak
-    unmap j
-    unmap k
-    unmap 0
-    unmap ^
-    unmap $
-  endif
-endfunction
-map <leader>w :call ToggleWrap()<CR>
-
-" Press Enter to clear search highlighting
-nnoremap <CR> :noh<CR><CR>
-
-" }
-
+nnoremap <esc> :noh<CR>

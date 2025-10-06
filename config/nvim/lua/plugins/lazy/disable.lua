@@ -16,15 +16,23 @@ return {
     enabled = false,
   },
   {
-    "vim-dadbod-ui",
-    enabled = false,
-  },
-  {
     "linux-cultist/venv-selector.nvim",
     enabled = false,
   },
   {
     "nvim-mini/mini.pairs",
+    enabled = false,
+  },
+  {
+    "akinsho/bufferline.nvim",
+    enabled = false,
+  },
+  {
+    "folke/trouble.nvim",
+    enabled = false,
+  },
+  {
+    "ts-comments.nvim",
     enabled = false,
   },
 }

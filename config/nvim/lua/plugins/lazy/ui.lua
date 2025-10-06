@@ -151,14 +151,6 @@ return {
     },
   },
   {
-    "akinsho/bufferline.nvim",
-    opts = {
-      options = {
-        mode = "tabs",
-      },
-    },
-  },
-  {
     "folke/which-key.nvim",
     opts = {
       show_help = false,
