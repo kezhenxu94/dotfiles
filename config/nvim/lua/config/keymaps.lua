@@ -13,3 +13,4 @@ vim.keymap.set("n", "<M-=>", "<C-w>=", { silent = true, desc = "Equalize window 
 vim.keymap.set("n", "<M->>", "<C-w>>", { silent = true, desc = "Increase window width" })
 vim.keymap.set("n", "<M-<>", "<C-w><", { silent = true, desc = "Decrease window width" })
 
+vim.keymap.set("n", "<leader>qr", "<cmd>restart<cr>", { desc = "Restart Neovim" })

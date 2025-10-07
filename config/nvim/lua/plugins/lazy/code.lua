@@ -17,30 +17,6 @@ return {
       "mason-org/mason.nvim",
     },
     opts = {
-      cmd = {
-        vim.fn.exepath("jdtls"),
-
-        string.format("--jvm-arg=-javaagent:%s", vim.fn.expand("$HOME/.local/share/nvim/mason/share/jdtls/lombok.jar")),
-
-        "-XX:+UseParallelGC",
-        "-XX:GCTimeRatio=4",
-        "-XX:AdaptiveSizePolicyWeight=90",
-        "-Xmx6G",
-        "-Xms1G",
-
-        "--add-modules=ALL-SYSTEM",
-
-        "--add-opens",
-        "java.base/java.util=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.lang=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.io=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/java.time=ALL-UNNAMED",
-        "--add-opens",
-        "java.base/sun.nio.ch=ALL-UNNAMED",
-      },
       settings = {
         java = {
           configuration = {
