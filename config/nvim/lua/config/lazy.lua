@@ -17,7 +17,9 @@ require("lazy").setup({
     {
       "LazyVim/LazyVim",
       import = "lazyvim.plugins",
-      opts = { colorscheme = "catppuccin" },
+      opts = {
+        colorscheme = "catppuccin",
+      },
     },
     { import = "plugins/lazy" },
   },
@@ -44,5 +46,6 @@ require("lazy").setup({
         "zipPlugin",
       },
     },
+    reset_packpath = false,
   },
 })

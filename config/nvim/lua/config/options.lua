@@ -36,10 +36,6 @@ vim.filetype.add({
   extension = { mdx = "markdown" },
 })
 
-vim.opt.listchars = {
-  tab = "  ",
-}
-
 -- System appearance detection
 if vim.fn.has("osx") == 1 then
   local function update_background()
@@ -64,5 +60,4 @@ else
 end
 
 vim.o.statuscolumn = "%l%s"
-vim.o.numberwidth = 3
 vim.o.signcolumn = "yes:1"

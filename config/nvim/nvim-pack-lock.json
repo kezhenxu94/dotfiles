@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "persistence.nvim": {
+      "rev": "166a79a",
+      "src": "https://github.com/folke/persistence.nvim"
+    },
+    "vim-fugitive": {
+      "rev": "61b51c0",
+      "src": "https://github.com/tpope/vim-fugitive"
+    },
+    "vim-tmux-navigator": {
+      "rev": "c45243d",
+      "src": "https://github.com/christoomey/vim-tmux-navigator"
+    }
+  }
+}

@@ -1,6 +1,7 @@
 set nowrap
 set encoding=utf-8
 set hls
+set timeoutlen=300
 
 set clipboard=unnamed
 
@@ -61,7 +62,7 @@ set shiftround
 set expandtab
 
 " Display extra whitespace
-set list listchars=tab:»·,trail:·,nbsp:·
+set list listchars=tab:\ \ ,trail:·,nbsp:·
 
 " Use one space, not two, after punctuation.
 set nojoinspaces
@@ -73,7 +74,7 @@ set formatoptions-=t " Do not automatically wrap when typing
 " Numbers
 set number
 set relativenumber
-set numberwidth=4
+set numberwidth=3
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow

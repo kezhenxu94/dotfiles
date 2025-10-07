@@ -97,8 +97,31 @@ return {
       },
     },
     keys = {
+      {
+        "<leader>e",
+        function()
+          local explorer = Snacks.picker.get({ source = "explorer" })[1]
+          if explorer == nil or explorer:is_focused() then
+            Snacks.picker.explorer({ cwd = LazyVim.root() })
+          else
+            explorer:focus()
+          end
+        end,
+        { desc = "Explorer Snacks (root dir)" },
+      },
+      {
+        "<leader>E",
+        function()
+          local explorer = Snacks.picker.get({ source = "explorer" })[1]
+          if explorer == nil or explorer:is_focused() then
+            Snacks.picker.explorer()
+          else
+            explorer:focus()
+          end
+        end,
+        { desc = "Explorer Snacks (root dir)" },
+      },
       { "<leader><leader>", LazyVim.pick("files", { root = false, hidden = true }), desc = "Find Files (cwd)" },
-      { "<leader>gc", LazyVim.pick("git_log"), desc = "Git Log" },
     },
   },
   {
@@ -155,16 +178,6 @@ return {
     opts = {
       show_help = false,
       show_keys = false,
-    },
-  },
-  {
-    "christoomey/vim-tmux-navigator",
-    keys = {
-      { "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>", desc = "Go to the previous pane" },
-      { "<C-h>", "<cmd>TmuxNavigateLeft<cr>", desc = "Got to the left pane" },
-      { "<C-j>", "<cmd>TmuxNavigateDown<cr>", desc = "Got to the down pane" },
-      { "<C-k>", "<cmd>TmuxNavigateUp<cr>", desc = "Got to the up pane" },
-      { "<C-l>", "<cmd>TmuxNavigateRight<cr>", desc = "Got to the right pane" },
     },
   },
 }

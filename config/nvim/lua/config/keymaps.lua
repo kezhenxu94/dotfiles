@@ -14,3 +14,10 @@ vim.keymap.set("n", "<M->>", "<C-w>>", { silent = true, desc = "Increase window 
 vim.keymap.set("n", "<M-<>", "<C-w><", { silent = true, desc = "Decrease window width" })
 
 vim.keymap.set("n", "<leader>qr", "<cmd>restart<cr>", { desc = "Restart Neovim" })
+
+-- Have to set the keymaps here to ovrride the same keymaps set by LazyVim
+vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Tmux Navigate Left", remap = true })
+vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { desc = "Tmux Navigate Down", remap = true })
+vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { desc = "Tmux Navigate Up", remap = true })
+vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { desc = "Tmux Navigate Right", remap = true })
+vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>", { desc = "Tmux Navigate Previous", remap = true })
