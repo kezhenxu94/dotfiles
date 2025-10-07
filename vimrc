@@ -5,7 +5,10 @@ let g:maplocalleader="\\"
 set nowrap
 set encoding=utf-8
 set hls
-set timeoutlen=300
+set timeoutlen=100
+set ttimeout
+set ttimeoutlen=100
+set noshowmode
 
 set clipboard=unnamed
 
@@ -14,14 +17,14 @@ set nobackup
 set nowritebackup
 set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
 set history=100
-set ruler         " show the cursor position all the time
 set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
 set ignorecase    " case insensitive searching UNLESS /C or capital in search
+set smartcase      " case insensitive searching UNLESS /C or capital in search
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
-set modelines=0   " Disable modelines as a security precaution
-set nomodeline
+
+set inccommand=split
 
 set fillchars+=vert:│ " Set the splitter of panels
 
@@ -72,16 +75,13 @@ set nojoinspaces
 set textwidth=80
 set formatoptions-=t " Do not automatically wrap when typing
 
-" Numbers
 set number
 set relativenumber
-set numberwidth=4
+set numberwidth=3
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
 set splitright
-
-set numberwidth=3
 
 " Quicker window movement
 nnoremap <C-j> <C-w>j
@@ -103,3 +103,8 @@ set cursorline
 nnoremap <esc> :noh<CR>
 
 packadd! cfilter
+
+set updatetime=250
+set confirm
+set breakindent
+set exrc

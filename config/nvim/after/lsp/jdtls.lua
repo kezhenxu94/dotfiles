@@ -66,31 +66,15 @@ return {
             path = vim.fn.expand("~/.local/share/mise/installs/java/21/"),
           },
         },
-        updateBuildConfiguration = "automatic",
-      },
-      eclipse = {
-        downloadSources = true,
-      },
-      maven = {
-        downloadSources = true,
-      },
-      signatureHelp = {
-        enabled = true,
-      },
-      contentProvider = {
-        preferred = "fernflower",
-      },
-      sources = {
-        organizeImports = {
-          starThreshold = 9999,
-          staticStarThreshold = 9999,
-        },
       },
     },
   },
   init_options = {
     bundles = get_mason_bundles(),
     workspace = {
+      didChangeWatchedFiles = {
+        dynamicRegistration = true,
+      },
       refresh = {
         enabled = true,
       },

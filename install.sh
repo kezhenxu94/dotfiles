@@ -7,7 +7,7 @@ should_ignore() {
   if [[ -f ".installignore" ]]; then
     while IFS= read -r pattern || [[ -n "$pattern" ]]; do
       [[ -z "$pattern" || "$pattern" =~ ^# ]] && continue
-      if [[ "$file" == $pattern ]]; then
+      if [[ "$file" == "$pattern" ]]; then
         return 0
       fi
     done <.installignore
@@ -17,7 +17,7 @@ should_ignore() {
 
 git -C "$SCRIPT_DIR" submodule update --init
 
-git -C "$SCRIPT_DIR" ls-files | while read file; do
+git -C "$SCRIPT_DIR" ls-files | while read -r file; do
   should_ignore "$file" && continue
 
   target="$HOME/.$file"

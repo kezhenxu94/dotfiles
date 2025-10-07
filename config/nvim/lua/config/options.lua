@@ -4,7 +4,7 @@
 
 vim.cmd("source ~/.vimrc")
 
-vim.loop = vim.loop or vim.uv
+vim.loop = vim.uv or vim.loop
 
 local vim_info_dir = vim.fn.getcwd() .. "/.vim"
 vim.g.vim_info_dir = vim_info_dir

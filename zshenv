@@ -10,6 +10,7 @@ export XDG_CONFIG_HOME=~/.config
 export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 export K9SCONFIG=~/.config/k9s
 export ASDF_GOLANG_MOD_VERSION_ENABLED=true
+export MANPAGER='nvim +Man!'
 
 if ls ~/usr/local/lib > /dev/null 2>&1; then
   export LD_LIBRARY_PATH=~/usr/local/lib:$LD_LIBRARY_PATH

@@ -1,42 +1,60 @@
 vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/mfussenegger/nvim-dap" },
+  { src = "https://github.com/mfussenegger/nvim-jdtls" },
 }, { confirm = false, load = true })
 
--- Setup LSP servers
+local autocmds = require("utils.autocmds")
 local languages = require("config.languages")
-vim.lsp.enable(vim
-  .iter(languages)
-  :filter(function(lang)
-    return lang.lsp
-  end)
-  :map(function(lang)
-    return lang.lsp
-  end)
-  :flatten()
-  :totable())
 
-vim.lsp.config("*", {
-  capabilities = {
-    textDocument = {
-      completion = {
-        completionItem = {
-          snippetSupport = false,
-          resolveSupport = {
-            properties = {
-              "documentation",
-              "detail",
-            },
-          },
-        },
-      },
-    },
-  },
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = autocmds.augroup("LspAttach"),
+  callback = function(event)
+    -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
+    ---@param client vim.lsp.Client
+    ---@param method vim.lsp.protocol.Method
+    ---@param bufnr? integer some lsp support methods only in specific files
+    ---@return boolean
+    local function client_supports_method(client, method, bufnr)
+      if vim.fn.has("nvim-0.11") == 1 then
+        return client:supports_method(method, bufnr)
+      else
+        return client.supports_method(method, { bufnr = bufnr })
+      end
+    end
+
+    -- The following two autocommands are used to highlight references of the
+    -- word under your cursor when your cursor rests there for a little while.
+    --    See `:help CursorHold` for information about when this is executed
+    --
+    -- When you move your cursor, the highlights will be cleared (the second autocommand).
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if
+      client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf)
+    then
+      local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
+      vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.document_highlight,
+      })
+
+      vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+        buffer = event.buf,
+        group = highlight_augroup,
+        callback = vim.lsp.buf.clear_references,
+      })
+
+      vim.api.nvim_create_autocmd("LspDetach", {
+        group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+        callback = function(event2)
+          vim.lsp.buf.clear_references()
+          vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
+        end,
+      })
+    end
+  end,
 })
 
-vim.lsp.semantic_tokens.enable(false)
-
-local icons = require("config.icons")
 vim.diagnostic.config({
   severity_sort = true,
   virtual_text = true,
@@ -64,15 +82,3 @@ vim.diagnostic.config({
     },
   },
 })
-
-vim.keymap.set("n", "<leader>du", function()
-  local height = vim.v.count ~= 0 and vim.v.count or 18
-  require("dap").repl.toggle({ height = height, winfixheight = true, winfixwidth = true })
-end, { desc = "Toggle dap ui" })
-
-vim.keymap.set("n", "<leader>db", function()
-  require("dap").toggle_breakpoint()
-end, { desc = "Toggle Debugger Breakpoint" })
-vim.keymap.set("n", "<leader>dc", function()
-  require("dap").continue()
-end, { desc = "Toggle Debugger Continue" })
