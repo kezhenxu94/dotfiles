@@ -75,6 +75,7 @@ return {
         "tree-sitter-cli",
         "jdtls",
         "prettier",
+        "vscode-spring-boot-tools",
       },
     },
   },
@@ -122,7 +123,11 @@ return {
         "<leader>du",
         function()
           local height = vim.v.count ~= 0 and vim.v.count or 18
-          require("dap").repl.toggle({ height = height, winfixheight = true, winfixwidth = true })
+          require("dap").repl.toggle({
+            height = height,
+            winfixheight = true,
+            winfixwidth = true,
+          }, "bo split")
         end,
       },
     },
