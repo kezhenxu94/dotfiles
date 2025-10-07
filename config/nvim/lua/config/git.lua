@@ -2,7 +2,7 @@ vim.pack.add({
   {
     src = "https://github.com/tpope/vim-fugitive",
   },
-}, { load = true })
+}, { load = true, confirm = false })
 
 local autocmds = require("utils.autocmds")
 vim.api.nvim_create_autocmd("FileType", {

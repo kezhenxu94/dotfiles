@@ -6,8 +6,6 @@ set nowrap
 set encoding=utf-8
 set hls
 set timeoutlen=300
-set ttimeout
-set ttimeoutlen=0
 
 set clipboard=unnamed
 

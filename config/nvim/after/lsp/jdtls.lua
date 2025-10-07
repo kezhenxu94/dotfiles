@@ -7,48 +7,44 @@ local function get_mason_bundles()
   vim.list_extend(bundles, jars("$MASON/share/java-test", "*.jar"))
   vim.list_extend(bundles, jars("$MASON/share/java-debug-adapter", "com.microsoft.java.debug.plugin-*.jar"))
   vim.list_extend(bundles, jars("$MASON/share/vscode-spring-boot-tools", "jdtls/*.jar"))
-
-  local excluded = {}
-
-  bundles = vim.tbl_filter(function(bundle)
-    if not bundle then
-      return false
-    end
-    local filename = vim.fn.fnamemodify(bundle, ":t")
-    for _, ex in ipairs(excluded) do
-      if filename == ex then
-        return false
-      end
-    end
-    return true
-  end, bundles)
-
   return bundles
 end
+
+local root_markers = {
+  -- Multi-module projects
+  "mvnw",
+  "gradlew",
+  "build.gradle",
+  "build.gradle.kts",
+  ".git",
+  -- Single-module projects
+  "pom.xml", -- Maven
+  "settings.gradle", -- Gradle
+  "settings.gradle.kts", -- Gradle
+}
 
 ---@type vim.lsp.Config
 return {
   on_attach = function(_, bufnr)
     local jdtls = require("jdtls")
-    jdtls.setup_dap({
+    local opts = {
       config_overrides = {
         console = "internalConsole",
       },
-    })
-    vim.keymap.set("n", "<leader>tm", jdtls.test_nearest_method, {
+    }
+    vim.keymap.set("n", "<leader>tm", function()
+      jdtls.test_nearest_method(opts)
+    end, {
       buffer = bufnr,
       desc = "Debug Test Method",
     })
-    vim.keymap.set("n", "<leader>tt", jdtls.test_class, {
+    vim.keymap.set("n", "<leader>tt", function()
+      jdtls.test_class(opts)
+    end, {
       buffer = bufnr,
       desc = "Debug Test Class",
     })
   end,
-  dap = {
-    config_overrides = {
-      console = "internalConsole",
-    },
-  },
   settings = {
     java = {
       configuration = {
@@ -78,9 +74,6 @@ return {
       maven = {
         downloadSources = true,
       },
-      format = {
-        enabled = true,
-      },
       signatureHelp = {
         enabled = true,
       },
@@ -95,12 +88,14 @@ return {
       },
     },
   },
-  jdtls = {
-    -- handlers = {
-    -- ["language/status"] = function(_, _) end,
-    -- },
-  },
   init_options = {
     bundles = get_mason_bundles(),
+    workspace = {
+      refresh = {
+        enabled = true,
+      },
+    },
+    extendedClientCapabilities = require("jdtls").extendedClientCapabilities,
   },
+  root_markers = root_markers,
 }

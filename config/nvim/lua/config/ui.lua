@@ -5,7 +5,6 @@ vim.pack.add({
   { src = "https://github.com/MunifTanjim/nui.nvim" },
   { src = "https://github.com/folke/noice.nvim" },
   { src = "https://github.com/folke/snacks.nvim" },
-  { src = "https://github.com/nvim-lualine/lualine.nvim" },
   { src = "https://github.com/nvim-tree/nvim-web-devicons" },
 }, { confirm = false, load = true })
 
@@ -217,50 +216,6 @@ end, { desc = "Git Status" })
 vim.keymap.set("n", "<leader>,", function()
   Snacks.picker.buffers()
 end, { desc = "Buffers" })
-vim.keymap.set("n", "<leader>k", function()
-  Snacks.picker.keys()
+vim.keymap.set("n", "<leader>sk", function()
+  Snacks.picker.keymaps()
 end, { desc = "Keys" })
-vim.keymap.set("n", "<leader>k", function()
-  Snacks.picker.keys()
-end, { desc = "Keys" })
-
-require("lualine").setup({
-  options = {
-    section_separators = {},
-    component_separators = {},
-    globalstatus = false,
-    disabled_filetypes = {
-      statusline = {
-        "snacks_picker_list",
-      },
-    },
-  },
-  sections = {
-    lualine_a = {
-      {
-        "mode",
-        fmt = function(res)
-          return res:sub(1, 1)
-        end,
-      },
-    },
-    lualine_b = {
-      {
-        "filename",
-        file_status = true,
-        newfile_status = false,
-        path = 1,
-      },
-    },
-    lualine_c = {
-      {
-        "diagnostics",
-      },
-    },
-    lualine_y = {},
-    lualine_z = {},
-  },
-  extensions = {
-    "fugitive",
-  },
-})

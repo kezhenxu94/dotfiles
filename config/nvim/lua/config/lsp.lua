@@ -34,6 +34,8 @@ vim.lsp.config("*", {
   },
 })
 
+vim.lsp.semantic_tokens.enable(false)
+
 local icons = require("config.icons")
 vim.diagnostic.config({
   severity_sort = true,
@@ -67,3 +69,10 @@ vim.keymap.set("n", "<leader>du", function()
   local height = vim.v.count ~= 0 and vim.v.count or 18
   require("dap").repl.toggle({ height = height, winfixheight = true, winfixwidth = true })
 end, { desc = "Toggle dap ui" })
+
+vim.keymap.set("n", "<leader>db", function()
+  require("dap").toggle_breakpoint()
+end, { desc = "Toggle Debugger Breakpoint" })
+vim.keymap.set("n", "<leader>dc", function()
+  require("dap").continue()
+end, { desc = "Toggle Debugger Continue" })
