@@ -44,6 +44,12 @@ return {
       buffer = bufnr,
       desc = "Debug Test Class",
     })
+    vim.keymap.set("n", "<leader>co", function()
+      jdtls.organize_imports()
+    end, {
+      buffer = bufnr,
+      desc = "Organize Imports",
+    })
   end,
   settings = {
     java = {

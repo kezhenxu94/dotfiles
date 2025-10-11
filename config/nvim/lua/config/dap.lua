@@ -3,7 +3,12 @@ vim.pack.add({
 }, { confirm = false, load = true })
 
 vim.keymap.set("n", "<leader>du", function()
-  require("dap").repl.toggle({ height = 18, winfixheight = true, winfixwidth = true })
+  local height = vim.v.count ~= 0 and vim.v.count or 18
+  require("dap").repl.toggle({
+    height = height,
+    winfixheight = true,
+    winfixwidth = true,
+  }, "bo split")
 end, { desc = "Debugger UI" })
 vim.keymap.set("n", "<leader>db", function()
   require("dap").toggle_breakpoint()
