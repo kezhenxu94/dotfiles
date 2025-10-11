@@ -5,9 +5,7 @@ let g:maplocalleader="\\"
 set nowrap
 set encoding=utf-8
 set hls
-set timeoutlen=100
-set ttimeout
-set ttimeoutlen=100
+set timeoutlen=300
 set noshowmode
 
 set clipboard=unnamed
