@@ -8,6 +8,7 @@ require("snacks").setup({
   terminal = { enabled = false },
   scroll = { enabled = false },
   indent = { enabled = false },
+  words = { enabled = true },
   picker = {
     prompt = "󰍉 ",
     sources = {
@@ -115,9 +116,16 @@ vim.keymap.set("n", "<leader>/", Snacks.picker.grep, { desc = "Grep" })
 vim.keymap.set("n", "<leader>gs", Snacks.picker.git_status, { desc = "Git Status" })
 vim.keymap.set("n", "<leader>gl", Snacks.picker.git_log, { desc = "Git Log" })
 vim.keymap.set("n", "<leader>,", Snacks.picker.buffers, { desc = "Buffers" })
-vim.keymap.set("n", "<leader>sk", Snacks.picker.keymaps, { desc = "Keys" })
+vim.keymap.set("n", "<leader>sk", Snacks.picker.keymaps, { desc = "Keymap" })
 vim.keymap.set("n", "<leader>sn", Snacks.picker.notifications, { desc = "Notifications" })
 vim.keymap.set("n", "<leader>sw", Snacks.picker.grep_word, { desc = "Search Word" })
 vim.keymap.set("n", "<leader>sc", Snacks.picker.commands, { desc = "Search Commands" })
 vim.keymap.set("n", "<leader>e", toggle_explorer(), { desc = "Explorer Snacks (root)" })
 vim.keymap.set("n", "<leader>E", toggle_explorer(vim.fn.getcwd()), { desc = "Explorer Snacks (cwd)" })
+
+vim.keymap.set("n", "[r", function()
+  Snacks.words.jump(-vim.v.count1)
+end, { desc = "Jum to Previous reference", remap = true })
+vim.keymap.set("n", "]r", function()
+  Snacks.words.jump(vim.v.count1)
+end, { desc = "Jum to Next reference", remap = true })

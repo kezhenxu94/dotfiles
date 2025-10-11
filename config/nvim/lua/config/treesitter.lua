@@ -17,7 +17,6 @@ require("nvim-treesitter.configs").setup({
   ensure_installed = packages,
   auto_install = true,
   highlight = { enable = true },
-  indent = { enable = true },
   sync_install = false,
   ignore_install = {},
 })
@@ -32,13 +31,21 @@ vim.api.nvim_create_autocmd("FileType", {
     end
 
     vim.treesitter.start()
+  end,
+})
 
-    if lang and vim.treesitter.query.get(lang, "folds") then
-      vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-    end
-
-    if lang and vim.treesitter.query.get(lang, "indents") then
-      vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
-    end
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "*",
+  callback = function()
+    vim.defer_fn(function()
+      local ft = vim.bo.filetype
+      local lang = vim.treesitter.language.get_lang(ft)
+      if lang and vim.treesitter.query.get(lang, "folds") then
+        vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+      end
+      if lang and vim.treesitter.query.get(lang, "indents") then
+        vim.bo.indentexpr = "nvim_treesitter#indent()"
+      end
+    end, 0)
   end,
 })
