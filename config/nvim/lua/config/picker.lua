@@ -85,11 +85,13 @@ require("snacks").setup({
     win = {
       input = {
         keys = {
+          ---@diagnostic disable-next-line: assign-type-mismatch
           ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
         },
       },
       list = {
         keys = {
+          ---@diagnostic disable-next-line: assign-type-mismatch
           ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
         },
       },

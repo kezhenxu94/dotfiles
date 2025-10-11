@@ -16,10 +16,3 @@ vim.keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", 
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
 vim.keymap.set("n", "<leader>uw", "<cmd>set wrap!<cr>", { silent = true, desc = "Toggle wrap" })
-
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = { "qf" },
---   callback = function()
---     vim.keymap.set("n", "<c-v>", "<cmd><c-w>v<cr>", { desc = "Split" })
---   end,
--- })
