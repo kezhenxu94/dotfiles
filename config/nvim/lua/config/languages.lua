@@ -25,7 +25,7 @@ return {
   },
   {
     treesitter = { "javascript", "typescript", "tsx", "html", "css" },
-    mason = { "vtsls", "eslint_d", "prettier" },
+    mason = { "vtsls", "eslint_d", "prettier", "prettierd" },
     lsp = { "vtsls" },
   },
   {

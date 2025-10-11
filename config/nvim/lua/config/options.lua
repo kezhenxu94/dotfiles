@@ -44,3 +44,4 @@ vim.o.scrolloff = 3
 vim.o.foldlevel = 99
 vim.o.foldmethod = "indent"
 vim.o.foldtext = ""
+vim.o.exrc = true
