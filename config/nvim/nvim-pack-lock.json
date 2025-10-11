@@ -4,6 +4,10 @@
       "rev": "8483171",
       "src": "https://github.com/saghen/blink.cmp"
     },
+    "bufferline.nvim": {
+      "rev": "655133c",
+      "src": "https://github.com/akinsho/bufferline.nvim"
+    },
     "conform.nvim": {
       "rev": "9d859cb",
       "src": "https://github.com/stevearc/conform.nvim"

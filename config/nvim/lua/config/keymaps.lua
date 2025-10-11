@@ -16,3 +16,6 @@ vim.keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", 
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
 
 vim.keymap.set("n", "<leader>uw", "<cmd>set wrap!<cr>", { silent = true, desc = "Toggle wrap" })
+
+vim.keymap.set("n", "]<tab>", "<cmd>:tabnext<cr>", { remap = true, desc = "Next Tab" })
+vim.keymap.set("n", "[<tab>", "<cmd>:tabprevious<cr>", { remap = true, desc = "Previous Tab" })
