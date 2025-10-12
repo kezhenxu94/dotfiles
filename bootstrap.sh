@@ -52,3 +52,9 @@ echo "==> Installing dotfiles..."
 echo "==> Bootstrap complete!"
 echo ""
 echo "Note: If the shell was changed to zsh, please restart your terminal or run 'exec zsh' to use it."
+
+echo "Installing Rust"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+echo "Installing Mise"
+curl https://mise.run | sh
