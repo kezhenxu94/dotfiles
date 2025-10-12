@@ -6,7 +6,7 @@ local function get_mason_bundles()
   local bundles = {}
   vim.list_extend(bundles, jars("$MASON/share/java-test", "*.jar"))
   vim.list_extend(bundles, jars("$MASON/share/java-debug-adapter", "com.microsoft.java.debug.plugin-*.jar"))
-  vim.list_extend(bundles, jars("$MASON/share/vscode-spring-boot-tools", "jdtls/*.jar"))
+  vim.list_extend(bundles, jars("$MASON/share/jdtls", "*.jar"))
   return bundles
 end
 

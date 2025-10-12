@@ -15,7 +15,7 @@ local packages = vim
   :flatten()
   :totable()
 
-packages = vim.tbl_extend("force", packages, { "gh" })
+packages = vim.tbl_extend("keep", packages, { "gh" })
 
 vim.api.nvim_create_user_command("MasonSync", function()
   vim.notify("Syncing packages...", vim.log.levels.INFO)

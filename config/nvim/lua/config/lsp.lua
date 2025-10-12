@@ -5,6 +5,18 @@ vim.pack.add({
 
 local autocmds = require("utils.autocmds")
 
+local lsps = vim
+  .iter(require("config.languages"))
+  :map(function(lang)
+    return lang.lsp
+  end)
+  :filter(function(lsp)
+    return lsp
+  end)
+  :flatten()
+  :totable()
+vim.lsp.enable(lsps)
+
 vim.api.nvim_create_autocmd("LspAttach", {
   group = autocmds.augroup("LspAttach"),
   callback = function(event)

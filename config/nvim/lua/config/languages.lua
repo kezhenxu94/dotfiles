@@ -1,7 +1,7 @@
 return {
   {
     treesitter = { "java" },
-    mason = { "jdtls", "java-debug-adapter", "java-test", "vscode-spring-boot-tools", "google-java-format" },
+    mason = { "jdtls", "java-debug-adapter", "java-test", "google-java-format" },
     lsp = { "jdtls" },
   },
   {
