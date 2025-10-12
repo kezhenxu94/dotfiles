@@ -24,4 +24,10 @@ vim.pack.add({
 require("blink-cmp").setup({
   signature = { enabled = true },
   completion = { documentation = { auto_show = true } },
+  cmdline = {
+    keymap = {
+      ["<Left>"] = false,
+      ["<Right>"] = false,
+    },
+  },
 })
