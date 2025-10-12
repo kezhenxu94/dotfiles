@@ -47,7 +47,7 @@ fi
 
 # Install dotfiles
 echo "==> Installing dotfiles..."
-"$SCRIPT_DIR/install.sh"
+"$SCRIPT_DIR/setup.sh"
 
 echo "==> Bootstrap complete!"
 echo ""

@@ -23,12 +23,12 @@ git clone --recurse-submodules git@github.com:kezhenxu94/dotfiles.git ~/dotfiles
 Install the dotfiles
 
 ```shell
-~/dotfiles/install.sh
+~/dotfiles/setup.sh
 ```
 
 Update the dotfiles:
 
 ```shell
 git -C ~/dotfiles pull
-~/dotfiles/install.sh
+~/dotfiles/setup.sh
 ```
