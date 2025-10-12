@@ -11,7 +11,10 @@
   whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
 
 [diff]
-  tool = vimdiff
+  tool = nvim_difftool
+
+[difftool "nvim_difftool"]
+  cmd = nvim -c \"DiffTool $LOCAL $REMOTE\"
 
 [difftool]
   prompt = false

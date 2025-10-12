@@ -33,8 +33,10 @@ require("gitsigns").setup({
 })
 
 vim.keymap.set("n", "]h", function()
+  ---@diagnostic disable-next-line: param-type-mismatch
   require("gitsigns").nav_hunk("next")
 end, { remap = true, desc = "Git Next Hunk" })
 vim.keymap.set("n", "[h", function()
+  ---@diagnostic disable-next-line: param-type-mismatch
   require("gitsigns").nav_hunk("prev")
-end, { remap = true, desc = "Git Next Hunk" })
+end, { remap = true, desc = "Git Prev Hunk" })
