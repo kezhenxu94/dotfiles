@@ -1,5 +1,6 @@
 vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
 }, { confirm = false })
 
 local packages = vim
@@ -19,6 +20,50 @@ require("nvim-treesitter.configs").setup({
   highlight = { enable = true },
   sync_install = false,
   ignore_install = {},
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true,
+      keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner",
+        ["al"] = "@loop.outer",
+        ["il"] = "@loop.inner",
+        ["ib"] = "@block.inner",
+        ["ab"] = "@block.outer",
+        ["as"] = "@statement.outer",
+        ["is"] = "@statement.inner",
+        ["ad"] = "@conditional.outer",
+        ["id"] = "@conditional.inner",
+        ["a/"] = "@comment.outer",
+      },
+    },
+    move = {
+      enable = true,
+      goto_next_start = {
+        ["]c"] = "@class.outer",
+        ["]d"] = "@conditional.outer",
+        ["]f"] = "@function.outer",
+      },
+      goto_next_end = {
+        ["]C"] = "@class.outer",
+        ["]D"] = "@conditional.outer",
+        ["]F"] = "@function.outer",
+      },
+      goto_previous_start = {
+        ["[c"] = "@class.outer",
+        ["[d"] = "@conditional.outer",
+        ["[f"] = "@function.outer",
+      },
+      goto_previous_end = {
+        ["[C"] = "@class.outer",
+        ["[D"] = "@conditional.outer",
+        ["[F"] = "@function.outer",
+      },
+    },
+  },
 })
 
 -- Consolidated FileType autocmd for treesitter features
