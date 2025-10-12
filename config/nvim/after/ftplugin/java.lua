@@ -11,5 +11,3 @@ end
 vim.env.JDTLS_JVM_ARGS = "-javaagent:"
   .. get_mason_lombok_agent()
   .. " -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xmx6G -Xms1G "
-
-vim.lsp.enable({ "jdtls" })
