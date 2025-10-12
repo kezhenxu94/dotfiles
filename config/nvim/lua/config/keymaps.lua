@@ -17,7 +17,7 @@ vim.keymap.set("n", "<leader>qr", "<cmd>restart<cr>", { silent = true, desc = "R
 
 vim.keymap.set("n", "<leader>-", "<c-w>s", { silent = true, desc = "Split window", remap = true })
 vim.keymap.set("n", "<leader>|", "<c-w>v", { silent = true, desc = "Split window vertically", remap = true })
-vim.keymap.set({ "n", "x", "i" }, "<c-s>", "<cmd>w<cr>", { silent = true, desc = "Save" })
+vim.keymap.set({ "n", "v", "x", "i" }, "<c-s>", "<cmd>w<cr>", { silent = true, desc = "Save" })
 
 vim.keymap.set({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 vim.keymap.set({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true })
@@ -29,3 +29,10 @@ vim.keymap.set("n", "[<tab>", "<cmd>:tabprevious<cr>", { remap = true, desc = "P
 
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
+
+vim.keymap.set("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next Search Result" })
+vim.keymap.set("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
+vim.keymap.set("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
+vim.keymap.set("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev Search Result" })
+vim.keymap.set("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" })
+vim.keymap.set("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" })
