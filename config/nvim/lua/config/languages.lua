@@ -52,4 +52,8 @@ return {
     mason = { "copilot-language-server" },
     lsp = { "copilot" },
   },
+  {
+    mason = { "tailwindcss-language-server" },
+    lsp = { "tailwindcss" },
+  },
 }
