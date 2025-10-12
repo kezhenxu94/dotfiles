@@ -56,4 +56,7 @@ return {
     mason = { "tailwindcss-language-server" },
     lsp = { "tailwindcss" },
   },
+  {
+    mason = { "gh" },
+  },
 }
