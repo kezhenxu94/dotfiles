@@ -31,7 +31,11 @@ echo "Latest release: $LATEST_RELEASE"
 
 echo "Getting nvim installation destination..."
 
-NVIM_DESTINATION=$(which nvim | sed 's#/bin/nvim$##')
+if command -v nvim >/dev/null 2>&1; then
+  NVIM_DESTINATION=$(which nvim | sed 's#/bin/nvim$##')
+else
+  NVIM_DESTINATION=$HOME/usr/local/nvim
+fi
 
 mkdir -p ${NVIM_DESTINATION}_temp
 echo "Downloading and extracting nvim to ${NVIM_DESTINATION}_temp..."
