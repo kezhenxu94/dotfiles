@@ -34,7 +34,6 @@ require("nvim-treesitter.configs").setup({
         ["ib"] = "@block.inner",
         ["ab"] = "@block.outer",
         ["as"] = "@statement.outer",
-        ["is"] = "@statement.inner",
         ["ad"] = "@conditional.outer",
         ["id"] = "@conditional.inner",
         ["a/"] = "@comment.outer",
