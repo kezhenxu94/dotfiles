@@ -19,3 +19,6 @@ vim.keymap.set("n", "<leader>uw", "<cmd>set wrap!<cr>", { silent = true, desc = 
 
 vim.keymap.set("n", "]<tab>", "<cmd>:tabnext<cr>", { remap = true, desc = "Next Tab" })
 vim.keymap.set("n", "[<tab>", "<cmd>:tabprevious<cr>", { remap = true, desc = "Previous Tab" })
+
+vim.keymap.set("v", "<", "<gv")
+vim.keymap.set("v", ">", ">gv")
