@@ -48,4 +48,8 @@ return {
     mason = { "pyright", "black" },
     lsp = { "pyright" },
   },
+  {
+    mason = { "copilot-language-server" },
+    lsp = { "copilot" },
+  },
 }

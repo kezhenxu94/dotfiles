@@ -22,6 +22,7 @@ vim.pack.add({
 }, { confirm = false })
 
 require("blink-cmp").setup({
+  keymap = { preset = "enter" },
   signature = { enabled = true },
   completion = { documentation = { auto_show = true } },
   cmdline = {

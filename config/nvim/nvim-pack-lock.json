@@ -68,6 +68,10 @@
       "rev": "b9fd522",
       "src": "https://github.com/nvim-lua/plenary.nvim"
     },
+    "sidekick.nvim": {
+      "rev": "f555379",
+      "src": "https://github.com/folke/sidekick.nvim"
+    },
     "snacks.nvim": {
       "rev": "dae80fb",
       "src": "https://github.com/folke/snacks.nvim"
