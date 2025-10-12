@@ -1,6 +1,6 @@
 vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-}, { confirm = false, load = true })
+}, { confirm = false })
 
 local packages = vim
   .iter(require("config.languages"))
