@@ -56,16 +56,8 @@ return {
       configuration = {
         runtimes = {
           {
-            name = "JavaSE-11",
-            path = vim.fn.expand("~/.local/share/mise/installs/java/11/"),
-          },
-          {
             name = "JavaSE-17",
             path = vim.fn.expand("~/.local/share/mise/installs/java/17/"),
-          },
-          {
-            name = "JavaSE-20",
-            path = vim.fn.expand("~/.local/share/mise/installs/java/20/"),
           },
           {
             name = "JavaSE-21",
