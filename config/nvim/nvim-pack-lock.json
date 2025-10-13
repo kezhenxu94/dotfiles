@@ -28,10 +28,6 @@
       "rev": "ad7146a",
       "src": "https://github.com/mason-org/mason.nvim"
     },
-    "noice.nvim": {
-      "rev": "0427460",
-      "src": "https://github.com/folke/noice.nvim"
-    },
     "nui.nvim": {
       "rev": "de74099",
       "src": "https://github.com/MunifTanjim/nui.nvim"
@@ -94,3 +90,4 @@
     }
   }
 }
+
