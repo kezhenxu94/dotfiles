@@ -24,5 +24,7 @@ __debug_bin*
 .lazy.lua
 .nvim.lua
 mise.toml
+.venv
+venv
 
 **/.claude/settings.local.json

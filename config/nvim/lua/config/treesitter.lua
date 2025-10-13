@@ -43,22 +43,18 @@ require("nvim-treesitter.configs").setup({
       enable = true,
       goto_next_start = {
         ["]c"] = "@class.outer",
-        ["]d"] = "@conditional.outer",
         ["]f"] = "@function.outer",
       },
       goto_next_end = {
         ["]C"] = "@class.outer",
-        ["]D"] = "@conditional.outer",
         ["]F"] = "@function.outer",
       },
       goto_previous_start = {
         ["[c"] = "@class.outer",
-        ["[d"] = "@conditional.outer",
         ["[f"] = "@function.outer",
       },
       goto_previous_end = {
         ["[C"] = "@class.outer",
-        ["[D"] = "@conditional.outer",
         ["[F"] = "@function.outer",
       },
     },
