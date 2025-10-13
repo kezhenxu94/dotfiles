@@ -24,7 +24,26 @@ vim.pack.add({
 require("blink-cmp").setup({
   keymap = { preset = "enter" },
   signature = { enabled = true },
-  completion = { documentation = { auto_show = true } },
+  completion = {
+    accept = {
+      -- experimental auto-brackets support
+      auto_brackets = {
+        enabled = true,
+      },
+    },
+    menu = {
+      draw = {
+        treesitter = { "lsp" },
+      },
+    },
+    documentation = {
+      auto_show = true,
+      auto_show_delay_ms = 200,
+    },
+    ghost_text = {
+      enabled = vim.g.ai_cmp,
+    },
+  },
   cmdline = {
     keymap = {
       ["<Left>"] = false,
