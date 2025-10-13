@@ -1,6 +1,5 @@
 " Leader
 let g:mapleader=" "
-let g:maplocalleader="\\"
 
 set nowrap
 set encoding=utf-8
