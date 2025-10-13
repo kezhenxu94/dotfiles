@@ -2,6 +2,7 @@ require("config.options")
 require("config.keymaps")
 require("config.autocmds")
 
+require("config.theme")
 require("config.ui")
 require("config.picker")
 require("config.blink")
