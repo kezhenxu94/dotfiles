@@ -38,12 +38,13 @@ vim.keymap.set("n", "]h", function() require("gitsigns").nav_hunk("next") end, {
 vim.keymap.set("n", "[h", function() require("gitsigns").nav_hunk("prev") end, { remap = true, desc = "Git Prev Hunk" })
 -- stylua: ignore end
 
+local root_patterns = { ".git" }
+local root_dir = vim.fs.dirname(vim.fs.find(root_patterns, { upward = true })[1])
 local function async_git(args_str)
-  local cwd = vim.fn.expand("%:p:h")
   local cmd = "git " .. args_str
   vim.notify("Running: " .. cmd, vim.log.levels.INFO)
 
-  vim.system({ "sh", "-c", cmd }, { cwd = cwd, text = true }, function(res)
+  vim.system({ "sh", "-c", cmd }, { cwd = root_dir, text = true }, function(res)
     vim.schedule(function()
       local subcmd = args_str:match("^%s*(%S+)")
       local title = "git " .. (subcmd or "")
