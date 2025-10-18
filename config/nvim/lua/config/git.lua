@@ -1,5 +1,4 @@
 vim.pack.add({
-  { src = "https://github.com/tpope/vim-fugitive" },
   { src = "https://github.com/lewis6991/gitsigns.nvim" },
 }, { confirm = false })
 
@@ -32,11 +31,36 @@ require("gitsigns").setup({
   },
 })
 
-vim.keymap.set("n", "]h", function()
-  ---@diagnostic disable-next-line: param-type-mismatch
-  require("gitsigns").nav_hunk("next")
-end, { remap = true, desc = "Git Next Hunk" })
-vim.keymap.set("n", "[h", function()
-  ---@diagnostic disable-next-line: param-type-mismatch
-  require("gitsigns").nav_hunk("prev")
-end, { remap = true, desc = "Git Prev Hunk" })
+-- stylua: ignore start
+vim.keymap.set("n", "]h", function() require("gitsigns").nav_hunk("next") end, { remap = true, desc = "Git Next Hunk" })
+vim.keymap.set("n", "[h", function() require("gitsigns").nav_hunk("prev") end, { remap = true, desc = "Git Prev Hunk" })
+-- stylua: ignore end
+
+local function async_git(args_str)
+  local cwd = vim.fn.expand("%:p:h")
+  local cmd = "git " .. args_str
+  vim.notify("Running: " .. cmd, vim.log.levels.INFO)
+
+  vim.system({ "sh", "-c", cmd }, { cwd = cwd, text = true }, function(res)
+    vim.schedule(function()
+      local subcmd = args_str:match("^%s*(%S+)")
+      local title = "git " .. (subcmd or "")
+      if res.code == 0 then
+        local out = (res.stdout or ""):match("^%s*(.-)%s*$")
+        if out == "" then
+          out = "✔ Git command completed successfully"
+        end
+        vim.notify(out, vim.log.levels.INFO, { title = title })
+      else
+        local err = (res.stderr or res.stdout or "Git command failed"):match("^%s*(.-)%s*$")
+        vim.notify(err, vim.log.levels.ERROR, { title = title })
+      end
+    end)
+  end)
+end
+
+vim.api.nvim_create_user_command("G", function(opts)
+  async_git(opts.args)
+end, {
+  nargs = "+",
+})

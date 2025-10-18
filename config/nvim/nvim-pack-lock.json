@@ -72,10 +72,6 @@
       "rev": "dae80fb",
       "src": "https://github.com/folke/snacks.nvim"
     },
-    "vim-fugitive": {
-      "rev": "61b51c0",
-      "src": "https://github.com/tpope/vim-fugitive"
-    },
     "vim-helm": {
       "rev": "2c8525f",
       "src": "https://github.com/towolf/vim-helm"
@@ -94,3 +90,4 @@
     }
   }
 }
+
