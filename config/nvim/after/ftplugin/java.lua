@@ -1,7 +1,3 @@
-vim.pack.add({
-  { src = "https://github.com/mfussenegger/nvim-jdtls" },
-}, { confirm = false })
-
 vim.g.java_ignore_markdown = true
 
 local function get_mason_lombok_agent()

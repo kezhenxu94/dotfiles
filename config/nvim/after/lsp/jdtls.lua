@@ -1,3 +1,7 @@
+vim.pack.add({
+  { src = "https://github.com/mfussenegger/nvim-jdtls" },
+}, { confirm = false, load = true })
+
 local function get_mason_bundles()
   local function jars(path, pattern)
     return vim.split(vim.fn.glob(vim.fn.expand(path) .. "/" .. pattern), "\n")

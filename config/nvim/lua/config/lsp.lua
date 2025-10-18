@@ -1,6 +1,5 @@
 vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/mfussenegger/nvim-jdtls" },
 }, { confirm = false, load = true })
 
 local autocmds = require("utils.autocmds")
