@@ -59,4 +59,12 @@ return {
   {
     mason = { "gh" },
   },
+  {
+    mason = { "markdownlint", "markdown-oxide" },
+    lsp = { "markdown_oxide" },
+  },
+  {
+    mason = { "helm-ls" },
+    lsp = { "helm_ls" },
+  },
 }

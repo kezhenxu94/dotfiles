@@ -14,8 +14,8 @@ map("v", "<M-j>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc 
 map("v", "<M-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
 
 map("n", "<leader>bd", "<cmd>bdelete<cr>", { silent = true, desc = "Buffer Delete" })
-map("n", "<leader>qq", "<cmd>qa<cr>", { silent = true, desc = "Exit Neovim" })
-map("n", "<leader>qr", "<cmd>restart<cr>", { silent = true, desc = "Restart Neovim" })
+map("n", "<leader>xx", "<cmd>qa<cr>", { silent = true, desc = "Exit Neovim" })
+map("n", "<leader>xr", "<cmd>restart<cr>", { silent = true, desc = "Restart Neovim" })
 
 map("n", "<leader>-", "<c-w>s", { silent = true, desc = "Split window", remap = true })
 map("n", "<leader>|", "<c-w>v", { silent = true, desc = "Split window vertically", remap = true })
