@@ -51,7 +51,7 @@ vim.diagnostic.config({
     current_line = true,
   },
   float = {
-    focusable = false,
+    border = "rounded",
   },
   jump = {
     _highest = true,
@@ -70,13 +70,6 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.INFO] = "DiagnosticHint",
     },
   },
-})
-vim.api.nvim_create_autocmd("CursorHold", {
-  desc = "Show diagnostic message for line under cursor",
-  group = autocmds.augroup("lsp_diagnostic", { clear = true }),
-  callback = function()
-    vim.diagnostic.open_float(nil, { scope = "line" })
-  end,
 })
 
 vim.lsp.inlay_hint.enable()
