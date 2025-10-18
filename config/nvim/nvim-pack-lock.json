@@ -4,6 +4,10 @@
       "rev": "8483171",
       "src": "https://github.com/saghen/blink.cmp"
     },
+    "catppuccin": {
+      "rev": "af58927",
+      "src": "https://github.com/catppuccin/nvim"
+    },
     "conform.nvim": {
       "rev": "9d859cb",
       "src": "https://github.com/stevearc/conform.nvim"
@@ -19,14 +23,6 @@
     "mason.nvim": {
       "rev": "ad7146a",
       "src": "https://github.com/mason-org/mason.nvim"
-    },
-    "nui.nvim": {
-      "rev": "de74099",
-      "src": "https://github.com/MunifTanjim/nui.nvim"
-    },
-    "nvim": {
-      "rev": "e79d09f",
-      "src": "https://github.com/catppuccin/nvim"
     },
     "nvim-dap": {
       "rev": "881f7dc",
@@ -86,3 +82,4 @@
     }
   }
 }
+
