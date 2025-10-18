@@ -7,7 +7,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost" }, {
   group = lint_augroup,
   callback = function()
     if vim.bo.modifiable then
-      require("lint").try_lint()
+      require("lint").try_lint(nil, { ignore_errors = true })
     end
   end,
 })
