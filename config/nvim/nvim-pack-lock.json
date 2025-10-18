@@ -8,10 +8,6 @@
       "rev": "9d859cb",
       "src": "https://github.com/stevearc/conform.nvim"
     },
-    "friendly-snippets": {
-      "rev": "572f566",
-      "src": "https://github.com/rafamadriz/friendly-snippets"
-    },
     "gitsigns.nvim": {
       "rev": "1ee5c1f",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
@@ -90,4 +86,3 @@
     }
   }
 }
-

@@ -32,7 +32,9 @@ require("gitsigns").setup({
 })
 
 -- stylua: ignore start
+---@diagnostic disable-next-line: param-type-mismatch
 vim.keymap.set("n", "]h", function() require("gitsigns").nav_hunk("next") end, { remap = true, desc = "Git Next Hunk" })
+---@diagnostic disable-next-line: param-type-mismatch
 vim.keymap.set("n", "[h", function() require("gitsigns").nav_hunk("prev") end, { remap = true, desc = "Git Prev Hunk" })
 -- stylua: ignore end
 
