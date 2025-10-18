@@ -3,7 +3,7 @@ require("config.keymaps")
 require("config.autocmds")
 
 require("config.theme")
-require("config.ui")
+require("config.editor")
 require("config.picker")
 require("config.blink")
 require("config.session")
