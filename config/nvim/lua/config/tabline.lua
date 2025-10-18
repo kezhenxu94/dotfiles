@@ -14,8 +14,11 @@ function TabLine()
   end
 
   tabline = ""
-  for index = 1, vim.fn.tabpagenr("$") do
-    if index == vim.fn.tabpagenr() then
+
+  local current = vim.fn.tabpagenr()
+  local total = vim.fn.tabpagenr("$")
+  for index = 1, total do
+    if index == current then
       tabline = tabline .. "%#TabLineSel#"
     else
       tabline = tabline .. "%#TabLineNormal#"
@@ -36,7 +39,7 @@ function TabLine()
       end
     end
 
-    if index == vim.fn.tabpagenr() then
+    if index == current then
       tabline = tabline .. "▎" .. filename .. " "
     else
       tabline = tabline .. " " .. filename .. " "
