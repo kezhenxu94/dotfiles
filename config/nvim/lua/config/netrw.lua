@@ -126,7 +126,7 @@ local function get_full_path()
 
   local netrw_dir = vim.b.netrw_curdir or vim.fn.getcwd()
   local full_path = vim.fn.fnamemodify(netrw_dir .. "/" .. filename, ":p")
-  local relative_path = vim.fn.fnamemodify(full_path, ":" .. netrw_dir)
+  local relative_path = vim.fn.fnamemodify(full_path, ":" .. vim.fn.getcwd())
   return relative_path
 end
 

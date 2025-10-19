@@ -1,7 +1,6 @@
 vim.pack.add({
   { src = "https://github.com/christoomey/vim-tmux-navigator" },
   { src = "https://github.com/folke/which-key.nvim" },
-  { src = "https://github.com/nvim-tree/nvim-web-devicons" },
 }, { confirm = false })
 
 vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>", { desc = "Go to the previous pane" })

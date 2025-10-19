@@ -34,7 +34,6 @@ vim.filetype.add({
 
 vim.o.statuscolumn = "%l%s"
 vim.o.signcolumn = "yes:1"
-vim.o.laststatus = 3
 vim.o.scrolloff = 3
 
 vim.o.foldlevel = 99
