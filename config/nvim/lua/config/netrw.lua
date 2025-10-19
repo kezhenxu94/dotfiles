@@ -7,6 +7,10 @@ vim.g.netrw_altv = 1
 vim.g.netrw_alto = 1
 vim.g.netrw_keepdir = 1
 vim.g.netrw_sort_sequence = [[[\/]$,*]]
+vim.g.netrw_localcopydircmd = "cp -r"
+vim.g.netrw_localrmdir = "rm -r"
+
+vim.api.nvim_set_hl(0, "netrwMarkFile", { link = "Search" })
 
 local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
