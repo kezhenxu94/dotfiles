@@ -21,7 +21,6 @@ end
 
 vim.filetype.add({
   pattern = {
-    [".*/.github/workflows/.*%.ya?ml"] = "yaml.ghaction",
     [".*/git/config"] = "gitconfig",
     [".gitmodules"] = "gitconfig",
     [".*/.?ssh/config.*"] = "sshconfig",

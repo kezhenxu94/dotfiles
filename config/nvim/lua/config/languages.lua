@@ -16,5 +16,6 @@ return {
   { mason = { "markdownlint", "markdown-oxide" }, lsp = { "markdown_oxide" }, },
   { mason = { "helm-ls" }, lsp = { "helm_ls" }, },
   { mason = { "docker-language-server" }, lsp = { "docker_language_server" }, },
+  { mason = { "gh-actions-language-server" }, lsp = { "gh_actions_ls" }, },
   -- stylua: ignore end
 }

@@ -6,14 +6,8 @@ vim.api.nvim_set_hl(0, "TabLineNormal", {
   bg = tabline_fill.bg,
 })
 
-local tabline = ""
 function TabLine()
-  local buftype = vim.api.nvim_get_option_value("buftype", { buf = 0 })
-  if buftype == "prompt" or buftype == "nofile" then
-    return tabline
-  end
-
-  tabline = ""
+  local tabline = ""
 
   local current = vim.fn.tabpagenr()
   local total = vim.fn.tabpagenr("$")
@@ -34,6 +28,8 @@ function TabLine()
     if filename == "" then
       if filetype == "snacks_picker_list" then
         filename = "Snacks"
+      elseif filetype == "checkhealth" then
+        filename = "Health"
       else
         filename = "[No Name]"
       end
