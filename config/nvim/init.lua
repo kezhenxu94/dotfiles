@@ -3,7 +3,6 @@ require("config.keymaps")
 require("config.autocmds")
 
 require("config.icons")
-require("config.netrw")
 
 require("config.theme")
 require("config.editor")
