@@ -103,3 +103,10 @@ set updatetime=250
 set confirm
 set breakindent
 set exrc
+
+nnoremap <leader>/ :silent! grep! 
+nnoremap <leader>? :silent! grepadd! 
+augroup AutoOpenQfAfterGrepAdd
+  autocmd!
+  autocmd QuickFixCmdPost grep,grepadd copen
+augroup END
