@@ -104,6 +104,12 @@ set confirm
 set breakindent
 set exrc
 
+" Search
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case\ --hidden
+else
+  set grepprg=grep\ -InDskip\ --exclude-dir=.git
+endif
 nnoremap <leader>/ :silent! grep! 
 nnoremap <leader>? :silent! grepadd! 
 augroup AutoOpenQfAfterGrepAdd
