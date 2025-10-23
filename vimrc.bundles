@@ -14,36 +14,6 @@ let g:has_async = v:version >= 800 || has('nvim')
 
 call plug#begin('~/.vim/bundle')
 
-" ==================== FZF configuration ====================
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-let g:fzf_preview_window = ['right,50%', 'ctrl-/']
-
-" ------------------------------------------------------------------------------
-" # Script functions copied from fzf.vim to make above things work
-" ------------------------------------------------------------------------------
-
-function! s:preview(bang, ...)
-  let preview_window = get(g:, 'fzf_preview_window', a:bang && &columns >= 80 || &columns >= 120 ? 'right': '')
-  if len(preview_window)
-    return call('fzf#vim#with_preview', add(copy(a:000), preview_window))
-  endif
-  return {}
-endfunction
-
-function! s:get_git_root()
-  let root = split(system('git rev-parse --show-toplevel'), '\n')[0]
-  return v:shell_error ? '' : root
-endfunction
-
-nnoremap <silent> <C-p> :GFiles<CR>
-nnoremap <silent> <Leader>ff :Files<CR>
-nnoremap <silent> <Leader>gf :GFiles<CR>
-nnoremap <silent> <Leader>fr :Hist<CR>
-nnoremap <silent> <Leader><Leader> :Ag<CR>
-nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
-" ==================== FZF configuration ====================
-
 set encoding=UTF-8
 
 if filereadable(expand("~/.vimrc.bundles.local"))
