@@ -1,4 +1,4 @@
-vim.cmd("source ~/.vimrc")
+vim.cmd("source $XDG_CONFIG_HOME/vim/vimrc")
 
 vim.loop = vim.uv or vim.loop
 

@@ -19,3 +19,6 @@
 [submodule "bin/kfc"]
 	path = bin/kfc
 	url = https://github.com/kezhenxu94/kfc.git
+[submodule "config/vim/pack/vendor/start/catppuccin"]
+	path = config/vim/pack/vendor/start/catppuccin
+	url = https://github.com/catppuccin/vim.git
