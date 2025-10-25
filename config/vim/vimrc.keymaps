@@ -1,0 +1,60 @@
+" Window resizing
+nnoremap <silent> <M-+> <C-w>+
+nnoremap <silent> <M-<> <C-w><
+nnoremap <silent> <M-=> <C-w>=
+nnoremap <silent> <M->> <C-w>>
+nnoremap <silent> <M-_> <C-w>-
+
+" Move lines up/down
+nnoremap <M-j> :<C-u>execute 'move .+' . v:count1<CR>==
+nnoremap <M-k> :<C-u>execute 'move .-' . (v:count1 + 1)<CR>==
+inoremap <M-j> <Esc>:m .+1<CR>==gi
+inoremap <M-k> <Esc>:m .-2<CR>==gi
+vnoremap <M-j> :<C-u>execute "'<,'>move '>+" . v:count1<CR>gv=gv
+vnoremap <M-k> :<C-u>execute "'<,'>move '<-" . (v:count1 + 1)<CR>gv=gv
+
+" Buffer and window operations
+nnoremap <silent> <leader>bd :bdelete<CR>
+nnoremap <silent> <leader>xx :qa<CR>
+nnoremap <silent> <leader>xr :restart<CR>
+
+" Split windows
+nnoremap <silent> <leader>- <C-w>s
+nnoremap <silent> <leader>\| <C-w>v
+
+" Save file
+noremap <silent> <C-s> :w<CR>
+inoremap <silent> <C-s> <Esc>:w<CR>
+vnoremap <silent> <C-s> <Esc>:w<CR>
+
+" Wrap-aware j/k movement
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+
+" Toggle wrap
+nnoremap <silent> <leader>uw :set wrap!<CR>
+
+" Visual mode indentation
+vnoremap < <gv
+vnoremap > >gv
+
+" Search result navigation
+nnoremap <expr> n 'Nn'[v:searchforward].'zv'
+xnoremap <expr> n 'Nn'[v:searchforward]
+onoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward].'zv'
+xnoremap <expr> N 'nN'[v:searchforward]
+onoremap <expr> N 'nN'[v:searchforward]
+
+" Tab manipulation
+nnoremap <silent> <leader><tab>d :tabclose<CR>
+nnoremap <silent> <leader><tab>D :tabonly<CR>
+nnoremap <silent> <leader><tab>c :tabnew<CR>
+nnoremap <silent> ]<tab> :tabnext<CR>
+nnoremap <silent> [<tab> :tabprevious<CR>
+
+" Toggle options
+nnoremap <silent> <leader>tww :set wrap!<CR>
+nnoremap <silent> <leader>tbg :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>

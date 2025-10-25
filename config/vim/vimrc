@@ -2,6 +2,7 @@ let g:mapleader=" "
 
 source $XDG_CONFIG_HOME/vim/vimrc.options
 source $XDG_CONFIG_HOME/vim/vimrc.autocmds
+source $XDG_CONFIG_HOME/vim/vimrc.keymaps
 
 syntax on
 
