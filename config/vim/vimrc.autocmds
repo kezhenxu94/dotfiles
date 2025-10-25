@@ -16,6 +16,11 @@ augroup kezhenxu94_resize_splits
   autocmd VimResized * tabdo wincmd = | execute 'tabnext ' . tabpagenr()
 augroup END
 
+augroup highlight_yank
+  autocmd!
+  autocmd TextYankPost * silent! lua vim.highlight.on_yank({ higroup="IncSearch", timeout=200 })
+augroup END
+
 " Auto create directory when saving a file
 augroup kezhenxu94_auto_create_dir
   autocmd!
