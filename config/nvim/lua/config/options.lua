@@ -33,13 +33,3 @@ vim.filetype.add({
 
 vim.o.statuscolumn = "%l%s"
 vim.o.signcolumn = "yes:1"
-vim.o.scrolloff = 3
-
-vim.o.foldlevel = 99
-vim.o.foldmethod = "indent"
-vim.o.foldtext = ""
-vim.o.exrc = true
-
-vim.o.autoindent = true
-vim.o.smartindent = true
-vim.o.cindent = true

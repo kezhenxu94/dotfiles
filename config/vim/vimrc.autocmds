@@ -1,0 +1,34 @@
+" Close certain filetypes with 'q'
+augroup kezhenxu94_close_with_q
+  autocmd!
+  autocmd FileType qf,git,help,netrw setlocal nobuflisted | nnoremap <buffer> <silent> q :bdelete!<CR>
+augroup END
+
+" Check if we need to reload the file when it changed
+augroup kezhenxu94_checktime
+  autocmd!
+  autocmd FocusGained * if &buftype != 'nofile' | checktime | endif
+augroup END
+
+" Resize splits when the window is resized
+augroup kezhenxu94_resize_splits
+  autocmd!
+  autocmd VimResized * tabdo wincmd = | execute 'tabnext ' . tabpagenr()
+augroup END
+
+" Auto create directory when saving a file
+augroup kezhenxu94_auto_create_dir
+  autocmd!
+  autocmd BufWritePre * call s:AutoCreateDir()
+augroup END
+
+function! s:AutoCreateDir()
+  " Skip URLs (e.g., http://, ftp://)
+  if expand('<afile>') =~# '^\w\w\+:\/\/'
+    return
+  endif
+  let l:dir = fnamemodify(expand('<afile>'), ':p:h')
+  if !isdirectory(l:dir)
+    call mkdir(l:dir, 'p')
+  endif
+endfunction
