@@ -113,7 +113,7 @@ vim.keymap.set({ "n", "x", "v" }, "<leader>sw", Snacks.picker.grep_word, { desc 
 vim.keymap.set("n", "<leader>sc", Snacks.picker.commands, { desc = "Search Commands" })
 vim.keymap.set("n", "<leader>ss", Snacks.picker.lsp_symbols, { desc = "Search Symbols" })
 vim.keymap.set("n", "<leader>sS", Snacks.picker.lsp_workspace_symbols, { desc = "Search Workspace Symbols" })
-vim.keymap.set("n", "<leader>e", Snacks.picker.explorer , { desc = "Explorer Snacks (root)" })
+vim.keymap.set("n", "<leader>1", Snacks.picker.explorer , { desc = "Explorer Snacks (root)" })
 
 vim.keymap.set("n", "[r", function() Snacks.words.jump(-vim.v.count1) end, { desc = "Jum to Previous reference", remap = true })
 vim.keymap.set("n", "]r", function() Snacks.words.jump(vim.v.count1) end, { desc = "Jum to Next reference", remap = true })

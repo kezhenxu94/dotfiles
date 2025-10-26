@@ -82,4 +82,4 @@ function! s:ToggleNetrw()
   execute 'Lexplore ' . fnameescape(fnamemodify(expand('%:p'), ':h'))
 endfunction
 
-nnoremap <silent> <leader>e :call <SID>ToggleNetrw()<CR>
+nnoremap <silent> <leader>1 :call <SID>ToggleNetrw()<CR>

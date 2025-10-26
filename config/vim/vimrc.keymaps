@@ -33,9 +33,6 @@ nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 
-" Toggle wrap
-nnoremap <silent> <leader>uw :set wrap!<CR>
-
 " Visual mode indentation
 vnoremap < <gv
 vnoremap > >gv

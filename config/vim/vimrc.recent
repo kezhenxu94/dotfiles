@@ -1,0 +1,21 @@
+function! RecentFiles()
+  let files = v:oldfiles[0:19]
+  if empty(files)
+    echo "No recent files"
+    return
+  endif
+
+  let choices = ['Select a recent file:']
+  let i = 1
+  for f in files
+    call add(choices, printf('%2d. %s', i, f))
+    let i += 1
+  endfor
+
+  let choice = inputlist(choices)
+  if choice >= 1 && choice <= len(files)
+    execute 'edit' fnameescape(files[choice - 1])
+  endif
+endfunction
+
+nnoremap <leader>e :call RecentFiles()<CR>
