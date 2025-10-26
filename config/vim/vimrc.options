@@ -78,7 +78,7 @@ set wildignore+=*.o,*.obj,*.pyc,*.class,*.jpg,*.png,*.gif,*.zip,*.tar,*.gz,node_
 
 " Search
 if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case\ --hidden
+  set grepprg=rg\ --vimgrep\ --smart-case\ --no-heading\ --hidden
 else
   set grepprg=grep\ -InDskip\ --exclude-dir=.git
 endif
