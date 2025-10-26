@@ -65,6 +65,12 @@ set autoindent
 set smartindent
 set cindent
 
+set path=.,**
+set wildmenu
+set wildmode=longest:full,full
+set wildignorecase
+set wildignore+=*.o,*.obj,*.pyc,*.class,*.jpg,*.png,*.gif,*.zip,*.tar,*.gz,node_modules/**,dist/**,build/**
+
 " Search
 if executable('rg')
   set grepprg=rg\ --vimgrep\ --smart-case\ --hidden

@@ -48,13 +48,6 @@ nnoremap <expr> N 'nN'[v:searchforward].'zv'
 xnoremap <expr> N 'nN'[v:searchforward]
 onoremap <expr> N 'nN'[v:searchforward]
 
-" Tab manipulation
-nnoremap <silent> <leader><tab>d :tabclose<CR>
-nnoremap <silent> <leader><tab>D :tabonly<CR>
-nnoremap <silent> <leader><tab>c :tabnew<CR>
-nnoremap <silent> ]<tab> :tabnext<CR>
-nnoremap <silent> [<tab> :tabprevious<CR>
-
 " Toggle options
 nnoremap <silent> <leader>tww :set wrap!<CR>
 nnoremap <silent> <leader>tbg :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>

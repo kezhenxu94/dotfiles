@@ -1,0 +1,56 @@
+highlight! link TabLineSel PmenuSel
+
+function! TabLine()
+  let l:tabline = ''
+
+  let l:current = tabpagenr()
+  let l:total = tabpagenr('$')
+
+  for l:index in range(1, l:total)
+    if l:index == l:current
+      let l:tabline .= '%#TabLineSel#'
+    else
+      let l:tabline .= '%#TabLineNormal#'
+    endif
+
+    let l:win_num = tabpagewinnr(l:index)
+    let l:buflist = tabpagebuflist(l:index)
+    let l:bufnr = l:buflist[l:win_num - 1]
+    let l:bufname = bufname(l:bufnr)
+    let l:filetype = getbufvar(l:bufnr, '&filetype')
+    let l:filename = fnamemodify(l:bufname, ':t')
+
+    if empty(l:filename)
+      if l:filetype ==# 'snacks_picker_list'
+        let l:filename = 'Snacks'
+      elseif l:filetype ==# 'checkhealth'
+        let l:filename = 'Health'
+      else
+        let l:filename = '[No Name]'
+      endif
+    endif
+
+    if l:index == l:current
+      let l:tabline .= '▎' . l:index . ': ' . l:filename . ' '
+    else
+      let l:tabline .= ' ' . l:index . ': ' . l:filename . ' '
+    endif
+  endfor
+
+  let l:tabline .= '%#TabLineFill#%T'
+
+  return l:tabline
+endfunction
+
+set tabline=%!TabLine()
+
+augroup TablineHighlights
+  autocmd!
+  autocmd ColorScheme * highlight! link TabLineSel PmenuSel
+augroup END
+
+nnoremap <silent> <leader><tab>d :tabclose<CR>
+nnoremap <silent> <leader><tab>D :tabonly<CR>
+nnoremap <silent> <leader><tab>c :tabnew<CR>
+nnoremap <silent> ]<tab> :<C-u>execute 'tabnext ' . v:count1<CR>
+nnoremap <silent> [<tab> :<C-u>execute 'tabprevious ' . v:count1<CR>
