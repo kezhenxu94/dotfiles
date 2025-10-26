@@ -6,6 +6,7 @@ source $XDG_CONFIG_HOME/vim/vimrc.keymaps
 source $XDG_CONFIG_HOME/vim/vimrc.tabline
 source $XDG_CONFIG_HOME/vim/vimrc.session
 source $XDG_CONFIG_HOME/vim/vimrc.tmux
+source $XDG_CONFIG_HOME/vim/vimrc.quickfix
 
 if !has("nvim")
   source $XDG_CONFIG_HOME/vim/vimrc.netrw
