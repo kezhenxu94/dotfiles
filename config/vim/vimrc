@@ -52,8 +52,8 @@ nnoremap <esc> :noh<CR>
 packadd! cfilter
 
 " Search
-nnoremap <leader>/ :silent! grep!
-nnoremap <leader>? :silent! grepadd!
+nnoremap <leader>/ :silent! grep! 
+nnoremap <leader>? :silent! grepadd! 
 augroup AutoOpenQfAfterGrepAdd
   autocmd!
   autocmd QuickFixCmdPost grep,grepadd copen

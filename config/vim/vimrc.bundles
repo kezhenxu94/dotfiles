@@ -11,8 +11,6 @@ if !has('nvim')
     source ~/.vimrc.bundles.local
   endif
 
-  set termguicolors
-
   let theme = trim(system("dark-notify -e || echo \"$THEME\" | grep light"))
   if theme != "dark"
     colorscheme catppuccin_latte

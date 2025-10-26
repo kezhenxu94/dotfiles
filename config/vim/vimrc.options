@@ -4,6 +4,8 @@ set encoding=utf-8
 set hls
 set timeoutlen=300
 set noshowmode
+set termguicolors
+set encoding=UTF-8
 
 set clipboard=unnamed
 
