@@ -65,6 +65,9 @@ set autoindent
 set smartindent
 set cindent
 
+filetype plugin indent on
+syntax on
+
 set path=.,**
 set wildmenu
 set wildmode=longest:full,full

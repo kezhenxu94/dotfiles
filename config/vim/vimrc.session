@@ -3,7 +3,7 @@ let s:home = expand("~")
 if has('nvim')
   let s:session_file = fnameescape(stdpath('state') . '/session.vim')
 else
-  let s:state_dir = $XDG_STATE_HOME != '' ? $XDG_STATE_HOME . '/vim' : s:home . '/.local/state/vim'
+  let s:state_dir = $XDG_STATE_HOME != '' ? $XDG_STATE_HOME . '/vim' : '.vim/state/vim'
   let s:session_file = fnameescape(s:state_dir . '/session.vim')
 endif
 

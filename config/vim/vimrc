@@ -5,14 +5,12 @@ source $XDG_CONFIG_HOME/vim/vimrc.autocmds
 source $XDG_CONFIG_HOME/vim/vimrc.keymaps
 source $XDG_CONFIG_HOME/vim/vimrc.tabline
 source $XDG_CONFIG_HOME/vim/vimrc.session
+source $XDG_CONFIG_HOME/vim/vimrc.tmux
 
-syntax on
-
-if !has('nvim') && filereadable(expand("$XDG_CONFIG_HOME/vim/vimrc.bundles"))
-  source $XDG_CONFIG_HOME/vim/vimrc.bundles
+if !has("nvim")
+  source $XDG_CONFIG_HOME/vim/vimrc.netrw
+  source $XDG_CONFIG_HOME/vim/vimrc.colorscheme
 endif
-
-filetype plugin indent on
 
 if has('persistent_undo')
   let target_path=has("nvim") ? fnameescape(stdpath('state') . '/undo') : expand('~/.vim/undo')
@@ -27,28 +25,17 @@ endif
 
 augroup vimrcEx
   autocmd!
-
-  " When editing a file, always jump to the last known cursor position.
-  " Don't do it for commit messages, when the position is invalid, or when
-  " inside an event handler (happens when dropping a file on gvim).
   autocmd BufReadPost *
     \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
     \   exe "normal g`\"" |
     \ endif
 augroup END
 
-" Quicker window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
 " Local config
 if filereadable($HOME . "/.vimrc.local")
   source ~/.vimrc.local
 endif
 
-" Press <esc> to clear search highlighting
 nnoremap <esc> :noh<CR>
 
 packadd! cfilter
