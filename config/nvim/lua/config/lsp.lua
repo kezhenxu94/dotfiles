@@ -2,8 +2,6 @@ vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
 }, { confirm = false, load = true })
 
-local autocmds = require("utils.autocmds")
-
 local lsps = vim
   .iter(require("config.languages"))
   :map(function(lang)
@@ -17,13 +15,13 @@ local lsps = vim
 vim.lsp.enable(lsps)
 
 vim.api.nvim_create_autocmd("LspAttach", {
-  group = autocmds.augroup("LspAttach"),
+  group = vim.api.nvim_create_augroup("kezhenxu94_lsp_attach", {}),
   callback = function(event)
     local client = vim.lsp.get_client_by_id(event.data.client_id)
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-      local highlight_augroup = autocmds.augroup("kickstart-lsp-highlight", { clear = false })
+      local highlight_augroup = vim.api.nvim_create_augroup("kezhenxu94_lsp_highlight", { clear = false })
       vim.api.nvim_create_autocmd("LspDetach", {
-        group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+        group = vim.api.nvim_create_augroup("kezhenxu94_lsp_detach", { clear = true }),
         callback = function(event2)
           vim.lsp.buf.clear_references()
           vim.api.nvim_clear_autocmds({ group = highlight_augroup, buffer = event2.buf })
