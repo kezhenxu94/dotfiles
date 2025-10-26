@@ -80,3 +80,6 @@ if executable('rg')
 else
   set grepprg=grep\ -InDskip\ --exclude-dir=.git
 endif
+
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
