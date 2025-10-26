@@ -4,6 +4,7 @@ source $XDG_CONFIG_HOME/vim/vimrc.options
 source $XDG_CONFIG_HOME/vim/vimrc.autocmds
 source $XDG_CONFIG_HOME/vim/vimrc.keymaps
 source $XDG_CONFIG_HOME/vim/vimrc.tabline
+source $XDG_CONFIG_HOME/vim/vimrc.session
 
 syntax on
 
@@ -14,7 +15,7 @@ endif
 filetype plugin indent on
 
 if has('persistent_undo')
-  let target_path=expand('~/.vim/undo')
+  let target_path=has("nvim") ? fnameescape(stdpath('state') . '/undo') : expand('~/.vim/undo')
   if !isdirectory(target_path)
     call mkdir(target_path, "p", 0700)
   endif

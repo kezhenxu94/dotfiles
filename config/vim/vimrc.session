@@ -1,0 +1,61 @@
+let s:home = expand("~")
+
+if has('nvim')
+  let s:session_file = fnameescape(stdpath('state') . '/session.vim')
+else
+  let s:state_dir = $XDG_STATE_HOME != '' ? $XDG_STATE_HOME . '/vim' : s:home . '/.local/state/vim'
+  let s:session_file = fnameescape(s:state_dir . '/session.vim')
+endif
+
+let s:disabled_dirs = [s:home, s:home . '/Downloads', '/private/tmp']
+
+augroup persistence
+  autocmd!
+  autocmd StdinReadPre * let g:started_with_stdin = 1
+  autocmd VimLeavePre * call s:SessionSave()
+  autocmd VimEnter * nested call s:SessionLoad()
+augroup END
+
+function! s:SessionSave() abort
+  if exists('g:skip_session') && g:skip_session
+    return
+  endif
+
+  for l:buf in getbufinfo()
+    if l:buf.listed == 0 && bufexists(l:buf.bufnr)
+      execute 'bwipeout! ' . l:buf.bufnr
+    endif
+  endfor
+
+  let l:valid_bufs = filter(getbufinfo(), {_, buf -> getbufvar(buf.bufnr, '&buftype') == '' && bufname(buf.bufnr) != ''})
+
+  if len(l:valid_bufs) < 1
+    return
+  endif
+
+  let l:session_dir = fnamemodify(s:session_file, ':h')
+  if !isdirectory(l:session_dir)
+    call mkdir(l:session_dir, 'p')
+  endif
+
+  execute 'mks! ' . s:session_file
+endfunction
+
+function! s:SessionLoad() abort
+  let l:cwd = getcwd()
+
+  for l:path in s:disabled_dirs
+    if l:path == l:cwd
+      let g:skip_session = 1
+      return
+    endif
+  endfor
+
+  if argc() == 0 && (!exists('g:started_with_stdin') || !g:started_with_stdin)
+    if filereadable(s:session_file)
+      execute 'source ' . s:session_file
+    endif
+  else
+    let g:skip_session = 1
+  endif
+endfunction
