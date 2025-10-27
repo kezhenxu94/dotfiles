@@ -28,3 +28,6 @@
 [submodule "config/vim/pack/vendor/opt/catppuccin"]
 	path = config/vim/pack/vendor/opt/catppuccin
 	url = https://github.com/catppuccin/vim.git
+[submodule "config/vim/pack/vendor/start/vim-surround"]
+	path = config/vim/pack/vendor/start/vim-surround
+	url = https://github.com/tpope/vim-surround
