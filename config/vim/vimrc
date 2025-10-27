@@ -46,9 +46,9 @@ packadd! cfilter
 " Search
 nnoremap <leader>/ :silent! grep! 
 nnoremap <leader>? :silent! grepadd! 
-nnoremap <leader>sw :execute 'silent! grep! ' . shellescape(expand('<cword>'))<CR>
-xnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape(@z)<CR>
-vnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape(@z)<CR>
+nnoremap <leader>sw :execute 'silent! grep! ' . shellescape(expand('\\b<cword>\\b'))<CR>
+xnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape('\b' . @z . '\b')<CR>
+vnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape('\b' . @z . '\b')<CR>
 augroup AutoOpenQfAfterGrepAdd
   autocmd!
   autocmd QuickFixCmdPost grep,grepadd copen
