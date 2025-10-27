@@ -13,7 +13,7 @@ augroup END
 " Resize splits when the window is resized
 augroup kezhenxu94_resize_splits
   autocmd!
-  autocmd VimResized * tabdo wincmd = | execute 'tabnext ' . tabpagenr()
+  autocmd VimResized * let curtab = tabpagenr() | tabdo wincmd = | execute 'tabnext ' . curtab
 augroup END
 
 " Auto create directory when saving a file
