@@ -52,5 +52,5 @@ augroup END
 nnoremap <silent> <leader><tab>d :tabclose<CR>
 nnoremap <silent> <leader><tab>D :tabonly<CR>
 nnoremap <silent> <leader><tab>c :tabnew<CR>
-nnoremap <silent> ]<tab> :<C-u>execute 'tabnext ' . v:count1<CR>
-nnoremap <silent> [<tab> :<C-u>execute 'tabprevious ' . v:count1<CR>
+nnoremap <silent> ]<tab> :tabnext<CR>
+nnoremap <silent> [<tab> :tabprevious<CR>
