@@ -51,9 +51,6 @@ vim.diagnostic.config({
   float = {
     border = "rounded",
   },
-  jump = {
-    _highest = true,
-  },
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = "",
