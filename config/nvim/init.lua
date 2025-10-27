@@ -17,6 +17,9 @@ for _, name in ipairs({ "state" }) do
   vim.env[("XDG_%s_HOME"):format(name:upper())] = folder
 end
 
+vim.opt.packpath:prepend(vim.fn.expand("$XDG_CONFIG_HOME/vim"))
+vim.opt.runtimepath:prepend(vim.fn.expand("$XDG_CONFIG_HOME/vim"))
+
 require("config.options")
 require("config.keymaps")
 require("config.autocmds")

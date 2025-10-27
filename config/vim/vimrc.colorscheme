@@ -10,9 +10,12 @@ if filereadable(expand("~/.vimrc.bundles.local"))
   source ~/.vimrc.bundles.local
 endif
 
-let theme = trim(system("dark-notify -e || echo \"$THEME\" | grep light"))
-if theme != "dark"
-  colorscheme catppuccin_latte
-else
-  colorscheme catppuccin_mocha
+if !has("nvim")
+  packadd catppuccin
+  let theme = trim(system("dark-notify -e || echo \"$THEME\" | grep light"))
+  if theme != "dark"
+    colorscheme catppuccin_latte
+  else
+    colorscheme catppuccin_mocha
+  endif
 endif
