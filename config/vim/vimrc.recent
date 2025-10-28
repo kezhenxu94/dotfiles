@@ -18,4 +18,4 @@ function! RecentFiles()
   endif
 endfunction
 
-nnoremap <leader>e :call RecentFiles()<CR>
+nnoremap <leader>re :call RecentFiles()<CR>

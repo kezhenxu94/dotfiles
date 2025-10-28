@@ -24,6 +24,6 @@ M.recent_files = function()
   end)
 end
 
-vim.keymap.set("n", "<leader>e", M.recent_files, { desc = "Recent files" })
+vim.keymap.set("n", "<leader>re", M.recent_files, { desc = "Recent files" })
 
 return M
