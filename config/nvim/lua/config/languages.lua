@@ -10,6 +10,7 @@ return {
   { treesitter = { "rust" }, mason = { "rust-analyzer" }, lsp = { "rust_analyzer" }, },
   { treesitter = { "vue" }, mason = { "vue-language-server" }, lsp = { "vue_ls" }, },
   { treesitter = { "python" }, mason = { "pyright", "black" }, lsp = { "pyright" }, },
+  { treesitter = { "terraform" }, mason = { "terraform-ls" }, lsp = { "terraformls" }, },
   { mason = { "copilot-language-server" }, lsp = { "copilot" }, },
   { mason = { "tailwindcss-language-server" }, lsp = { "tailwindcss" }, },
   { mason = { "gh" }, },
