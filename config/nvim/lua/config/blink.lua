@@ -54,6 +54,11 @@ require("blink-cmp").setup({
       ["<Right>"] = false,
     },
     completion = {
+      list = {
+        selection = {
+          preselect = false,
+        },
+      },
       menu = {
         auto_show = true,
       },
