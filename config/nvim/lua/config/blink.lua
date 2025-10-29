@@ -33,6 +33,11 @@ require("blink-cmp").setup({
     menu = {
       draw = {
         treesitter = { "lsp" },
+        components = {
+          label = {
+            width = { fill = true, max = 120 },
+          },
+        },
       },
     },
     documentation = {
@@ -48,6 +53,10 @@ require("blink-cmp").setup({
       ["<Left>"] = false,
       ["<Right>"] = false,
     },
-    completion = { menu = { auto_show = true } },
+    completion = {
+      menu = {
+        auto_show = true,
+      },
+    },
   },
 })
