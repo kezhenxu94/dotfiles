@@ -31,7 +31,7 @@ if exists('&findfunc')
        call filter(s:filescache, '!isdirectory(v:val)')
        call map(s:filescache, "fnamemodify(v:val, ':.')")
       else
-        let s:filescache =  systemlist(g:findcmd .. ' 2> /dev/null')
+        let s:filescache = systemlist(g:findcmd .. ' 2> /dev/null')
       endif
     endif
     return empty(a:arg) ? s:filescache : matchfuzzy(s:filescache, a:arg)
