@@ -102,7 +102,6 @@ require("snacks").setup({
 
 
 -- stylua: ignore start
-vim.keymap.set("n", "<leader><leader>", function() Snacks.picker.files({ hidden = true }) end, { desc = "Find Files" })
 vim.keymap.set("n", "<leader>sg", function() Snacks.picker.grep({ hidden = true }) end, { desc = "Grep" })
 vim.keymap.set("n", "<leader>gs", Snacks.picker.git_status, { desc = "Git Status" })
 vim.keymap.set("n", "<leader>gl", Snacks.picker.git_log, { desc = "Git Log" })

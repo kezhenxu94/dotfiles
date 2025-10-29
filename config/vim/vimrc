@@ -9,6 +9,7 @@ source $XDG_CONFIG_HOME/vim/vimrc.tmux
 source $XDG_CONFIG_HOME/vim/vimrc.quickfix
 source $XDG_CONFIG_HOME/vim/vimrc.arglist
 source $XDG_CONFIG_HOME/vim/vimrc.recent
+source $XDG_CONFIG_HOME/vim/vimrc.findgrep
 
 if !has("nvim")
   source $XDG_CONFIG_HOME/vim/vimrc.netrw
@@ -42,14 +43,3 @@ endif
 nnoremap <esc> :noh<CR>
 
 packadd! cfilter
-
-" Search
-nnoremap <leader>/ :silent! grep! 
-nnoremap <leader>? :silent! grepadd! 
-nnoremap <leader>sw :execute 'silent! grep! ' . shellescape(expand('\\b<cword>\\b'))<CR>
-xnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape('\b' . @z . '\b')<CR>
-vnoremap <leader>sw "zy:execute 'silent! grep! ' . shellescape('\b' . @z . '\b')<CR>
-augroup AutoOpenQfAfterGrepAdd
-  autocmd!
-  autocmd QuickFixCmdPost grep,grepadd copen
-augroup END

@@ -70,18 +70,5 @@ set cindent
 filetype plugin indent on
 syntax on
 
-set path=.,**
-set wildmenu
-set wildmode=longest:full,full
-set wildignorecase
-set wildignore+=*.o,*.obj,*.pyc,*.class,*.jpg,*.png,*.gif,*.zip,*.tar,*.gz,node_modules/**,dist/**,build/**
-
-" Search
-if executable('rg')
-  set grepprg=rg\ --vimgrep\ --smart-case\ --no-heading\ --hidden
-else
-  set grepprg=grep\ -InDskip\ --exclude-dir=.git
-endif
-
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"

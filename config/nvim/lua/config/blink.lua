@@ -48,5 +48,6 @@ require("blink-cmp").setup({
       ["<Left>"] = false,
       ["<Right>"] = false,
     },
+    completion = { menu = { auto_show = true } },
   },
 })
