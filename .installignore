@@ -8,4 +8,5 @@ vim/undo/*
 .gitignore
 .gitmodules
 .installignore
-install.sh
+setup.sh
+bootstrap.sh
