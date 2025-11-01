@@ -129,7 +129,7 @@ local function open_in_window()
 
   local cur_win = vim.api.nvim_get_current_win()
   local wins = {}
-  for _, w in ipairs(vim.api.nvim_list_wins()) do
+  for _, w in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
     if w ~= cur_win and vim.api.nvim_win_get_config(w).relative == "" then
       table.insert(wins, w)
     end
