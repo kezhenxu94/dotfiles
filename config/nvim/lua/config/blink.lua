@@ -48,20 +48,5 @@ require("blink-cmp").setup({
       enabled = true,
     },
   },
-  cmdline = {
-    keymap = {
-      ["<Left>"] = false,
-      ["<Right>"] = false,
-    },
-    completion = {
-      list = {
-        selection = {
-          preselect = false,
-        },
-      },
-      menu = {
-        auto_show = true,
-      },
-    },
-  },
+  cmdline = { enabled = false },
 })
