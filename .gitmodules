@@ -31,3 +31,6 @@
 [submodule "config/vim/pack/vendor/start/vim-surround"]
 	path = config/vim/pack/vendor/start/vim-surround
 	url = https://github.com/tpope/vim-surround
+[submodule "config/vim/pack/vendor/start/vim-rhubarb"]
+	path = config/vim/pack/vendor/start/vim-rhubarb
+	url = https://github.com/tpope/vim-rhubarb
