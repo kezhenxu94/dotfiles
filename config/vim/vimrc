@@ -41,6 +41,6 @@ if filereadable($HOME . "/.vimrc.local")
   source ~/.vimrc.local
 endif
 
-nnoremap <esc> :noh<CR>
+nnoremap <silent> <esc> :noh<CR>
 
 packadd! cfilter
