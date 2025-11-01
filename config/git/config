@@ -46,6 +46,7 @@
 
 [advice]
   skippedCherryPicks = false
+  statusHints = false
 
 [filter "lfs"]
   smudge = git-lfs smudge -- %f

@@ -82,4 +82,6 @@ function! s:ToggleNetrw()
   execute 'Lexplore ' . fnameescape(fnamemodify(expand('%:p'), ':h'))
 endfunction
 
-nnoremap <silent> <leader>e :call <SID>ToggleNetrw()<CR>
+if !has("nvim")
+  nnoremap <silent> <leader>e :call <SID>ToggleNetrw()<CR>
+endif
