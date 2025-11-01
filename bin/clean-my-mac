@@ -1,0 +1,352 @@
+#!/usr/bin/env bash
+#
+# clean-my-mac - Clean cache files, build artifacts, and temporary files on macOS
+# Similar to CleanMyMac functionality but customized for development environments
+#
+# Usage:
+#   clean-my-mac              Clean unused build files (not modified in 7 days) and caches
+#   clean-my-mac --aggressive Clean ALL build files regardless of age
+#   clean-my-mac --dry-run    Preview what would be deleted without deleting
+#
+
+set -e -o pipefail
+
+# Configuration
+AGGRESSIVE_MODE=false
+DRY_RUN=false
+AGE_DAYS=7
+TOTAL_SIZE=0
+
+# Parse arguments
+for arg in "$@"; do
+  case $arg in
+  --aggressive)
+    AGGRESSIVE_MODE=true
+    shift
+    ;;
+  --dry-run)
+    DRY_RUN=true
+    shift
+    ;;
+  --help | -h)
+    echo "Usage: clean-my-mac [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  --aggressive    Clean ALL build files regardless of age"
+    echo "  --dry-run       Preview what would be deleted without deleting"
+    echo "  --help, -h      Show this help message"
+    echo ""
+    echo "Default behavior: Clean build files not modified in 7 days and safe caches"
+    exit 0
+    ;;
+  *)
+    echo "Error: Unknown option: $arg" >&2
+    echo "Use --help for usage information" >&2
+    exit 1
+    ;;
+  esac
+done
+
+# Verify we're on macOS
+if [[ "$(uname)" != "Darwin" ]]; then
+  echo "Error: This script is designed for macOS only" >&2
+  exit 1
+fi
+
+# Verify fd is installed
+if ! command -v fd &>/dev/null; then
+  echo "Error: 'fd' is required but not installed" >&2
+  echo "Install with: brew install fd" >&2
+  exit 1
+fi
+
+# Ask for sudo password upfront if not in dry-run mode
+# This ensures we can clean system caches that require elevated permissions
+if [[ "$DRY_RUN" == false ]]; then
+  echo "Some files may require administrator privileges to clean."
+  sudo -v
+  # Keep sudo alive in background
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2>/dev/null &
+fi
+
+# Helper function to get human-readable size
+get_size() {
+  local path="$1"
+  if [[ -e "$path" ]]; then
+    du -sh "$path" 2>/dev/null | awk '{print $1}' || echo "0B"
+  else
+    echo "0B"
+  fi
+}
+
+# Helper function to add to total size (in KB)
+add_to_total() {
+  local path="$1"
+  if [[ -e "$path" ]]; then
+    local size
+    size=$(du -sk "$path" 2>/dev/null | awk '{print $1}' || echo "0")
+    TOTAL_SIZE=$((TOTAL_SIZE + size))
+  fi
+}
+
+# Helper function to remove directory or files
+clean_path() {
+  local path="$1"
+  local description="$2"
+
+  if [[ -e "$path" ]]; then
+    local size
+    size=$(get_size "$path")
+    add_to_total "$path"
+
+    printf "  %-50s %8s  %s\n" "$description" "$size" "$path"
+
+    if [[ "$DRY_RUN" == false ]]; then
+      # Try regular rm first, use sudo if permission denied
+      if ! rm -rf "$path" 2>/dev/null; then
+        sudo rm -rf "$path" 2>/dev/null || true
+      fi
+    fi
+  fi
+}
+
+# Helper function to find and clean files by pattern using fd (gitignore-aware)
+find_and_clean() {
+  local base_path="$1"
+  local name_pattern="$2"
+  local description="$3"
+  local age_days="$4"
+
+  if [[ ! -d "$base_path" ]]; then
+    return
+  fi
+
+  # Use fd with gitignore support - finds directories matching pattern (respects .gitignore)
+  # --no-ignore-vcs: Don't respect .gitignore (we want to find gitignored build artifacts)
+  # --changed-before: Only show files older than N days (based on modification time)
+  local fd_cmd="fd --type d --hidden --no-ignore-vcs --max-depth 5 '^${name_pattern}$' \"$base_path\" 2>/dev/null"
+
+  if [[ -n "$age_days" && "$AGGRESSIVE_MODE" == false ]]; then
+    fd_cmd="fd --type d --hidden --no-ignore-vcs --changed-before ${age_days}d --max-depth 5 '^${name_pattern}$' \"$base_path\" 2>/dev/null"
+  fi
+
+  # Use process substitution to avoid subshell and preserve TOTAL_SIZE updates
+  while IFS= read -r path; do
+    if [[ -n "$path" && -e "$path" ]]; then
+      clean_path "$path" "$description"
+    fi
+  done < <(eval "$fd_cmd")
+}
+
+if [[ "$DRY_RUN" == true ]]; then
+  echo "==> Running in DRY-RUN mode"
+fi
+
+if [[ "$AGGRESSIVE_MODE" == true ]]; then
+  echo "==> AGGRESSIVE MODE: Will clean ALL build files"
+fi
+
+# Confirmation
+if [[ "$DRY_RUN" == false ]]; then
+  read -p "Clean cache and build artifacts? (y/N): " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Cancelled."
+    exit 0
+  fi
+fi
+
+echo ""
+echo "==> Cleaning development build artifacts..."
+
+# Node.js artifacts
+find_and_clean "$HOME" "node_modules" "Node.js modules" "$AGE_DAYS"
+find_and_clean "$HOME" ".next" "Next.js build cache" "$AGE_DAYS"
+find_and_clean "$HOME" "dist" "Distribution folder" "$AGE_DAYS"
+find_and_clean "$HOME" "build" "Build folder" "$AGE_DAYS"
+find_and_clean "$HOME" ".parcel-cache" "Parcel cache" "$AGE_DAYS"
+
+# Python artifacts
+find_and_clean "$HOME" "__pycache__" "Python cache" "$AGE_DAYS"
+find_and_clean "$HOME" ".pytest_cache" "Pytest cache" "$AGE_DAYS"
+find_and_clean "$HOME" ".tox" "Tox environments" "$AGE_DAYS"
+find_and_clean "$HOME" ".venv" "Python virtual environments" "$AGE_DAYS"
+find_and_clean "$HOME" "venv" "Python virtual environments" "$AGE_DAYS"
+
+# Rust artifacts
+find_and_clean "$HOME" "target" "Rust build artifacts" "$AGE_DAYS"
+
+# Java/Gradle artifacts
+find_and_clean "$HOME" ".gradle" "Gradle cache" "$AGE_DAYS"
+
+echo ""
+echo "==> Cleaning package manager caches..."
+
+# Cargo cache (Rust)
+clean_path "$HOME/.cargo/registry/cache" "Cargo registry cache"
+
+# Maven cache (only clean repository cache, not the whole .m2)
+if [[ -d "$HOME/m2/repository" ]]; then
+  find "$HOME/m2/repository" -type f -name "*.lastUpdated" -delete 2>/dev/null || true
+fi
+
+# npm cache
+if command -v npm &>/dev/null; then
+  if [[ "$DRY_RUN" == false ]]; then
+    npm cache clean --force 2>/dev/null || true
+  fi
+fi
+
+# pip cache
+clean_path "$HOME/Library/Caches/pip" "pip cache"
+
+echo ""
+echo "==> Cleaning Docker images and containers..."
+
+# Docker cleanup (if Docker is installed and running)
+if command -v docker &>/dev/null && docker info &>/dev/null 2>&1; then
+  # Clean up dangling images (untagged)
+  DANGLING_IMAGES=$(docker images -f "dangling=true" -q 2>/dev/null || true)
+  if [[ -n "$DANGLING_IMAGES" ]]; then
+    DANGLING_COUNT=$(echo "$DANGLING_IMAGES" | wc -l | tr -d ' ')
+    if [[ "$DRY_RUN" == true ]]; then
+      printf "  %-50s %8s\n" "Docker dangling images ($DANGLING_COUNT images)" "N/A"
+    else
+      # shellcheck disable=SC2086
+      docker rmi $DANGLING_IMAGES &>/dev/null || true
+      printf "  %-50s %8s\n" "Docker dangling images" "$DANGLING_COUNT"
+    fi
+  fi
+
+  # Clean up stopped containers
+  STOPPED_CONTAINERS=$(docker ps -a -f "status=exited" -q 2>/dev/null || true)
+  if [[ -n "$STOPPED_CONTAINERS" ]]; then
+    CONTAINER_COUNT=$(echo "$STOPPED_CONTAINERS" | wc -l | tr -d ' ')
+    if [[ "$DRY_RUN" == true ]]; then
+      printf "  %-50s %8s\n" "Docker stopped containers ($CONTAINER_COUNT)" "N/A"
+    else
+      # shellcheck disable=SC2086
+      docker rm $STOPPED_CONTAINERS &>/dev/null || true
+      printf "  %-50s %8s\n" "Docker stopped containers" "$CONTAINER_COUNT"
+    fi
+  fi
+
+  # Clean up unused volumes
+  if [[ "$DRY_RUN" == true ]]; then
+    UNUSED_VOLUMES=$(docker volume ls -f "dangling=true" -q 2>/dev/null || true)
+    if [[ -n "$UNUSED_VOLUMES" ]]; then
+      VOLUME_COUNT=$(echo "$UNUSED_VOLUMES" | wc -l | tr -d ' ')
+      printf "  %-50s %8s\n" "Docker unused volumes ($VOLUME_COUNT)" "N/A"
+    fi
+  else
+    docker volume prune -f &>/dev/null || true
+  fi
+
+  # Clean up build cache
+  if [[ "$DRY_RUN" == true ]]; then
+    printf "  %-50s %8s\n" "Docker build cache" "N/A"
+  else
+    docker builder prune -f &>/dev/null || true
+  fi
+fi
+
+echo ""
+echo "==> Cleaning macOS system caches..."
+
+# Xcode derived data and caches
+clean_path "$HOME/Library/Developer/Xcode/DerivedData" "Xcode DerivedData"
+clean_path "$HOME/Library/Developer/Xcode/Archives" "Xcode Archives"
+clean_path "$HOME/Library/Caches/com.apple.dt.Xcode" "Xcode caches"
+
+# iOS Device Support (old versions)
+if [[ -d "$HOME/Library/Developer/Xcode/iOS DeviceSupport" ]]; then
+  # Keep only the most recent 2 versions
+  find "$HOME/Library/Developer/Xcode/iOS DeviceSupport" -mindepth 1 -maxdepth 1 -type d -mtime +30 2>/dev/null | while read -r path; do
+    clean_path "$path" "Old iOS DeviceSupport"
+  done
+fi
+
+# CocoaPods cache
+clean_path "$HOME/Library/Caches/CocoaPods" "CocoaPods cache"
+
+# User cache directory
+if [[ -d "$HOME/Library/Caches" ]]; then
+  # Clean specific application caches that are safe to remove
+  for cache_dir in \
+    "$HOME/Library/Caches/Google" \
+    "$HOME/Library/Caches/Mozilla" \
+    "$HOME/Library/Caches/com.google.Chrome" \
+    "$HOME/Library/Caches/com.apple.Safari" \
+    "$HOME/Library/Caches/com.microsoft.VSCode" \
+    "$HOME/Library/Caches/JetBrains"; do
+    if [[ -d "$cache_dir" ]]; then
+      clean_path "$cache_dir" "Application cache: $(basename "$cache_dir")"
+    fi
+  done
+fi
+
+# System logs (only old ones)
+if [[ -d "$HOME/Library/Logs" ]]; then
+  find "$HOME/Library/Logs" -type f -name "*.log" -mtime +30 2>/dev/null | while read -r logfile; do
+    if [[ -f "$logfile" ]]; then
+      clean_path "$logfile" "Old log file: $(basename "$logfile")"
+    fi
+  done
+fi
+
+# Trash
+clean_path "$HOME/.Trash" "Trash"
+
+# User cache files
+clean_path "$HOME/.cache" "User cache directory"
+
+# Temporary files
+if [[ -d "/tmp" ]]; then
+  find /tmp -user "$USER" -type f -mtime +7 2>/dev/null | while read -r tmpfile; do
+    if [[ -f "$tmpfile" ]]; then
+      clean_path "$tmpfile" "Temp file: $(basename "$tmpfile")"
+    fi
+  done
+fi
+
+echo ""
+echo "==> Cleaning editor/IDE caches..."
+
+# Neovim swap and shada files
+clean_path "$HOME/.local/state/nvim/swap" "Neovim swap files"
+clean_path "$HOME/.local/share/nvim/swap" "Neovim swap files (legacy)"
+
+# Old vim undo files (keep recent ones)
+if [[ -d "$HOME/.vim/undo" ]]; then
+  find "$HOME/.vim/undo" -type f -mtime +90 2>/dev/null | while read -r undofile; do
+    if [[ -f "$undofile" ]]; then
+      clean_path "$undofile" "Old vim undo file"
+    fi
+  done
+fi
+
+# VS Code cache (if exists)
+clean_path "$HOME/.vscode/extensions/.obsolete" "VS Code obsolete extensions"
+
+echo ""
+# Calculate and display total size
+TOTAL_SIZE_MB=0
+TOTAL_SIZE_GB=0
+TOTAL_SIZE_MB=$(awk "BEGIN {printf \"%.1f\", $TOTAL_SIZE / 1024}")
+TOTAL_SIZE_GB=$(awk "BEGIN {printf \"%.2f\", $TOTAL_SIZE / 1024 / 1024}")
+
+if (($(awk "BEGIN {print ($TOTAL_SIZE_GB >= 1)}"))); then
+  SIZE_STR="${TOTAL_SIZE_GB} GB"
+else
+  SIZE_STR="${TOTAL_SIZE_MB} MB"
+fi
+
+if [[ "$DRY_RUN" == true ]]; then
+  echo "==> Would free: $SIZE_STR"
+else
+  echo "==> Freed: $SIZE_STR"
+fi
