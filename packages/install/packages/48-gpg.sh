@@ -8,6 +8,12 @@ install_gpg() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager gnupg; then
+    return 0
+  fi
+
+  # Fall back to building from source
   echo "Installing gpg ${pkg_version}..."
 
   local src_dir="$USR_HOME/src/gnupg-${pkg_version}"

@@ -8,6 +8,12 @@ install_utf8proc() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager libutf8proc-dev; then
+    return 0
+  fi
+
+  # Fall back to building from source
   echo "Installing utf8proc ${pkg_version}..."
 
   local src_dir="$USR_HOME/src/utf8proc-${pkg_version}"

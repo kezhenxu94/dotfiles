@@ -8,6 +8,12 @@ install_tmux() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager tmux; then
+    return 0
+  fi
+
+  # Fall back to building from source
   install_library "$pkg_name" "$pkg_version" \
     "https://github.com/tmux/tmux/releases/download/${pkg_version}/tmux-${pkg_version}.tar.gz" \
     --enable-utf8proc \

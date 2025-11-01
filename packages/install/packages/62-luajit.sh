@@ -8,6 +8,12 @@ install_luajit() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager luajit; then
+    return 0
+  fi
+
+  # Fall back to building from source
   echo "Installing luajit ${pkg_version}..."
 
   local src_dir="$USR_HOME/src/luajit"

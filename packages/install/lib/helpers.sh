@@ -11,15 +11,36 @@ check_installed() {
 check_library() {
   local lib_pattern="$1"
   # shellcheck disable=SC2086
-  ls "$USR_HOME"/lib/${lib_pattern}* >/dev/null 2>&1 || \
-  ls "$USR_HOME"/lib64/${lib_pattern}* >/dev/null 2>&1
+  ls "$USR_HOME"/lib/${lib_pattern}* >/dev/null 2>&1 ||
+    ls "$USR_HOME"/lib64/${lib_pattern}* >/dev/null 2>&1
 }
 
 # Check if a pkg-config file exists
 check_pkgconfig() {
   local pc_name="$1"
-  ls "$USR_HOME/lib/pkgconfig/${pc_name}.pc" >/dev/null 2>&1 || \
-  ls "$USR_HOME/lib64/pkgconfig/${pc_name}.pc" >/dev/null 2>&1
+  ls "$USR_HOME/lib/pkgconfig/${pc_name}.pc" >/dev/null 2>&1 ||
+    ls "$USR_HOME/lib64/pkgconfig/${pc_name}.pc" >/dev/null 2>&1
+}
+
+# Install package via apt
+# Usage: install_via_apt <package_name> [package_name2...]
+install_via_apt() {
+  if [ "$pkg_manager" != "apt" ] || [ "$has_sudo" != "true" ]; then
+    return 1
+  fi
+
+  echo "Installing via apt: $*"
+  sudo apt-get update -qq && sudo apt-get install -y -qq "$@"
+}
+
+# Try to install via package manager, return 0 if successful
+# Usage: try_package_manager <package_names...>
+try_package_manager() {
+  if [ "$pkg_manager" = "apt" ] && [ "$has_sudo" = "true" ]; then
+    install_via_apt "$@"
+    return $?
+  fi
+  return 1
 }
 
 # Download and extract archive
@@ -40,11 +61,11 @@ download_extract() {
   base_archive="$(basename "$url")"
 
   if [[ "$base_archive" == *.tar.gz ]] || [[ "$base_archive" == *.tgz ]]; then
-    tar -zxf "$archive" "${tar_flags[@]}" -C "$dest_dir" || return 1
+    tar -zxf "$archive" ${tar_flags[@]+"${tar_flags[@]}"} -C "$dest_dir" || return 1
   elif [[ "$base_archive" == *.tar.xz ]] || [[ "$base_archive" == *.txz ]]; then
-    tar -Jxf "$archive" "${tar_flags[@]}" -C "$dest_dir" || return 1
+    tar -Jxf "$archive" ${tar_flags[@]+"${tar_flags[@]}"} -C "$dest_dir" || return 1
   elif [[ "$base_archive" == *.tar.bz2 ]] || [[ "$base_archive" == *.tbz ]]; then
-    tar -jxf "$archive" "${tar_flags[@]}" -C "$dest_dir" || return 1
+    tar -jxf "$archive" ${tar_flags[@]+"${tar_flags[@]}"} -C "$dest_dir" || return 1
   else
     echo "Unsupported archive format: $base_archive" >&2
     return 1
@@ -85,8 +106,8 @@ install_gnu_tool() {
   done
 
   # Run configure with environment variables and flags
-  env "${env_vars[@]}" ./configure --prefix="$USR_HOME" "${config_flags[@]}" && \
-    make && \
+  env ${env_vars[@]+"${env_vars[@]}"} ./configure --prefix="$USR_HOME" ${config_flags[@]+"${config_flags[@]}"} &&
+    make &&
     make install
 }
 
@@ -101,7 +122,7 @@ install_library() {
   # Add PKG_CONFIG_PATH to environment
   export PKG_CONFIG_PATH="$USR_HOME/lib/pkgconfig:$USR_HOME/lib64/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 
-  install_gnu_tool "$name" "$version" "$url" "${configure_args[@]}"
+  install_gnu_tool "$name" "$version" "$url" ${configure_args[@]+"${configure_args[@]}"}
 }
 
 # Download and install a pre-built binary

@@ -9,18 +9,6 @@ require("catppuccin").setup({
     transparent = true,
     solid = false,
   },
-  custom_highlights = function(c)
-    return {
-      SnacksPickerBorder = { fg = c.base, bg = c.base },
-      SnacksPickerInput = { bg = c.base },
-      SnacksPickerInputBorder = { fg = c.base, bg = c.base },
-      SnacksPickerTitle = { bg = c.surface0 },
-      SnacksPickerList = { bg = c.base },
-      SnacksPickerPreviewTitle = { bg = c.surface0 },
-      SnacksPickerPreview = { bg = c.mantle },
-      SnacksPickerPreviewBorder = { bg = c.mantle, fg = c.mantle },
-    }
-  end,
 })
 
 -- System appearance detection

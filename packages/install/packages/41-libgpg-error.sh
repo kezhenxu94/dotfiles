@@ -8,6 +8,12 @@ install_libgpg_error() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager libgpg-error-dev; then
+    return 0
+  fi
+
+  # Fall back to building from source
   install_gnu_tool "$pkg_name" "$pkg_version" \
     "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-${pkg_version}.tar.bz2"
 }

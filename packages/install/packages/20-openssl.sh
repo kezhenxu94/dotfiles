@@ -8,6 +8,12 @@ install_openssl() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager libssl-dev; then
+    return 0
+  fi
+
+  # Fall back to building from source
   echo "Installing openssl ${pkg_version}..."
 
   local src_dir="$USR_HOME/src/openssl-${pkg_version}"

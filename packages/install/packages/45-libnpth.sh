@@ -8,6 +8,12 @@ install_libnpth() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager libnpth0-dev; then
+    return 0
+  fi
+
+  # Fall back to building from source
   install_gnu_tool "npth" "$pkg_version" \
     "https://gnupg.org/ftp/gcrypt/npth/npth-${pkg_version}.tar.bz2"
 }

@@ -6,6 +6,10 @@ pkg_version="${PINENTRY_VERSION:-1.1.1.1}"
 install_pinentry() {
   # Only install on macOS
   if [[ "$os" != "darwin" ]]; then
+    # Try package manager on Linux
+    if try_package_manager pinentry-curses; then
+      return 0
+    fi
     return 0
   fi
 
@@ -13,6 +17,7 @@ install_pinentry() {
     return 0
   fi
 
+  # Fall back to building from source (macOS)
   echo "Installing pinentry-mac ${pkg_version}..."
 
   local src_dir="$USR_HOME/src/pinentry-${pkg_version}"

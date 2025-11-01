@@ -8,6 +8,12 @@ install_libevent() {
     return 0
   fi
 
+  # Try package manager first
+  if try_package_manager libevent-dev; then
+    return 0
+  fi
+
+  # Fall back to building from source
   install_library "$pkg_name" "$pkg_version" \
     "https://github.com/libevent/libevent/releases/download/release-${pkg_version}/libevent-${pkg_version}.tar.gz" \
     --enable-shared
