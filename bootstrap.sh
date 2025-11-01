@@ -11,8 +11,6 @@ if ! command -v zsh >/dev/null 2>&1; then
   echo "==> Installing zsh..."
   if command -v apt-get >/dev/null 2>&1; then
     sudo apt-get update && sudo apt-get install -y zsh
-  elif command -v brew >/dev/null 2>&1; then
-    brew install zsh
   else
     echo "Error: Unable to install zsh. Please install it manually."
     exit 1

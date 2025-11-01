@@ -1,7 +1,7 @@
 " Close certain filetypes with 'q'
 augroup kezhenxu94_close_with_q
   autocmd!
-  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :bdelete!<CR>
+  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :bdelete!<CR>
 augroup END
 
 " Check if we need to reload the file when it changed
