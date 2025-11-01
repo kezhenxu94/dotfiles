@@ -19,9 +19,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(event)
     local client = vim.lsp.get_client_by_id(event.data.client_id)
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-      local highlight_augroup = vim.api.nvim_create_augroup("kezhenxu94_lsp_highlight", { clear = false })
+      local highlight_augroup = vim.api.nvim_create_augroup("kezhenxu94_lsp_highlight", { clear = true })
       vim.api.nvim_create_autocmd("LspDetach", {
-        group = vim.api.nvim_create_augroup("kezhenxu94_lsp_detach", { clear = true }),
+        group = highlight_augroup,
         callback = function(event2)
           vim.lsp.buf.clear_references()
           vim.api.nvim_clear_autocmds({ group = highlight_augroup, buffer = event2.buf })

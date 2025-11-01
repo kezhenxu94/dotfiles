@@ -11,6 +11,7 @@ source $XDG_CONFIG_HOME/vim/vimrc.arglist
 source $XDG_CONFIG_HOME/vim/vimrc.recent
 source $XDG_CONFIG_HOME/vim/vimrc.findgrep
 source $XDG_CONFIG_HOME/vim/vimrc.netrw
+source $XDG_CONFIG_HOME/vim/vimrc.git
 
 if !has("nvim")
   source $XDG_CONFIG_HOME/vim/vimrc.colorscheme

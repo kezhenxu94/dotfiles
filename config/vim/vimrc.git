@@ -1,0 +1,2 @@
+nnoremap <silent> <leader>gs :G<CR>
+

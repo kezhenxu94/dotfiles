@@ -1,5 +1,6 @@
 vim.pack.add({
   { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter-refactor" },
   { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
 }, { confirm = false })
 
@@ -56,6 +57,19 @@ require("nvim-treesitter.configs").setup({
       goto_previous_end = {
         ["[C"] = "@class.outer",
         ["[F"] = "@function.outer",
+      },
+    },
+  },
+  refactor = {
+    highlight_definitions = {
+      enable = true,
+      clear_on_cursor_move = true,
+    },
+    navigation = {
+      enable = true,
+      keymaps = {
+        goto_next_usage = "]r",
+        goto_previous_usage = "[r",
       },
     },
   },

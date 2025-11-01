@@ -48,6 +48,10 @@
       "rev": "42fc28ba",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
+    "nvim-treesitter-refactor": {
+      "rev": "d8b74fa",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter-refactor"
+    },
     "nvim-treesitter-textobjects": {
       "rev": "a9742cb",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
@@ -55,10 +59,6 @@
     "nvim-web-devicons": {
       "rev": "8dcb311",
       "src": "https://github.com/nvim-tree/nvim-web-devicons"
-    },
-    "snacks.nvim": {
-      "rev": "ecde81f",
-      "src": "https://github.com/folke/snacks.nvim"
     },
     "vim-helm": {
       "rev": "2c8525f",

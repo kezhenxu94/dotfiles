@@ -28,7 +28,6 @@ require("config.icons")
 
 require("config.theme")
 require("config.editor")
-require("config.picker")
 require("config.blink")
 require("config.git")
 require("config.mason")
