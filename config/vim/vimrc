@@ -23,6 +23,7 @@ if has('persistent_undo')
     call mkdir(s:target_path, "p", 0700)
   endif
   set undofile
+  set undolevels=10000
   let &undodir=s:target_path
 endif
 
