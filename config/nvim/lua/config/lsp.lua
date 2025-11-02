@@ -34,6 +34,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
     end
 
+    if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
+      vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
+    end
+
+
     -- stylua: ignore start
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Actions" })
     vim.keymap.set("n", "<leader>tih", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), { bufnr = 0 }) end, { desc = "Toggle Inlay Hint (Buffer)" })

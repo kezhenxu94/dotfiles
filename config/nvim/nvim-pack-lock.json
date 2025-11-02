@@ -5,7 +5,7 @@
       "src": "https://github.com/saghen/blink.cmp"
     },
     "catppuccin": {
-      "rev": "8c4125e",
+      "rev": "234fc04",
       "src": "https://github.com/catppuccin/nvim"
     },
     "conform.nvim": {
@@ -37,7 +37,7 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lint": {
-      "rev": "c4141a4",
+      "rev": "8c694e1",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-lspconfig": {
