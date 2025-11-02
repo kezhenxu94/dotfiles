@@ -1,5 +1,6 @@
 set path=.,**
 set wildmenu
+set wildoptions=pum
 set wildmode=longest:full,full
 set wildignorecase
 set wildignore+=**/.git/**,**/node_modules/**,**/dist/**,**/build/**,**/__pycache__/**,**/.venv/**,**/.idea/**,**/.vim/**

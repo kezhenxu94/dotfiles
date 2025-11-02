@@ -6,7 +6,6 @@ set timeoutlen=300
 set noshowmode
 set termguicolors
 set encoding=UTF-8
-set notimeout
 set nottimeout
 
 set clipboard=unnamed
@@ -70,5 +69,10 @@ set cindent
 filetype plugin indent on
 syntax on
 
+" Cursor shapes
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
+
+set complete=o,.
+set autocomplete
+set completeopt=fuzzy,menuone,noselect,popup
