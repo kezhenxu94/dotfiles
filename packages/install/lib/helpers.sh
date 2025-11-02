@@ -10,16 +10,61 @@ check_installed() {
 # Check if a library exists
 check_library() {
   local lib_pattern="$1"
+
+  # Check filesystem locations
   # shellcheck disable=SC2086
-  ls "$USR_HOME"/lib/${lib_pattern}* >/dev/null 2>&1 ||
-    ls "$USR_HOME"/lib64/${lib_pattern}* >/dev/null 2>&1
+  if ls "$USR_HOME"/lib/${lib_pattern}* >/dev/null 2>&1 ||
+     ls "$USR_HOME"/lib64/${lib_pattern}* >/dev/null 2>&1 ||
+     ls /usr/lib/${lib_pattern}* >/dev/null 2>&1 ||
+     ls /usr/lib64/${lib_pattern}* >/dev/null 2>&1 ||
+     ls /usr/local/lib/${lib_pattern}* >/dev/null 2>&1 ||
+     ls /usr/local/lib64/${lib_pattern}* >/dev/null 2>&1; then
+    return 0
+  fi
+
+  # Check via package manager
+  if [ "$pkg_manager" = "apt" ]; then
+    # Check if any package matching the library pattern is installed
+    # dpkg -l output format: "ii" prefix means installed
+    if dpkg -l "*${lib_pattern}*" 2>/dev/null | grep -q "^ii"; then
+      return 0
+    fi
+  fi
+
+  return 1
 }
 
 # Check if a pkg-config file exists
 check_pkgconfig() {
   local pc_name="$1"
-  ls "$USR_HOME/lib/pkgconfig/${pc_name}.pc" >/dev/null 2>&1 ||
-    ls "$USR_HOME/lib64/pkgconfig/${pc_name}.pc" >/dev/null 2>&1
+
+  # Check filesystem locations
+  if ls "$USR_HOME/lib/pkgconfig/${pc_name}.pc" >/dev/null 2>&1 ||
+     ls "$USR_HOME/lib64/pkgconfig/${pc_name}.pc" >/dev/null 2>&1 ||
+     ls /usr/lib/pkgconfig/${pc_name}.pc >/dev/null 2>&1 ||
+     ls /usr/lib64/pkgconfig/${pc_name}.pc >/dev/null 2>&1 ||
+     ls /usr/local/lib/pkgconfig/${pc_name}.pc >/dev/null 2>&1 ||
+     ls /usr/local/lib64/pkgconfig/${pc_name}.pc >/dev/null 2>&1 ||
+     ls /usr/share/pkgconfig/${pc_name}.pc >/dev/null 2>&1; then
+    return 0
+  fi
+
+  # Also try using pkg-config itself if available
+  if command -v pkg-config >/dev/null 2>&1; then
+    if pkg-config --exists "$pc_name" 2>/dev/null; then
+      return 0
+    fi
+  fi
+
+  # Check via package manager
+  if [ "$pkg_manager" = "apt" ]; then
+    # Check if any package matching the pkgconfig pattern is installed
+    if dpkg -l "*${pc_name}*" 2>/dev/null | grep -q "^ii"; then
+      return 0
+    fi
+  fi
+
+  return 1
 }
 
 # Install package via apt

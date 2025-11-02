@@ -6,10 +6,6 @@ pkg_version="${PINENTRY_VERSION:-1.1.1.1}"
 install_pinentry() {
   # Only install on macOS
   if [[ "$os" != "darwin" ]]; then
-    # Try package manager on Linux
-    if try_package_manager pinentry-curses; then
-      return 0
-    fi
     return 0
   fi
 
@@ -28,13 +24,13 @@ install_pinentry() {
 
   cd "$src_dir" || return 1
 
-  autoreconf -fiv && \
-  autoconf && \
-  ./configure --disable-ncurses --enable-maintainer-mode --prefix="$USR_HOME" \
-    CFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses" \
-    LDFLAGS="-L$USR_HOME/include -L$USR_HOME/include/ncurses -L$USR_HOME/lib" && \
-  make && \
-  make install
+  autoreconf -fiv &&
+    autoconf &&
+    ./configure --disable-ncurses --enable-maintainer-mode --prefix="$USR_HOME" \
+      CFLAGS="-I$USR_HOME/include -I$USR_HOME/include/ncurses" \
+      LDFLAGS="-L$USR_HOME/include -L$USR_HOME/include/ncurses -L$USR_HOME/lib" &&
+    make &&
+    make install
 }
 
 install_pinentry
