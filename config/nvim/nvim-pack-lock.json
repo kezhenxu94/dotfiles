@@ -1,9 +1,5 @@
 {
   "plugins": {
-    "blink.cmp": {
-      "rev": "2408f14",
-      "src": "https://github.com/saghen/blink.cmp"
-    },
     "catppuccin": {
       "rev": "234fc04",
       "src": "https://github.com/catppuccin/nvim"
@@ -74,3 +70,4 @@
     }
   }
 }
+

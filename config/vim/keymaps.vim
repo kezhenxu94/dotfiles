@@ -14,7 +14,6 @@ vnoremap <M-j> :<C-u>execute "'<,'>move '>+" . v:count1<CR>gv=gv
 vnoremap <M-k> :<C-u>execute "'<,'>move '<-" . (v:count1 + 1)<CR>gv=gv
 
 " Buffer and window operations
-nnoremap <silent> <leader>bd :bdelete<CR>
 nnoremap <silent> <leader>xx :qa<CR>
 nnoremap <silent> <leader>xr :restart<CR>
 

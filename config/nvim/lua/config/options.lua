@@ -1,5 +1,6 @@
 vim.cmd("source $XDG_CONFIG_HOME/vim/vimrc")
 
+
 vim.o.winborder = "rounded"
 vim.o.pumborder = vim.o.winborder
 

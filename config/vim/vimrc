@@ -3,6 +3,7 @@ let g:mapleader=" "
 source $XDG_CONFIG_HOME/vim/options.vim
 source $XDG_CONFIG_HOME/vim/autocmds.vim
 source $XDG_CONFIG_HOME/vim/keymaps.vim
+source $XDG_CONFIG_HOME/vim/buffers.vim
 source $XDG_CONFIG_HOME/vim/tabline.vim
 source $XDG_CONFIG_HOME/vim/session.vim
 source $XDG_CONFIG_HOME/vim/tmux.vim
