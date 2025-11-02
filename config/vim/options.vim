@@ -6,6 +6,7 @@ set timeoutlen=300
 set noshowmode
 set termguicolors
 set encoding=UTF-8
+set notimeout
 set nottimeout
 set shortmess+=WIC
 
