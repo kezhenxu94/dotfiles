@@ -12,7 +12,6 @@ require("catppuccin").setup({
 })
 
 -- System appearance detection
-vim.o.background = os.getenv("THEME") or "light"
 if vim.fn.has("osx") == 1 then
   local function start_dark_notify()
     local stdout = vim.loop.new_pipe(false)
