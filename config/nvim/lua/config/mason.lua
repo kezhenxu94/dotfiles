@@ -30,10 +30,9 @@ local function install_wanted()
         local latest_version = pkg:get_latest_version()
         if latest_version and installed_version ~= latest_version then
           vim.notify(
-            string.format("Updating %s (%s → %s)", name, installed_version, latest_version),
+            string.format("New version available: %s (%s → %s)", name, installed_version, latest_version),
             vim.log.levels.INFO
           )
-          pkg:install({ version = latest_version })
         end
       end
     end
