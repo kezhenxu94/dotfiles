@@ -78,3 +78,4 @@ let &t_EI = "\e[2 q"
 set complete=o,.
 set autocomplete
 set completeopt=fuzzy,menuone,noselect,popup
+inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
