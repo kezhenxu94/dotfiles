@@ -18,4 +18,5 @@ if !has("nvim")
   else
     colorscheme catppuccin_mocha
   endif
+  hi Normal guibg=NONE ctermbg=NONE
 endif
