@@ -37,7 +37,12 @@ vim.api.nvim_create_autocmd("LspProgress", {
 })
 
 function _G.get_lsp_progress()
-  return _G.lsp_progress
+  local current_win = tonumber(vim.g.actual_curwin) or vim.api.nvim_get_current_win()
+  local statusline_win = vim.api.nvim_get_current_win()
+  if current_win == statusline_win then
+    return _G.lsp_progress
+  end
+  return ""
 end
 
-vim.opt.statusline = "%f %h%m%r%=%{v:lua.get_lsp_progress()}"
+vim.opt.statusline = "%f %h%m%r%=%{%v:lua.get_lsp_progress()%}"
