@@ -8,10 +8,6 @@
       "rev": "9fd3d5e",
       "src": "https://github.com/stevearc/conform.nvim"
     },
-    "copilot.vim": {
-      "rev": "da369d9",
-      "src": "https://github.com/github/copilot.vim"
-    },
     "gitsigns.nvim": {
       "rev": "20ad441",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
@@ -70,4 +66,3 @@
     }
   }
 }
-

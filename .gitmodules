@@ -34,3 +34,6 @@
 [submodule "config/vim/pack/vendor/start/vim-rhubarb"]
 	path = config/vim/pack/vendor/start/vim-rhubarb
 	url = https://github.com/tpope/vim-rhubarb
+[submodule "config/vim/pack/vendor/start/copilot.vim"]
+	path = config/vim/pack/vendor/start/copilot.vim
+	url = https://github.com/github/copilot.vim.git
