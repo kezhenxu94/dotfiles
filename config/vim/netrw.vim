@@ -79,7 +79,14 @@ function! s:ToggleNetrw()
     execute netrw_win . 'wincmd w'
     return
   endif
-  execute 'Lexplore ' . fnameescape(fnamemodify(expand('%:p'), ':h'))
+
+  let current_file = expand('%:p')
+  let filename = fnamemodify(current_file, ':t')
+  execute 'Lexplore ' . fnameescape(fnamemodify(current_file, ':h'))
+
+  if !empty(filename) && filereadable(current_file)
+    call search('\V' . escape(filename, '\'))
+  endif
 endfunction
 
 nnoremap <silent> <leader>e :call <SID>ToggleNetrw()<CR>
