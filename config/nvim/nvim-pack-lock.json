@@ -5,7 +5,7 @@
       "src": "https://github.com/catppuccin/nvim"
     },
     "conform.nvim": {
-      "rev": "9fd3d5e",
+      "rev": "26c02e1",
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "gitsigns.nvim": {
@@ -21,7 +21,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-dap": {
-      "rev": "6782b09",
+      "rev": "e97dc47",
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-jdtls": {
