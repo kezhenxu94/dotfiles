@@ -24,7 +24,7 @@ set smartcase     " case insensitive searching UNLESS /C or capital in search
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 
-set fillchars+=vert:│ " Set the splitter of panels
+set fillchars+=vert:│,eob:\  " Set the splitter of panels
 
 " Softtabs, 2 spaces
 set tabstop=2
