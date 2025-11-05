@@ -7,7 +7,7 @@ set noshowmode
 set termguicolors
 set encoding=UTF-8
 set notimeout
-set nottimeout
+set ttimeout
 set shortmess+=WIC
 
 set clipboard=unnamed

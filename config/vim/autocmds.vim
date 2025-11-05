@@ -1,8 +1,18 @@
 " Close certain filetypes with 'q'
 augroup kezhenxu94_close_with_q
   autocmd!
-  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-* setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :bdelete!<CR>
+  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-* setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :call <SID>CloseSpecialBuffer()<CR>
 augroup END
+
+function! s:CloseSpecialBuffer()
+  if winnr('$') > 1
+    let l:cur_win = winnr()
+    wincmd p
+    execute l:cur_win . 'wincmd c'
+  else
+    bdelete!
+  endif
+endfunction
 
 " Check if we need to reload the file when it changed
 augroup kezhenxu94_checktime
