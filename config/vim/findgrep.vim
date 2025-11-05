@@ -1,7 +1,7 @@
 set path=.,**
 set wildmenu
 set wildoptions=pum
-set wildmode=longest:full,full
+set wildmode=noselect:full,full
 set wildignorecase
 set wildignore+=**/.git/**,**/node_modules/**,**/dist/**,**/build/**,**/__pycache__/**,**/.venv/**,**/.idea/**,**/.vim/**
 
@@ -14,6 +14,7 @@ endif
 
 augroup vimrcFindGrep
   autocmd!
+  autocmd CmdlineChanged : if getcmdline() =~# '^find\s' | call wildtrigger() | endif
 augroup END
 
 " :find
