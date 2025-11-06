@@ -62,7 +62,8 @@ augroup NetrwKeymaps
 augroup END
 
 " Toggle netrw file explorer
-function! s:ToggleNetrw()
+" Optional argument: cwd - custom working directory to open netrw in
+function! s:ToggleNetrw(...)
   let cur_win = winnr()
   let netrw_win = 0
   for win in range(1, winnr('$'))
@@ -83,7 +84,8 @@ function! s:ToggleNetrw()
 
   let current_file = expand('%:p')
   let filename = fnamemodify(current_file, ':t')
-  execute 'Lexplore ' . fnameescape(fnamemodify(current_file, ':h'))
+  let target_dir = a:0 > 0 && !empty(a:1) ? a:1 : fnamemodify(current_file, ':h')
+  execute 'Lexplore ' . fnameescape(target_dir)
   execute 'silent NetrwC ' . (cur_win + 1)
 
   if !empty(filename) && filereadable(current_file)
@@ -92,3 +94,4 @@ function! s:ToggleNetrw()
 endfunction
 
 nnoremap <silent> <leader>e :call <SID>ToggleNetrw()<CR>
+nnoremap <silent> <leader>E :call <SID>ToggleNetrw(getcwd())<CR>
