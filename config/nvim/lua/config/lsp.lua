@@ -2,16 +2,14 @@ vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
 }, { confirm = false, load = true })
 
+-- stylua: ignore start
 local lsps = vim
   .iter(require("config.languages"))
-  :map(function(lang)
-    return lang.lsp
-  end)
-  :filter(function(lsp)
-    return lsp
-  end)
+  :map(function(lang) return lang.lsp end)
+  :filter(function(lsp) return lsp end)
   :flatten()
   :totable()
+-- stylua: ignore end
 vim.lsp.enable(lsps)
 
 vim.api.nvim_create_autocmd("LspAttach", {
