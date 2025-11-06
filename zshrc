@@ -38,7 +38,7 @@ source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 zvm_after_init() {
   if [[ -f ~/.fzf.zsh ]]; then
-    export FZF_DEFAULT_OPTS="--inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
+    export FZF_DEFAULT_OPTS="$FZF_THEME --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
     source ~/.fzf.zsh
   fi
 }
