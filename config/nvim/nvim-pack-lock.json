@@ -13,7 +13,7 @@
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "lazydev.nvim": {
-      "rev": "371cd74",
+      "rev": "5231c62",
       "src": "https://github.com/folke/lazydev.nvim"
     },
     "mason.nvim": {
