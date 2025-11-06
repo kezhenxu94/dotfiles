@@ -14,7 +14,7 @@ precmd() {
         # Using @fg-color "#2c3e50" for prompt symbol
         PS1="${venv}%B%F{#2563eb}%~%f%b %F{#2c3e50}%(!.#.❯)%f "
 
-        export FZF_THEME=" \
+        export FZF_DEFAULT_OPTS=" $FZF_DEFAULT_OPTS_PARTIAL \
         --color=bg+:#CCD0DA,spinner:#DC8A78,hl:#D20F39 \
         --color=fg:#4C4F69,header:#D20F39,info:#8839EF,pointer:#DC8A78 \
         --color=marker:#7287FD,fg+:#4C4F69,prompt:#8839EF,hl+:#D20F39 \
@@ -27,7 +27,7 @@ precmd() {
         # Using @fg-color "#c0caf5" for prompt symbol
         PS1="${venv}%B%F{#7aa2f7}%~%f%b %F{#c0caf5}%(!.#.❯)%f "
 
-        export FZF_THEME=" \
+        export FZF_DEFAULT_OPTS=" $FZF_DEFAULT_OPTS_PARTIAL \
         --color=bg+:#313244,spinner:#F5E0DC,hl:#F38BA8 \
         --color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC \
         --color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8 \
