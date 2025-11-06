@@ -8,24 +8,11 @@ local function get_mason_bundles()
   end
 
   local bundles = {}
-  vim.list_extend(bundles, jars("$MASON/share/java-test", "*.jar"))
-  vim.list_extend(bundles, jars("$MASON/share/java-debug-adapter", "com.microsoft.java.debug.plugin-*.jar"))
-  vim.list_extend(bundles, jars("$MASON/share/jdtls", "*.jar"))
+  vim.list_extend(bundles, jars("$MASON/packages/java-debug-adapter/extension/server", "*.jar"))
+  vim.list_extend(bundles, jars("$MASON/packages/java-test/extension/server", "*.jar"))
+  vim.list_extend(bundles, jars("$MASON/packages/jdtls", "*.jar"))
   return bundles
 end
-
-local root_markers = {
-  -- Multi-module projects
-  "mvnw",
-  "gradlew",
-  "build.gradle",
-  "build.gradle.kts",
-  ".git",
-  -- Single-module projects
-  "pom.xml", -- Maven
-  "settings.gradle", -- Gradle
-  "settings.gradle.kts", -- Gradle
-}
 
 ---@type vim.lsp.Config
 return {
@@ -83,5 +70,4 @@ return {
     },
     extendedClientCapabilities = require("jdtls").extendedClientCapabilities,
   },
-  root_markers = root_markers,
 }

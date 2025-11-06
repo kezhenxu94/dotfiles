@@ -1,5 +1,3 @@
-set sessionoptions+=options
-
 let s:home = expand("~")
 
 if has('nvim')

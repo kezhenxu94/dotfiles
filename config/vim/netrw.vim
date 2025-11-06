@@ -2,7 +2,6 @@ packadd netrw
 
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
 let g:netrw_preview = 1
 let g:netrw_winsize = -30
 let g:netrw_altv = 1
@@ -64,6 +63,7 @@ augroup END
 
 " Toggle netrw file explorer
 function! s:ToggleNetrw()
+  let cur_win = winnr()
   let netrw_win = 0
   for win in range(1, winnr('$'))
     if getwinvar(win, '&filetype') == 'netrw'
@@ -84,6 +84,7 @@ function! s:ToggleNetrw()
   let current_file = expand('%:p')
   let filename = fnamemodify(current_file, ':t')
   execute 'Lexplore ' . fnameescape(fnamemodify(current_file, ':h'))
+  execute 'silent NetrwC ' . (cur_win + 1)
 
   if !empty(filename) && filereadable(current_file)
     call search('\V' . escape(filename, '\'))

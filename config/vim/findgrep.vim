@@ -7,7 +7,7 @@ set wildignore+=**/.git/**,**/node_modules/**,**/dist/**,**/build/**,**/__pycach
 
 " :grep
 if executable('rg')
-  let &g:grepprg = 'rg --multiline --no-heading --with-filename --line-number --column --smart-case --color never $* 2> /dev/null'
+  let &g:grepprg = 'rg --multiline --no-heading --with-filename --line-number --column --smart-case --color never --hidden $* 2> /dev/null'
 elseif executable('grep')
   let &g:grepprg = 'grep -rnHIsE $* --exclude=tags --exclude-dir=.git 2> /dev/null'
 endif
