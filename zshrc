@@ -1,5 +1,8 @@
-CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-for function in "$CONFIG_DIR"/functions/*; do
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
+for function in "$XDG_CONFIG_HOME"/zsh/functions/*; do
   source $function
 done
 
@@ -32,17 +35,13 @@ _load_settings() {
     fi
   fi
 }
-_load_settings "$CONFIG_DIR/configs"
+_load_settings "$XDG_CONFIG_HOME/zsh/configs"
 
-source $CONFIG_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $XDG_CONFIG_HOME/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 if [[ -f ~/.fzf.zsh ]]; then
   export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
   source ~/.fzf.zsh
-fi
-
-if [[ -f .env ]] ; then
-  envup
 fi
 
 if which gh > /dev/null; then
@@ -57,10 +56,6 @@ fi
 
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 [[ -f ~/.aliases ]] && source ~/.aliases
-
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
 
 if command -v rapture >/dev/null 2>&1; then
   eval "$( command rapture shell-init )"

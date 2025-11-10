@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-function chpwd {
+function _activate_venv {
   if [[ ! -z "$VIRTUAL_ENV" ]] ; then
     # If the current directory is not contained
     # within the venv parent directory -> deactivate the venv.
@@ -25,4 +25,6 @@ function chpwd {
   fi
 }
 
-chpwd
+autoload -U add-zsh-hook
+add-zsh-hook chpwd _activate_venv
+_activate_venv
