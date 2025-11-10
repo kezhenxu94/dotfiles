@@ -8,11 +8,8 @@ function chpwd_set_history() {
   [[ -f $HISTFILE ]] || touch $HISTFILE
 }
 
-# Add to chpwd hook to switch history when changing directories
 autoload -U add-zsh-hook
 add-zsh-hook chpwd chpwd_set_history
-
-# Initialize history for current directory
 chpwd_set_history
 
 # General history settings

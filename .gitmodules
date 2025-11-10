@@ -1,11 +1,5 @@
-[submodule "zsh/plugins/zsh-syntax-highlighting"]
-	path = zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "zsh/plugins/zsh-vi-mode"]
-	path = zsh/plugins/zsh-vi-mode
-	url = https://github.com/jeffreytse/zsh-vi-mode.git
-[submodule "zsh/plugins/cappuccin"]
-	path = zsh/plugins/cappuccin
+[submodule "config/zsh/plugins/cappuccin"]
+	path = config/zsh/plugins/cappuccin
 	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
 [submodule "config/tmux/plugins/tmux-resurrect"]
 	path = config/tmux/plugins/tmux-resurrect
@@ -34,3 +28,6 @@
 [submodule "config/vim/pack/vendor/start/copilot.vim"]
 	path = config/vim/pack/vendor/start/copilot.vim
 	url = https://github.com/github/copilot.vim.git
+[submodule "config/zsh/plugins/zsh-syntax-highlighting"]
+	path = config/zsh/plugins/zsh-syntax-highlighting
+	url = https://github.com/zsh-users/zsh-syntax-highlighting.git

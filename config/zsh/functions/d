@@ -1,7 +1,6 @@
 #!/bin/env zsh
-# No arguments: `docker ps`
-# With arguments: acts like `docker`
-d() {
+
+function d {
   if [[ $# -gt 0 ]]; then
     docker "$@"
   else

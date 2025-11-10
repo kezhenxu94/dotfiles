@@ -1,7 +1,6 @@
 #!/bin/env zsh
-# Load .env file into shell session for environment variables
 
-function envup() {
+function envup {
   envfile="${1:-.env}"
   if [ -f "$envfile" ]; then
     while IFS= read -r line; do

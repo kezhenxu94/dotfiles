@@ -1,5 +1,5 @@
-# load custom executable functions
-for function in ~/.zsh/functions/*; do
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+for function in "$CONFIG_DIR"/functions/*; do
   source $function
 done
 
@@ -32,18 +32,14 @@ _load_settings() {
     fi
   fi
 }
-_load_settings "$HOME/.zsh/configs"
+_load_settings "$CONFIG_DIR/configs"
 
-source $HOME/.zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $CONFIG_DIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-zvm_after_init() {
-  if [[ -f ~/.fzf.zsh ]]; then
-    export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
-    source ~/.fzf.zsh
-  fi
-}
-
-source $HOME/.zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+if [[ -f ~/.fzf.zsh ]]; then
+  export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
+  source ~/.fzf.zsh
+fi
 
 if [[ -f .env ]] ; then
   envup

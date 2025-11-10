@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
 function _set_zsh_theme() {
   if [[ -z "$TMUX" ]]; then
     export THEME=light
@@ -24,9 +25,9 @@ function _set_zsh_syntax_highlighting() {
     return
   fi
   if [[ "$THEME" == "light" ]]; then
-    source $HOME/.zsh/plugins/cappuccin/themes/catppuccin_latte-zsh-syntax-highlighting.zsh
+    source $CONFIG_DIR/plugins/cappuccin/themes/catppuccin_latte-zsh-syntax-highlighting.zsh
   else
-    source $HOME/.zsh/plugins/cappuccin/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+    source $CONFIG_DIR/plugins/cappuccin/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
   fi
 }
 
