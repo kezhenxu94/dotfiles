@@ -21,7 +21,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-dap": {
-      "rev": "e97dc47",
+      "rev": "b38f7d3",
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-jdtls": {
@@ -29,11 +29,11 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lint": {
-      "rev": "8c694e1",
+      "rev": "8b349e8",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-lspconfig": {
-      "rev": "2010fc6",
+      "rev": "c8503e6",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {

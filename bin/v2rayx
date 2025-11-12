@@ -12,8 +12,8 @@ setup() {
   networksetup -setsecurewebproxy Wi-Fi host.docker.internal 7890
   networksetup -setsocksfirewallproxy Wi-Fi host.docker.internal 7891
   networksetup -setproxybypassdomains wi-Fi host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.* *.local
-  networksetup -setdnsservers Wi-Fi Empty    # 114.114.114.114 1.1.1.1 8.8.8.8 8.8.4.4
-  networksetup -setsearchdomains Wi-Fi Empty # 114.114.114.114 1.1.1.1 8.8.8.8 8.8.4.4
+  networksetup -setdnsservers Wi-Fi 119.29.29.29 223.5.5.5 223.6.6.6 114.114.114.114 114.114.115.115 1.1.1.1
+  networksetup -setsearchdomains Wi-Fi 119.29.29.29 223.5.5.5 223.6.6.6 114.114.114.114 114.114.115.115 1.1.1.1
 
   cat <<EOF >>"$ENV_FILE"
 export HTTPS_PROXY=http://host.docker.internal:7890

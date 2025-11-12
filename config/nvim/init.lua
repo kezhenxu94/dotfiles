@@ -24,8 +24,6 @@ require("config.options")
 require("config.keymaps")
 require("config.autocmds")
 
-require("config.icons")
-
 require("config.theme")
 require("config.editor")
 require("config.git")
