@@ -48,10 +48,6 @@
       "rev": "5ca4aaa",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects"
     },
-    "nvim-web-devicons": {
-      "rev": "8dcb311",
-      "src": "https://github.com/nvim-tree/nvim-web-devicons"
-    },
     "vim-helm": {
       "rev": "2c8525f",
       "src": "https://github.com/towolf/vim-helm"

@@ -16,8 +16,14 @@ require("conform").setup({
     javascript = { "prettierd", "prettier", stop_after_first = true },
   },
 
-  format_on_save = {
-    timeout_ms = 2000,
-    lsp_format = "fallback",
-  },
+  format_on_save = function(bufnr)
+    if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+      return
+    end
+    return { timeout_ms = 500, lsp_format = "fallback" }
+  end,
 })
+
+vim.keymap.set("n", "<leader>tff", function()
+  vim.b.disable_autoformat = not vim.b.disable_autoformat
+end, { desc = "Toggle auto format" })
