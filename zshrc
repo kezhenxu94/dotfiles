@@ -1,7 +1,3 @@
-if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh)"
-fi
-
 for function in "$XDG_CONFIG_HOME"/zsh/functions/*; do
   source $function
 done
@@ -61,3 +57,9 @@ if command -v rapture >/dev/null 2>&1; then
   eval "$( command rapture shell-init )"
 fi
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+
+
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
