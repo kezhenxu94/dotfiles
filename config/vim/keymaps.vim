@@ -50,3 +50,29 @@ nnoremap <silent> <leader>tww :set wrap!<CR>
 nnoremap <silent> <leader>tbg :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
 
 nnoremap <silent> <esc> :noh<CR>
+
+" Yank file paths
+function! YankFileRelativePath()
+  let @+ = expand('%')
+  echo 'Yanked relative path: ' . expand('%')
+endfunction
+
+function! YankFileAbsolutePath()
+  let @+ = expand('%:p')
+  echo 'Yanked absolute path: ' . expand('%:p')
+endfunction
+
+function! YankFileName()
+  let @+ = expand('%:t')
+  echo 'Yanked file name: ' . expand('%:t')
+endfunction
+
+function! YankFileLocation()
+  let @+ = expand('%') . ':' . line('.')
+  echo 'Yanked file location: ' . expand('%') . ':' . line('.')
+endfunction
+
+nnoremap <silent> <leader>yfr :call YankFileRelativePath()<CR>
+nnoremap <silent> <leader>yfa :call YankFileAbsolutePath()<CR>
+nnoremap <silent> <leader>yfn :call YankFileName()<CR>
+nnoremap <silent> <leader>yfl :call YankFileLocation()<CR>
