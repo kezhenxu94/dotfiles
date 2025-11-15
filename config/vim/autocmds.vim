@@ -10,7 +10,7 @@ augroup END
 " Close certain filetypes with 'q'
 augroup kzx_close_with_q
   autocmd!
-  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-* setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :call <SID>CloseSpecialBuffer()<CR>
+  autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-*,nvim-undotree setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :call <SID>CloseSpecialBuffer()<CR>
 augroup END
 
 function! s:CloseSpecialBuffer()
