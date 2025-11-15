@@ -1,5 +1,14 @@
+" Restore cursor position
+augroup kzx_restore_cursor
+  autocmd!
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+augroup END
+
 " Close certain filetypes with 'q'
-augroup kezhenxu94_close_with_q
+augroup kzx_close_with_q
   autocmd!
   autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-* setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :call <SID>CloseSpecialBuffer()<CR>
 augroup END
@@ -15,19 +24,19 @@ function! s:CloseSpecialBuffer()
 endfunction
 
 " Check if we need to reload the file when it changed
-augroup kezhenxu94_checktime
+augroup kzx_checktime
   autocmd!
   autocmd FocusGained * if &buftype != 'nofile' | checktime | endif
 augroup END
 
 " Resize splits when the window is resized
-augroup kezhenxu94_resize_splits
+augroup kzx_resize_splits
   autocmd!
   autocmd VimResized * let curtab = tabpagenr() | tabdo wincmd = | execute 'tabnext ' . curtab
 augroup END
 
 " Auto create directory when saving a file
-augroup kezhenxu94_auto_create_dir
+augroup kzx_auto_create_dir
   autocmd!
   autocmd BufWritePre * call s:AutoCreateDir()
 augroup END

@@ -1,3 +1,5 @@
+packadd! cfilter
+
 " Toggle quickfix window
 nnoremap <silent> <leader>qq :call <SID>ToggleQuickfix()<CR>
 

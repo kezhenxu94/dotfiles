@@ -16,6 +16,7 @@ vnoremap <M-k> :<C-u>execute "'<,'>move '<-" . (v:count1 + 1)<CR>gv=gv
 " Buffer and window operations
 nnoremap <silent> <leader>xx :qa<CR>
 nnoremap <silent> <leader>xr :restart<CR>
+nnoremap <silent> <leader>bd :bdelete! <CR>
 
 " Split windows
 nnoremap <silent> <leader>- <C-w>s
@@ -47,3 +48,5 @@ onoremap <expr> N 'nN'[v:searchforward]
 " Toggle options
 nnoremap <silent> <leader>tww :set wrap!<CR>
 nnoremap <silent> <leader>tbg :let &background = (&background == 'dark' ? 'light' : 'dark')<CR>
+
+nnoremap <silent> <esc> :noh<CR>

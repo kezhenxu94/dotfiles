@@ -1,3 +1,7 @@
+if &compatible
+  set nocompatible
+endif
+
 " Basic settings
 set nowrap
 set encoding=utf-8
@@ -5,7 +9,6 @@ set hls
 set timeoutlen=300
 set noshowmode
 set termguicolors
-set encoding=UTF-8
 set notimeout
 set ttimeout
 set shortmess+=WIC
@@ -79,3 +82,4 @@ set complete=o,.
 set autocomplete
 set completeopt=fuzzy,menuone,noselect,popup
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
+
