@@ -21,7 +21,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
       end
 
       if value.percentage then
-        table.insert(parts, string.format("(%d%%)", value.percentage))
+        table.insert(parts, string.format("(%d%%%%)", value.percentage))
       end
     end
     _G.lsp_progress = table.concat(parts, " ")
