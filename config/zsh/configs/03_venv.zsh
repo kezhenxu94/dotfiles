@@ -1,26 +1,24 @@
 #!/usr/bin/env zsh
 
 function _activate_venv {
-  if [[ ! -z "$VIRTUAL_ENV" ]] ; then
-    # If the current directory is not contained
-    # within the venv parent directory -> deactivate the venv.
-    cur_dir=$(pwd -P)
-    venv_dir="$(dirname "$VIRTUAL_ENV")"
-    if [[ "$cur_dir"/ != "$venv_dir"/* ]] ; then
-      deactivate
-    fi
+  local venv_path=""
+  if [[ -d ".venv" ]]; then
+    venv_path=".venv"
+  elif [[ -d "venv" ]]; then
+    venv_path="venv"
   fi
 
-  if [[ -z "$VIRTUAL_ENV" ]] ; then
-    # If config file is found -> activate the vitual environment
-    venv_cfg_filepath=$(find . -maxdepth 2 -type f -name 'pyvenv.cfg' 2> /dev/null)
-    if [[ -z "$venv_cfg_filepath" ]]; then
-      return # no config file found
-    fi
+  # Deactivate if no venv folder found in current directory and VIRTUAL_ENV is set
+  if [[ -z "$venv_path" ]] && [[ -n "$VIRTUAL_ENV" ]]; then
+    deactivate
+    return
+  fi
 
-    venv_filepath=$(dirname "${venv_cfg_filepath}")
-    if [[ -d "$venv_filepath" ]] && [[ -f "${venv_filepath}/bin/activate" ]] ; then
-      source "${venv_filepath}/bin/activate"
+  # Activate if venv folder exists and not already activated
+  if [[ -n "$venv_path" ]] && [[ -z "$VIRTUAL_ENV" ]]; then
+    venv_path="$(cd "$venv_path" && pwd -P)"
+    if [[ -f "${venv_path}/bin/activate" ]]; then
+      source "${venv_path}/bin/activate"
     fi
   fi
 }

@@ -18,3 +18,4 @@ function _set_fzf_theme {
 
 autoload -U add-zsh-hook
 add-zsh-hook precmd _set_fzf_theme
+_set_fzf_theme
