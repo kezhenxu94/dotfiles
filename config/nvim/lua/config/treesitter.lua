@@ -1,7 +1,7 @@
 vim.pack.add({
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter" },
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter-refactor" },
-  { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects" },
+  "https://github.com/nvim-treesitter/nvim-treesitter",
+  "https://github.com/nvim-treesitter/nvim-treesitter-refactor",
+  "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
 }, { confirm = false })
 
 local packages = vim

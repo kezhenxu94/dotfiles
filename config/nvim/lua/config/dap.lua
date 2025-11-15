@@ -1,6 +1,4 @@
-vim.pack.add({
-  { src = "https://github.com/mfussenegger/nvim-dap" },
-}, { confirm = false, load = true })
+vim.pack.add({ "https://github.com/mfussenegger/nvim-dap" }, { confirm = false })
 
 vim.keymap.set("n", "<leader>du", function()
   local height = vim.v.count ~= 0 and vim.v.count or 18

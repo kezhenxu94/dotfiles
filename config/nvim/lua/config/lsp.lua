@@ -1,6 +1,4 @@
-vim.pack.add({
-  { src = "https://github.com/neovim/nvim-lspconfig" },
-}, { confirm = false, load = true })
+vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" }, { confirm = false })
 
 -- stylua: ignore start
 local lsps = vim

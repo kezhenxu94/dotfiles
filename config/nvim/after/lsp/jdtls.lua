@@ -1,6 +1,4 @@
-vim.pack.add({
-  { src = "https://github.com/mfussenegger/nvim-jdtls" },
-}, { confirm = false, load = true })
+vim.pack.add({ "https://github.com/mfussenegger/nvim-jdtls" }, { confirm = false })
 
 local function get_mason_bundles()
   local function jars(path, pattern)
