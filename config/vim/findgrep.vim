@@ -55,10 +55,10 @@ augroup AutoOpenQfAfterGrepAdd
   autocmd QuickFixCmdPost grep,grepadd copen
 augroup END
 
-cnoremap <expr> <c-v> getcmdline() =~# '^find\s' ?
-  \ "\<C-e>\<C-u>vsplit " . findfile(matchstr(getcmdline(), '^find\s\+\zs.*'), &path) :
+cnoremap <expr> <c-v> getcmdline() =~# '^\s*find\s' ?
+  \ "\<C-e>\<C-u>vsplit " . findfile(matchstr(getcmdline(), '^\s*find\s\+\zs.*'), &path) . "\<CR>" :
   \ "\<C-v>"
 
-cnoremap <expr> <c-s> getcmdline() =~# '^find\s' ?
-  \ "\<C-e>\<C-u>split " . findfile(matchstr(getcmdline(), '^find\s\+\zs.*'), &path) :
+cnoremap <expr> <c-s> getcmdline() =~# '^\s*find\s' ?
+  \ "\<C-e>\<C-u>split " . findfile(matchstr(getcmdline(), '^\s*find\s\+\zs.*'), &path) . "\<CR>" :
   \ "\<C-s>"
