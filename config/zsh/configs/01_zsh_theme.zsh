@@ -9,7 +9,7 @@ function _set_zsh_theme {
     fi
     return
   fi
-  export THEME=${THEME:-light}
+  export THEME=light
   if [ "$(dark-notify -e 2>/dev/null)" = "dark" ]; then
     export THEME=dark
   fi
