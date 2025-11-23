@@ -62,3 +62,7 @@ cnoremap <expr> <c-v> getcmdline() =~# '^\s*find\s' ?
 cnoremap <expr> <c-s> getcmdline() =~# '^\s*find\s' ?
   \ "\<C-e>\<C-u>split " . findfile(matchstr(getcmdline(), '^\s*find\s\+\zs.*'), &path) . "\<CR>" :
   \ "\<C-s>"
+
+cnoremap <expr> <c-o> getcmdline() =~# '^\s*find\s' && exists(':WinPick') == 2 ?
+  \ "\<C-e>\<C-u>WinPick " . findfile(matchstr(getcmdline(), '^\s*find\s\+\zs.*'), &path) . "\<CR>" :
+  \ "\<C-o>"
