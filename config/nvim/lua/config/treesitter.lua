@@ -2,7 +2,7 @@ vim.pack.add({
   "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/nvim-treesitter/nvim-treesitter-refactor",
   "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
-}, { confirm = false })
+}, { confirm = false, load = true })
 
 local packages = vim
   .iter(require("config.languages"))

@@ -1,1 +1,1 @@
-vim.pack.add({ "https://github.com/towolf/vim-helm" }, { confirm = false })
+vim.pack.add({ "https://github.com/towolf/vim-helm" }, { confirm = false, load = true })

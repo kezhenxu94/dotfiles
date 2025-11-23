@@ -1,4 +1,4 @@
-vim.pack.add({ "https://github.com/mfussenegger/nvim-jdtls" }, { confirm = false })
+vim.pack.add({ "https://github.com/mfussenegger/nvim-jdtls" }, { confirm = false, load = true })
 
 local function get_mason_bundles()
   local function jars(path, pattern)
@@ -38,6 +38,12 @@ return {
     end, {
       buffer = bufnr,
       desc = "Organize Imports",
+    })
+    vim.keymap.set("n", "<leader>gS", function()
+      require("jdtls.tests").goto_subjects()
+    end, {
+      buffer = bufnr,
+      desc = "Go to Test Subject",
     })
   end,
   settings = {

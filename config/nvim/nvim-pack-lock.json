@@ -5,11 +5,11 @@
       "src": "https://github.com/catppuccin/nvim"
     },
     "conform.nvim": {
-      "rev": "cde4da5",
+      "rev": "afce105eb47b0869dfafdac90d82f02ef2419d61",
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "gitsigns.nvim": {
-      "rev": "20ad441",
+      "rev": "cdafc320f03f2572c40ab93a4eecb733d4016d07",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "lazydev.nvim": {
@@ -21,7 +21,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nvim-dap": {
-      "rev": "b38f7d3",
+      "rev": "5860c7c501eb428d3137ee22c522828d20cca0b3",
       "src": "https://github.com/mfussenegger/nvim-dap"
     },
     "nvim-jdtls": {
@@ -29,11 +29,11 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lint": {
-      "rev": "baf7c91",
+      "rev": "d1118791070d090777398792a73032a0ca5c79ff",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-lspconfig": {
-      "rev": "c6f05c0",
+      "rev": "41d32cc1d12512038ce781c1594f05b406b31f62",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
