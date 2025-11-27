@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 pkg_name="tmux"
-pkg_version="${TMUX_VERSION:-3.5a}"
+pkg_version="${TMUX_VERSION:-3.6}"
 
 install_tmux() {
   if check_installed tmux; then
