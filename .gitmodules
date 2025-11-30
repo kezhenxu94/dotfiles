@@ -7,15 +7,9 @@
 [submodule "config/tmux/plugins/tmux-continuum"]
 	path = config/tmux/plugins/tmux-continuum
 	url = https://github.com/tmux-plugins/tmux-continuum.git
-[submodule "config/tmux/plugins/tmux-navigator"]
-	path = config/tmux/plugins/tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator
 [submodule "bin/kfc"]
 	path = bin/kfc
 	url = https://github.com/kezhenxu94/kfc.git
-[submodule "config/vim/pack/vendor/start/vim-tmux-navigator"]
-	path = config/vim/pack/vendor/start/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator
 [submodule "config/vim/pack/vendor/start/vim-fugitive"]
 	path = config/vim/pack/vendor/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive

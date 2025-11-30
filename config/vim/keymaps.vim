@@ -22,6 +22,13 @@ nnoremap <silent> <leader>bd :bdelete! <CR>
 nnoremap <silent> <leader>- <C-w>s
 nnoremap <silent> <leader>\| <C-w>v
 
+" Navigate between windows
+nnoremap <silent> <C-h> <C-w>h
+nnoremap <silent> <C-j> <C-w>j
+nnoremap <silent> <C-k> <C-w>k
+nnoremap <silent> <C-l> <C-w>l
+nnoremap <silent> <C-\> <C-w>p
+
 " Save file
 noremap <silent> <C-s> :w<CR>
 inoremap <silent> <C-s> <Esc>:w<CR>
