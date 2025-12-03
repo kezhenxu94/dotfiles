@@ -33,7 +33,8 @@ function! TabLine()
     if l:index == l:current
       let l:tabline .= '▎' . l:index . ': ' . l:filename . ' '
     else
-      let l:tabline .= ' ' . l:index . ': ' . l:filename . ' '
+      let l:cwd = fnamemodify(getcwd(l:win_num, l:index), ':t')
+      let l:tabline .= ' ' . l:index . ': ' . l:cwd . ' '
     endif
   endfor
 
