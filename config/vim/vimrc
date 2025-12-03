@@ -5,7 +5,6 @@ source $XDG_CONFIG_HOME/vim/autocmds.vim
 source $XDG_CONFIG_HOME/vim/keymaps.vim
 source $XDG_CONFIG_HOME/vim/tabline.vim
 source $XDG_CONFIG_HOME/vim/session.vim
-source $XDG_CONFIG_HOME/vim/tmux.vim
 source $XDG_CONFIG_HOME/vim/quickfix.vim
 source $XDG_CONFIG_HOME/vim/arglist.vim
 source $XDG_CONFIG_HOME/vim/recent.vim
@@ -15,7 +14,7 @@ source $XDG_CONFIG_HOME/vim/git.vim
 source $XDG_CONFIG_HOME/vim/colorscheme.vim
 
 if has('persistent_undo')
-  let s:target_path=has("nvim") ? fnameescape(stdpath('state') . '/undo') : (expand('~') .. '/.vim/undo')
+  let s:target_path=expand('~') .. '/.vim/undo'
   if !isdirectory(s:target_path)
     call mkdir(s:target_path, "p", 0700)
   endif
