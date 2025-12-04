@@ -78,8 +78,9 @@ syntax on
 let &t_SI = "\e[6 q"
 let &t_EI = "\e[2 q"
 
-set complete=o,.
+set complete=
 set autocomplete
+set pumheight=24
 set completeopt=fuzzy,menuone,noselect,popup
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
 

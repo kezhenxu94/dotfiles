@@ -31,6 +31,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
+      if
+        client.server_capabilities.completionProvider
+        and client.server_capabilities.completionProvider.triggerCharacters
+      then
+        local triggers = vim.tbl_filter(function(char)
+          return char ~= " "
+        end, client.server_capabilities.completionProvider.triggerCharacters)
+        client.server_capabilities.completionProvider.triggerCharacters = triggers
+      end
       vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
     end
 
