@@ -83,9 +83,3 @@ set autocomplete
 set pumheight=24
 set completeopt=fuzzy,menuone,noselect,popup
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
-
-set errorformat=
-set errorformat+=%-G%.%#
-set errorformat+=%f(%l\\,%c):\ %trror\ TS%n:\ %m
-set errorformat+=%f(%l\\,%c):\ %tarning\ TS%n:\ %m
-set errorformat+=%f(%l\\,%c):\ %m
