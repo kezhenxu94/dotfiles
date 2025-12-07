@@ -11,7 +11,6 @@ source $XDG_CONFIG_HOME/vim/recent.vim
 source $XDG_CONFIG_HOME/vim/findgrep.vim
 source $XDG_CONFIG_HOME/vim/netrw.vim
 source $XDG_CONFIG_HOME/vim/git.vim
-source $XDG_CONFIG_HOME/vim/make.vim
 source $XDG_CONFIG_HOME/vim/colorscheme.vim
 
 if has('persistent_undo')

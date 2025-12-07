@@ -119,3 +119,5 @@ nnoremap <silent> <leader>yfa :call YankFileAbsolutePath()<CR>
 nnoremap <silent> <leader>yfn :call YankFileName()<CR>
 nnoremap <silent> <leader>yfl :call YankFileLocation()<CR>
 nnoremap <silent> <leader>yghl :call YankGitHubPermalink()<CR>
+
+nnoremap <silent> <leader>mk :make<CR>
