@@ -55,3 +55,6 @@ nnoremap <silent> <leader><tab>D :tabonly<CR>
 nnoremap <silent> <leader><tab>c :tabnew<CR>
 nnoremap <silent> ]<tab> :tabnext<CR>
 nnoremap <silent> [<tab> :tabprevious<CR>
+
+" Switch to tab by number using count (only when count is provided)
+nnoremap <silent> <expr> <Tab> v:count ? ':<C-u>execute "tabn" v:count<CR>' : '<Tab>'
