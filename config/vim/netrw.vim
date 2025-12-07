@@ -58,6 +58,7 @@ augroup NetrwKeymaps
   autocmd!
   autocmd FileType netrw nnoremap <buffer> <silent> <C-v> :call <SID>OpenInVsplit()<CR>
   autocmd FileType netrw nnoremap <buffer> <silent> <C-s> :call <SID>OpenInSplit()<CR>
+  autocmd FileType netrw silent! nunmap <buffer> <C-l>
   autocmd FileType netrw setlocal signcolumn=no
 augroup END
 
