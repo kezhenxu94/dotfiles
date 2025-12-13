@@ -1,5 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "theme": "catppuccin",
+  "theme": "system",
   "autoupdate": true
 }
