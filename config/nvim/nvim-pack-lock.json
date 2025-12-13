@@ -29,11 +29,11 @@
       "src": "https://github.com/mfussenegger/nvim-jdtls"
     },
     "nvim-lint": {
-      "rev": "ebe535956106c60405b02220246e135910f6853d",
+      "rev": "897f7771c1ca4b11659dfe372d9376acd9fe3097",
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-lspconfig": {
-      "rev": "a2bd1cf7b0446a7414aaf373cea5e4ca804c9c69",
+      "rev": "7af6f57d517d8cc68f249e0d27364c188a097812",
       "src": "https://github.com/neovim/nvim-lspconfig"
     },
     "nvim-treesitter": {
