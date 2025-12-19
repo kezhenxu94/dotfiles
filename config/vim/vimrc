@@ -17,6 +17,9 @@ source $XDG_CONFIG_HOME/vim/colorscheme.vim
 
 if has('persistent_undo')
   let s:target_path=expand('~') .. '/.vim/undo'
+  if has('nvim')
+    let s:target_path=expand('~') .. '/.nvim/undo'
+  endif
   if !isdirectory(s:target_path)
     call mkdir(s:target_path, "p", 0700)
   endif
