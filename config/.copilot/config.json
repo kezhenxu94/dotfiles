@@ -1,0 +1,21 @@
+{
+  "banner": "never",
+  "last_logged_in_user": {
+    "host": "https://github.com",
+    "login": "kezhenxu94"
+  },
+  "logged_in_users": [
+    {
+      "host": "https://github.com",
+      "login": "kezhenxu94"
+    }
+  ],
+  "model": "claude-sonnet-4.5",
+  "render_markdown": true,
+  "screen_reader": false,
+  "theme": "dark",
+  "trusted_folders": [
+    "/Users/kezhenxu94/dotfiles",
+    "/Users/kezhenxu94/workspace"
+  ]
+}
