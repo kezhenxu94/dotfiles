@@ -13,7 +13,7 @@
   "model": "claude-sonnet-4.5",
   "render_markdown": true,
   "screen_reader": false,
-  "theme": "auto",
+  "theme": "dark",
   "trusted_folders": [
     "/Users/kezhenxu94/dotfiles",
     "/Users/kezhenxu94/workspace"
