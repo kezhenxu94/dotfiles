@@ -2,7 +2,6 @@
 
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)/../..
 CONFIG_FILE="$SCRIPT_DIR/.copilot/config.json"
-echo $CONFIG_FILE
 
 function _set_copilot_theme {
   if [[ ! -f $CONFIG_FILE ]]; then
