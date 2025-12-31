@@ -6,6 +6,7 @@ SendEnv THEME
 Host github.com
   Hostname ssh.github.com
   Port 443
+  ProxyCommand nc -x 127.0.0.1:7891 %h %p
 
 Host *
   ServerAliveInterval 30
