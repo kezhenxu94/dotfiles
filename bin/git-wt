@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# Git worktree subcommand wrapper
+# Supports: git wt cd <name> and git wt rm <name>
+
+if [ "$#" -lt 1 ]; then
+  git worktree "$@"
+  exit $?
+fi
+
+subcommand="$1"
+shift
+
+case "$subcommand" in
+  cd)
+    if [ -z "$1" ]; then
+      echo "Usage: git wt cd <name>" >&2
+      exit 1
+    fi
+    worktree_path=$(git worktree list | awk -v name="$1" '$0 ~ name {print $1; exit}')
+    if [ -z "$worktree_path" ]; then
+      echo "Worktree '$1' not found" >&2
+      exit 1
+    fi
+    cd "$worktree_path" || exit 1
+    ;;
+  rm)
+    if [ -z "$1" ]; then
+      echo "Usage: git wt rm <name>" >&2
+      exit 1
+    fi
+    worktree_path=$(git worktree list | awk -v name="$1" '$0 ~ name {print $1; exit}')
+    if [ -z "$worktree_path" ]; then
+      echo "Worktree '$1' not found" >&2
+      exit 1
+    fi
+    git worktree remove "$worktree_path"
+    ;;
+  *)
+    # Pass through to git worktree for other commands
+    git worktree "$subcommand" "$@"
+    ;;
+esac

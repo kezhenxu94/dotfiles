@@ -26,7 +26,6 @@
   ps  = push
   st  = status
   sub = submodule
-  wt  = worktree
 
 [gpg]
   program = gpg
