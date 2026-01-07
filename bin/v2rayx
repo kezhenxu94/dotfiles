@@ -20,6 +20,10 @@ export HTTPS_PROXY=http://host.docker.internal:7890
 export HTTP_PROXY=http://host.docker.internal:7890
 export ALL_PROXY=socks5://host.docker.internal:7891
 export NO_PROXY="127.0.0.1,192.168.0.0/16,10.0.0.0/8,host.docker.internal,*.apple.com,.local,localhost,local-docker-registry,pi5,kind-control-plane" # Don't proxy *.apple.com for "Translate" application to work
+export https_proxy=http://host.docker.internal:7890
+export http_proxy=http://host.docker.internal:7890
+export all_proxy=socks5://host.docker.internal:7891
+export no_proxy="127.0.0.1,192.168.0.0/16,10.0.0.0/8,host.docker.internal,*.apple.com,.local,localhost,local-docker-registry,pi5,kind-control-plane" # Don't proxy *.apple.com for "Translate" application to work
 EOF
 }
 
