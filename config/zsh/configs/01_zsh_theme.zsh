@@ -18,8 +18,12 @@ function _set_zsh_theme {
 function _set_zsh_syntax_highlighting {
   if [[ "$THEME" == "light" ]]; then
     source "$XDG_CONFIG_HOME"/zsh/plugins/cappuccin/themes/catppuccin_latte-zsh-syntax-highlighting.zsh
+    printf '\033]11;#ffffff\007'
+    printf '\033]10;#2c3e50\007'
   else
     source "$XDG_CONFIG_HOME"/zsh/plugins/cappuccin/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
+    printf '\033]11;#1e1e1e\007'
+    printf '\033]10;#c0caf5\007'
   fi
 }
 
