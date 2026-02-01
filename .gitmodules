@@ -1,12 +1,6 @@
 [submodule "config/zsh/plugins/cappuccin"]
 	path = config/zsh/plugins/cappuccin
 	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
-[submodule "config/tmux/plugins/tmux-resurrect"]
-	path = config/tmux/plugins/tmux-resurrect
-	url = https://github.com/tmux-plugins/tmux-resurrect.git
-[submodule "config/tmux/plugins/tmux-continuum"]
-	path = config/tmux/plugins/tmux-continuum
-	url = https://github.com/tmux-plugins/tmux-continuum.git
 [submodule "bin/kfc"]
 	path = bin/kfc
 	url = https://github.com/kezhenxu94/kfc.git

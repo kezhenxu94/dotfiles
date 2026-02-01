@@ -36,6 +36,7 @@ teardown() {
   networksetup -setsearchdomains Wi-Fi Empty
 
   /usr/bin/sed -i '' '/export HTTP_PROXY/d; /export HTTPS_PROXY/d; /export ALL_PROXY/d; /export NO_PROXY/d' "$ENV_FILE"
+  /usr/bin/sed -i '' '/export http_proxy/d; /export https_proxy/d; /export all_proxy/d; /export no_proxy/d' "$ENV_FILE"
 }
 
 trap teardown EXIT

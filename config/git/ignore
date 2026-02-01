@@ -14,7 +14,6 @@ log/*.log
 rerun.txt
 tmp/**/*
 /tags
-.vscode
 .tool-versions
 .idea
 __debug_bin*
@@ -26,4 +25,4 @@ mise.toml
 .venv
 venv
 
-**/.claude/settings.local.json
+**/.claude/*.local.*

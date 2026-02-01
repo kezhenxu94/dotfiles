@@ -44,12 +44,6 @@ if [[ -f ~/.fzf.zsh ]]; then
   source ~/.fzf.zsh
 fi
 
-if which gh > /dev/null; then
-  if gh extension list | grep -q copilot; then
-    eval "$(gh copilot alias -- zsh)"
-  fi
-fi
-
 if [[ "$TERM_PROGRAM" = "Apple_Terminal" ]]; then
   tmux attach
 fi
