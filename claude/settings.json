@@ -27,7 +27,7 @@
       "Skill(superpowers:systematic-debugging)",
       "mcp__context7"
     ],
-    "defaultMode": "default"
+    "defaultMode": "plan"
   },
   "model": "opus",
   "enabledPlugins": {
