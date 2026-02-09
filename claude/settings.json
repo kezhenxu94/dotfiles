@@ -17,6 +17,11 @@
       "Bash(yarn:*)",
       "Bash(npm:*)",
       "Bash(git diff:*)",
+      "Bash(git fetch:*)",
+      "Bash(git show:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh label list:*)",
       "Bash(make:*)",
       "Bash(node:*)",
       "Bash(tree:*)",
@@ -30,15 +35,6 @@
     "defaultMode": "plan"
   },
   "model": "opus",
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "superpowers@superpowers-marketplace": true,
-    "context7@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true
-  },
   "hooks": {
     "PermissionRequest": [
       {
@@ -74,5 +70,15 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "ralph-loop@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "superpowers@superpowers-marketplace": true,
+    "context7@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "document-skills@anthropic-agent-skills": true
   }
 }
