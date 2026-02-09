@@ -1,10 +1,66 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]; then
-    echo "Usage: notify <message>"
+# Default values
+TITLE="Terminal"
+SOUND=""
+MESSAGE=""
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+  -h | --help)
+    echo "Usage: notify [message] [options]"
+    echo ""
+    echo "Arguments:"
+    echo "  message              The notification message (required)"
+    echo ""
+    echo "Options:"
+    echo "  -t, --title TITLE    Custom title (default: \"Terminal\")"
+    echo "  -s, --sound NAME     System sound name (e.g., Glass, Frog, Ping)"
+    echo "  -h, --help           Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  notify \"Build complete\""
+    echo "  notify \"Task done\" --title \"My App\""
+    echo "  notify \"Hello\" --sound \"Glass\""
+    echo "  notify \"Complete\" --sound \"Frog\" --title \"Build\""
+    exit 0
+    ;;
+  -t | --title)
+    TITLE="$2"
+    shift 2
+    ;;
+  -s | --sound)
+    SOUND="$2"
+    shift 2
+    ;;
+  -*)
+    echo "Error: Unknown option: $1" >&2
+    echo "Use -h or --help for usage information." >&2
     exit 1
+    ;;
+  *)
+    if [[ -z "$MESSAGE" ]]; then
+      MESSAGE="$1"
+    else
+      MESSAGE="$MESSAGE $1"
+    fi
+    shift
+    ;;
+  esac
+done
+
+# Check if message is provided
+if [[ -z "$MESSAGE" ]]; then
+  echo "Error: Message is required" >&2
+  echo "Usage: notify <message> [options]" >&2
+  echo "Use -h or --help for usage information." >&2
+  exit 1
 fi
 
-message="$*"
-
-osascript -e "display notification \"$message\" with title \"Notification\""
+# Build the osascript command
+if [[ -n "$SOUND" ]]; then
+  osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\" sound name \"$SOUND\""
+else
+  osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\""
+fi

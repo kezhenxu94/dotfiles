@@ -38,5 +38,41 @@
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true
+  },
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify \"Claude needs permission\" --title \"Claude Code\" --sound \"Glass\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify \"Claude needs your attention\" --title \"Claude Code\" --sound \"Ping\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "notify \"Claude task completed\" --title \"Claude Code\" --sound \"Pop\"",
+            "async": true
+          }
+        ]
+      }
+    ]
   }
 }
