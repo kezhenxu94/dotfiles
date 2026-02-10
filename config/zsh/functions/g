@@ -2,25 +2,7 @@
 
 function g {
   if [[ $# -gt 0 ]]; then
-    if [[ "$1" == "wt" || "$1" == "worktree" ]] && [[ "$2" == "cd" ]] && [[ -n "$3" ]]; then
-      local worktree_path=$(command git worktree list | awk -v name="$3" '$0 ~ name {print $1; exit}')
-      if [[ -n "$worktree_path" ]]; then
-        cd "$worktree_path"
-      else
-        echo "Worktree '$3' not found" >&2
-        return 1
-      fi
-    elif [[ "$1" == "wt" || "$1" == "worktree" ]] && [[ "$2" == "rm" ]] && [[ -n "$3" ]]; then
-      local worktree_path=$(command git worktree list | awk -v name="$3" '$0 ~ name {print $1; exit}')
-      if [[ -n "$worktree_path" ]]; then
-        command git worktree remove "$worktree_path"
-      else
-        echo "Worktree '$3' not found" >&2
-        return 1
-      fi
-    else
-      git "$@"
-    fi
+    git "$@"
   else
     git status
   fi
