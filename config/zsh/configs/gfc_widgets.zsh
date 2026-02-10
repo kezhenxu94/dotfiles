@@ -17,7 +17,7 @@ __gfc_pick_branch__() {
   echo "$branch" | __gfc_fzf__ \
     --prompt="[${current_branch:-detached}] branch> " \
     --preview-window=hidden,right,border-left \
-    --preview='git log --oneline --graph --color=always -20 {}' \
+    --preview='git log --oneline --graph --color=always {}' \
     --bind="ctrl-p:toggle-preview+transform([[ \$(cat $state_file) = hidden ]] && echo visible > $state_file || echo hidden > $state_file)" \
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
@@ -30,7 +30,7 @@ __gfc_pick_commit__() {
   echo "hidden" > "$state_file"
   trap 'rm -f "$state_file"' EXIT
 
-  git log --oneline --graph --color=always --decorate -100 | __gfc_fzf__ \
+  git log --oneline --graph --color=always --decorate | __gfc_fzf__ \
     --ansi --no-sort \
     --prompt="[${current_branch:-detached}] commit> " \
     --preview-window=hidden,right,border-left \
@@ -75,7 +75,7 @@ __gfc_pick_worktree__() {
   echo "$worktrees" | __gfc_fzf__ \
     --prompt="[${current_branch:-detached}] worktree> " \
     --preview-window=hidden,right,border-left \
-    --preview='git -C {1} log --oneline --graph --color=always -10' \
+    --preview='git -C {1} log --oneline --graph --color=always' \
     --bind="ctrl-p:toggle-preview+transform([[ \$(cat $state_file) = hidden ]] && echo visible > $state_file || echo hidden > $state_file)" \
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
