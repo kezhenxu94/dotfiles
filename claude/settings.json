@@ -36,17 +36,6 @@
   },
   "model": "opus",
   "hooks": {
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "notify \"Claude needs permission\" --title \"Claude Code\" --sound \"Glass\"",
-            "async": true
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "matcher": "",
