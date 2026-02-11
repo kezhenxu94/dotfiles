@@ -1,6 +1,7 @@
 export VISUAL=nvim
 export EDITOR=$VISUAL
 export KEYTIMEOUT=2000
+export PROMPT_EOL_MARK=""
 
 # awesome cd movements from zshkit
 setopt autocd autopushd pushdminus pushdsilent pushdtohome cdablevars

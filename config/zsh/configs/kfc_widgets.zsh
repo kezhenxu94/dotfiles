@@ -2,7 +2,7 @@
 
 _kfc_widget() {
   local result
-  result=$(KFC_SELECT=1 k)
+  result=$(k)
   if [[ -n "$result" ]]; then
     LBUFFER+="$result"
   fi
