@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
@@ -71,5 +75,13 @@
     "feature-dev@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true
-  }
+  },
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": [
+      "Clauding"
+    ]
+  },
+  "spinnerTipsEnabled": false,
+  "teammateMode": "in-process"
 }
