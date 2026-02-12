@@ -1,10 +1,11 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "MANPAGER": "cat"
+  },
   "attribution": {
     "commit": "",
     "pr": ""
-  },
-  "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
     "allow": [
@@ -40,7 +41,6 @@
     ],
     "defaultMode": "plan"
   },
-  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -76,12 +76,13 @@
     "commit-commands@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true
   },
+  "spinnerTipsEnabled": false,
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
       "Clauding"
     ]
   },
-  "spinnerTipsEnabled": false,
-  "teammateMode": "in-process"
+  "teammateMode": "in-process",
+  "model": "opus"
 }
