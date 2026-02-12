@@ -34,13 +34,22 @@
       "Bash(curl *)",
       "Bash(* --version)",
       "Bash(* --help *)",
+      "Read(//tmp/**)",
+      "Read(~/workspace/**)",
       "Skill(superpowers:executing-plans)",
       "Skill(superpowers:finishing-a-development-branch)",
       "Skill(superpowers:systematic-debugging)",
       "mcp__plugin_context7_context7"
     ],
+    "deny": [
+      "Read(//**/.env)",
+      "Read(//**/*.env)",
+      "Read(//**/*.env.*)",
+      "Read(//**/*credential*)"
+    ],
     "defaultMode": "plan"
   },
+  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -83,6 +92,5 @@
       "Clauding"
     ]
   },
-  "teammateMode": "in-process",
-  "model": "opus"
+  "teammateMode": "in-process"
 }
