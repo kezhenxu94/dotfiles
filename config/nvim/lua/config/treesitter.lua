@@ -90,6 +90,7 @@ vim.api.nvim_create_autocmd("FileType", {
 
     -- Set folding if available
     if vim.treesitter.query.get(lang, "folds") then
+      vim.wo.foldmethod = "expr"
       vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
     end
 
