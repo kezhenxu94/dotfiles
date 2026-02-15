@@ -91,6 +91,7 @@
       "Clauding"
     ]
   },
+  "skipDangerousModePermissionPrompt": true,
   "teammateMode": "in-process",
-  "skipDangerousModePermissionPrompt": true
+  "effortLevel": "medium"
 }
