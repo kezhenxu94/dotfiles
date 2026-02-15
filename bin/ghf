@@ -1,0 +1,255 @@
+#!/usr/bin/env zsh
+
+SCRIPT_FILE=$(realpath "$0")
+
+_run_fzf_picker() {
+  local state_file=$(mktemp)
+  echo "hidden" > "$state_file"
+  trap 'rm -f "$state_file"' EXIT
+  fzf --layout=reverse --info='inline: | ' --pointer=' ' --scrollbar='' "$@" \
+    --bind="ctrl-p:toggle-preview+transform([[ \$(cat $state_file) = hidden ]] && echo visible > $state_file || echo hidden > $state_file)" \
+    --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
+    --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)"
+}
+
+_view_in_editor() {
+  ${EDITOR:-nvim} -R -c "set nomodifiable" -c "nnoremap q :q<CR>" "$@"
+}
+
+_browse_notifications() {
+  local header="HEADER_ID\tHEADER_URL\t$(printf '%-8s  %-32s  #%-7s  %-16s  %s' 'STATUS' 'REPOSITORY' 'NUMBER' 'UPDATED' 'TITLE')"
+  local cmd="gh api notifications --paginate 2>/dev/null | jq -r '.[] | [.id, .subject.url, (if .unread then \"[unread]\" else \"[read]\" end), .repository.full_name, (.subject.url | split(\"/\") | .[-1]), (.updated_at | fromdateiso8601 | strftime(\"%Y-%m-%d %H:%M\")), .subject.title] | @tsv' 2>/dev/null | awk -F'\\t' '{printf \"%s\\t%s\\t%-8s  %-32s  #%-7s  %-16s  %s\\n\", \$1, \$2, \$3, substr(\$4, 1, 32), substr(\$5, 1, 7), \$6, \$7}'"
+  local full_cmd="echo -e '$header'; $cmd"
+  local preview_cmd='gh api {2} 2>/dev/null | jq -r "\"REPOSITORY: \" + (.repository.full_name // .base.repo.full_name // \"unknown\") + \"\\n\" + \"TYPE: \" + (.type // \"unknown\") + \"\\n\" + \"STATE: \" + (.state // \"unknown\") + \"\\n\" + \"USER: \" + (.user.login // \"unknown\") + \"\\n\\n\" + \"--- BODY ---\\n\" + (.body // .message // \"No content\")" 2>/dev/null'
+
+  _run_fzf_picker \
+    --prompt='notifications> ' \
+    --delimiter='\t' \
+    --with-nth=3.. \
+    --header-lines=1 \
+    --ghost='type to filter | Enter (open) | C-o (done) | C-x (read) | C-s (unsubscribe) | Tab (multi-select) | Esc (back)' \
+    --preview-window=hidden,right,50%,border-left \
+    --multi \
+    --bind="start:reload:$full_cmd" \
+    --bind="ctrl-r:reload:$full_cmd" \
+    --bind="enter:execute:gh api {2} -q '.html_url' 2>/dev/null | xargs open" \
+    --bind="ctrl-o:execute:gh api --method DELETE /notifications/threads/{1} 2>/dev/null && echo 'Marked as done'" \
+    --bind="ctrl-x:execute:gh api --method PATCH /notifications/threads/{1} -f read=true 2>/dev/null && echo 'Marked as read'" \
+    --bind="ctrl-s:execute:gh api --method DELETE /notifications/threads/{1}/subscription 2>/dev/null && echo 'Unsubscribed'" \
+    --bind="ctrl-t:become(source $SCRIPT_FILE && _show_main_menu)" \
+    --preview="$preview_cmd" \
+    --bind="esc:become(source $SCRIPT_FILE && _show_main_menu)"
+}
+
+_browse_repos() {
+  local header="HEADER_REPO\t$(printf '%-40s  %-8s  %-8s  %-16s  %-16s' 'REPOSITORY' 'STARS' 'FORKS' 'LANGUAGE' 'UPDATED')"
+  local cmd="gh repo list --limit ${GHF_MAX_ITEMS:-100} --json nameWithOwner,stargazerCount,forkCount,primaryLanguage,updatedAt,description 2>/dev/null | jq -r '.[] | [.nameWithOwner, .nameWithOwner, (.stargazerCount|tostring), (.forkCount|tostring), (.primaryLanguage.name // \"-\"), (.updatedAt | fromdateiso8601 | strftime(\"%Y-%m-%d %H:%M\"))] | @tsv' 2>/dev/null | awk -F'\\t' '{printf \"%s\\t%-40s  %-8s  %-8s  %-16s  %-16s\\n\", \$1, substr(\$2, 1, 40), substr(\$3, 1, 8), substr(\$4, 1, 8), substr(\$5, 1, 16), \$6}'"
+  local full_cmd="echo -e '$header'; $cmd"
+  local preview_cmd='gh repo view {1} 2>/dev/null'
+
+  _run_fzf_picker \
+    --prompt='repos> ' \
+    --delimiter='\t' \
+    --with-nth=2.. \
+    --header-lines=1 \
+    --ghost='type to filter | Enter (open) | C-g (clone) | C-f (fork) | C-s (star) | C-v (README) | Esc (back)' \
+    --preview-window=hidden,right,50%,border-left \
+    --bind="start:reload:$full_cmd" \
+    --bind="ctrl-r:reload:$full_cmd" \
+    --bind="enter:execute:gh repo view {1} --web 2>/dev/null" \
+    --bind="ctrl-v:execute:gh repo view {1} 2>/dev/null | _view_in_editor - > /dev/tty" \
+    --bind="ctrl-n:become(source $SCRIPT_FILE && _browse_issues {1})" \
+    --bind="ctrl-o:become(source $SCRIPT_FILE && _browse_prs {1})" \
+    --bind="ctrl-t:become(source $SCRIPT_FILE && _show_main_menu)" \
+    --preview="$preview_cmd" \
+    --bind="esc:become(source $SCRIPT_FILE && _show_main_menu)"
+}
+
+_browse_issues() {
+  local repo_filter="${1:-}"
+  local search_query="is:issue state:open archived:false assignee:@me sort:updated-desc"
+  if [[ -n "$repo_filter" ]]; then
+    search_query="repo:$repo_filter state:open"
+  fi
+
+  local header="HEADER_REPO\tHEADER_NUM\t$(printf '%-8s  %-32s  #%-7s  %-16s  %s' 'STATE' 'REPOSITORY' 'NUMBER' 'UPDATED' 'TITLE')"
+  local cmd="gh search issues --limit 100 --json repository,number,state,title,updatedAt -- $search_query 2>/dev/null | jq -r '.[] | [.repository.nameWithOwner, .number, .state, (.updatedAt | fromdateiso8601 | strftime(\"%Y-%m-%d %H:%M\")), .title] | @tsv' 2>/dev/null | awk -F'\\t' '{printf \"%s\\t%s\\t%-8s  %-32s  #%-7s  %-16s  %s\\n\", \$1, \$2, \"[\"\$3\"]\", substr(\$1, 1, 32), substr(\$2, 1, 7), \$4, \$5}'"
+  local full_cmd="echo -e '$header'; $cmd"
+  local preview_cmd="gh issue view -R {1} {2} 2>/dev/null"
+
+  _run_fzf_picker \
+    --prompt="issues${repo_filter:+@$repo_filter}> " \
+    --delimiter='\t' \
+    --with-nth=3.. \
+    --header-lines=1 \
+    --ghost='type to filter | Enter (open) | C-e (edit) | C-x (close) | C-o (comment) | Esc (back)' \
+    --preview-window=hidden,right,50%,border-left \
+    --multi \
+    --bind="start:reload:$full_cmd" \
+    --bind="ctrl-r:reload:$full_cmd" \
+    --bind="enter:execute:gh issue view -R {1} {2} --web 2>/dev/null" \
+    --bind="ctrl-e:execute:gh issue edit -R {1} {2} 2>/dev/null" \
+    --bind="ctrl-x:execute:gh issue close -R {1} {2} 2>/dev/null && echo 'Closed issue #{2}'" \
+    --bind="ctrl-o:execute:gh issue comment -R {1} {2} 2>/dev/null" \
+    --bind="ctrl-t:become(source $SCRIPT_FILE && _show_main_menu)" \
+    --preview="$preview_cmd" \
+    --bind="esc:become(source $SCRIPT_FILE && _show_main_menu)"
+}
+
+_browse_prs() {
+  local repo_filter="${1:-}"
+  local search_query="is:open is:pr author:@me archived:false"
+  if [[ -n "$repo_filter" ]]; then
+    search_query="repo:$repo_filter state:open"
+  fi
+
+  local header="HEADER_REPO\tHEADER_NUM\t$(printf '%-8s  %-32s  #%-7s  %-16s  %s' 'STATE' 'REPOSITORY' 'NUMBER' 'UPDATED' 'TITLE')"
+  local cmd="gh search prs --limit 100 --json repository,number,state,title,updatedAt -- $search_query 2>/dev/null | jq -r '.[] | [.repository.nameWithOwner, .number, .state, (.updatedAt | fromdateiso8601 | strftime(\"%Y-%m-%d %H:%M\")), .title] | @tsv' 2>/dev/null | awk -F'\\t' '{printf \"%s\\t%s\\t%-8s  %-32s  #%-7s  %-16s  %s\\n\", \$1, \$2, \"[\"\$3\"]\", substr(\$1, 1, 32), substr(\$2, 1, 7), \$4, \$5}'"
+  local full_cmd="echo -e '$header'; $cmd"
+  local preview_cmd="gh pr view -R {1} {2} 2>/dev/null"
+
+  _run_fzf_picker \
+    --prompt="pull requests${repo_filter:+@$repo_filter}> " \
+    --delimiter='\t' \
+    --with-nth=3.. \
+    --header-lines=1 \
+    --ghost='type to filter | Enter (open) | C-o (checkout) | C-g (merge) | C-x (close) | Esc (back)' \
+    --preview-window=hidden,right,50%,border-left \
+    --multi \
+    --bind="start:reload:$full_cmd" \
+    --bind="ctrl-r:reload:$full_cmd" \
+    --bind="enter:execute:gh pr view -R {1} {2} --web 2>/dev/null" \
+    --bind="ctrl-o:execute:gh pr checkout {2} 2>/dev/null" \
+    --bind="ctrl-g:execute:gh pr merge {2} --squash --delete-branch 2>/dev/null && echo 'Merged PR #{2}'" \
+    --bind="ctrl-x:execute:gh pr close {2} 2>/dev/null && echo 'Closed PR #{2}'" \
+    --bind="ctrl-e:execute:gh pr edit {2} 2>/dev/null" \
+    --bind="ctrl-t:become(source $SCRIPT_FILE && _show_main_menu)" \
+    --preview="$preview_cmd" \
+    --bind="esc:become(source $SCRIPT_FILE && _show_main_menu)"
+}
+
+_browse_actions() {
+  local repo_filter="${1:-}"
+  local repo_flag=""
+  if [[ -n "$repo_filter" ]]; then
+    repo_flag="-R $repo_filter"
+  fi
+
+  local header="HEADER_ID\t$(printf '%-12s  %-32s  %-20s  %-16s' 'STATUS' 'WORKFLOW' 'BRANCH' 'CREATED')"
+  local cmd="gh run list $repo_flag --limit ${GHF_MAX_ITEMS:-50} --json databaseId,name,status,conclusion,headBranch,createdAt,displayTitle 2>/dev/null | jq -r '.[] | [.databaseId, (if .conclusion == \"SUCCESS\" then \"[success]\" elif .conclusion == \"FAILURE\" then \"[failed]\" elif .status == \"IN_PROGRESS\" then \"[running]\" else \"[unknown]\" end), .name, .headBranch, (.createdAt | fromdateiso8601 | strftime(\"%Y-%m-%d %H:%M\"))] | @tsv' 2>/dev/null | awk -F'\\t' '{printf \"%s\\t%-12s  %-32s  %-20s  %-16s\\n\", \$1, \$2, substr(\$3, 1, 32), substr(\$4, 1, 20), \$5}'"
+  local full_cmd="echo -e '$header'; $cmd"
+  local preview_cmd="gh run view {1} $repo_flag 2>/dev/null"
+
+  _run_fzf_picker \
+    --prompt="actions${repo_filter:+@$repo_filter}> " \
+    --delimiter='\t' \
+    --with-nth=2.. \
+    --header-lines=1 \
+    --ghost='type to filter | Enter (open) | C-k (logs) | C-y (rerun) | C-x (cancel) | C-j (artifacts) | Esc (back)' \
+    --preview-window=hidden,right,50%,border-left \
+    --bind="start:reload:$full_cmd" \
+    --bind="ctrl-r:reload:$full_cmd" \
+    --bind="enter:execute:gh run view {1} --web $repo_flag 2>/dev/null" \
+    --bind="ctrl-k:execute:gh run view {1} --log-failed $repo_flag 2>/dev/null | tail -100 | _view_in_editor - > /dev/tty" \
+    --bind="ctrl-y:execute:gh run rerun {1} $repo_flag 2>/dev/null && echo 'Rerun triggered for #{1}'" \
+    --bind="ctrl-x:execute:gh run cancel {1} $repo_flag 2>/dev/null && echo 'Cancelled run #{1}'" \
+    --bind="ctrl-j:execute:gh run download {1} $repo_flag 2>/dev/null && echo 'Downloaded artifacts for #{1}'" \
+    --bind="ctrl-t:become(source $SCRIPT_FILE && _show_main_menu)" \
+    --preview="$preview_cmd" \
+    --bind="esc:become(source $SCRIPT_FILE && _show_main_menu)"
+}
+
+_show_main_menu() {
+  local menu_items=(
+    "[notif]  Notifications"
+    "[repo]   Repositories"
+    "[issue]  Issues"
+    "[pr]     Pull Requests"
+    "[action] Actions"
+  )
+
+  printf '%s\n' "${menu_items[@]}" |
+    _run_fzf_picker \
+      --prompt='ghf> ' \
+      --ghost='select a module | Enter (navigate) | Esc (exit)' \
+      --header=$'>> GitHub Fuzzy - Interactive GitHub CLI <<\n' \
+      --preview-window=hidden \
+      --height=~50% \
+      --bind="enter:become(
+        case '{1}' in
+          '[notif]'*) source $SCRIPT_FILE && _browse_notifications ;;
+          '[repo]'*) source $SCRIPT_FILE && _browse_repos ;;
+          '[issue]'*) source $SCRIPT_FILE && _browse_issues ;;
+          '[pr]'*) source $SCRIPT_FILE && _browse_prs ;;
+          '[action]'*) source $SCRIPT_FILE && _browse_actions ;;
+        esac
+      )"
+}
+
+ghf() {
+  local cmd
+  for cmd in gh fzf jq; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+      echo "Error: $cmd is not installed or not in PATH" >&2
+      exit 1
+    fi
+  done
+
+  if ! gh auth status &>/dev/null; then
+    echo "Error: Not authenticated with GitHub CLI. Run 'gh auth login' first." >&2
+    exit 1
+  fi
+
+  local subcmd="${1:-}"
+
+  case "$subcmd" in
+    n|notif|notifications)
+      _browse_notifications
+      ;;
+    r|repo|repos|repositories)
+      _browse_repos
+      ;;
+    i|issue|issues)
+      shift
+      _browse_issues "$@"
+      ;;
+    p|pr|prs|pulls)
+      shift
+      _browse_prs "$@"
+      ;;
+    a|action|actions)
+      shift
+      _browse_actions "$@"
+      ;;
+    ""|menu)
+      _show_main_menu
+      ;;
+    -h|--help|help)
+      echo "Usage: ghf [command]"
+      echo ""
+      echo "Commands:"
+      echo "  n, notif     Notifications manager"
+      echo "  r, repo      Repository browser"
+      echo "  i, issue     Issue tracker"
+      echo "  p, pr        Pull request workflow"
+      echo "  a, action    GitHub Actions viewer"
+      echo ""
+      echo "Run without arguments for interactive menu."
+      ;;
+    *)
+      echo "Unknown command: $subcmd" >&2
+      echo "Run 'ghf --help' for usage." >&2
+      exit 1
+      ;;
+  esac
+}
+
+main() {
+  ghf "$@"
+}
+
+# Only run main when executed directly (not when sourced)
+(
+  [[ -n $ZSH_VERSION && $ZSH_EVAL_CONTEXT =~ :file$ ]] ||
+  [[ -n $BASH_VERSION ]] && (return 0 2>/dev/null)
+) || main "$@"

@@ -81,8 +81,7 @@
     "superpowers@superpowers-marketplace": true,
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true,
-    "document-skills@anthropic-agent-skills": true
+    "commit-commands@claude-plugins-official": true
   },
   "spinnerTipsEnabled": false,
   "spinnerVerbs": {
