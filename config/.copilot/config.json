@@ -10,7 +10,7 @@
       "login": "kezhenxu94"
     }
   ],
-  "model": "claude-sonnet-4.5",
+  "model": "claude-sonnet-4.6",
   "render_markdown": true,
   "screen_reader": false,
   "theme": "dark",
@@ -22,4 +22,3 @@
     "https://github.com"
   ]
 }
-
