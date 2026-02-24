@@ -78,3 +78,42 @@ vim.diagnostic.config({
 })
 
 vim.lsp.inlay_hint.enable()
+
+vim.api.nvim_create_autocmd("LspProgress", {
+  callback = function(ev)
+    local clientId = ev.data.client_id
+    local client = vim.lsp.get_client_by_id(clientId)
+    local name = client and client.name or "LSP"
+
+    local value = ev.data.params.value
+    local parts = {}
+
+    if value.kind == "end" then
+      table.insert(parts, "✔ Done")
+    else
+      if value.title and value.title ~= "" then
+        table.insert(parts, value.title)
+      end
+
+      if value.message and value.message ~= "" then
+        table.insert(parts, value.message)
+      end
+
+      if value.percentage then
+        table.insert(parts, string.format("(%d%%%%)", value.percentage))
+      end
+    end
+
+    local msgId = ("progress-lsp-%s-%s"):format(clientId, value.title)
+    local title = ("[%s] %s"):format(name or clientId, value.title)
+    local msg = table.concat(parts, " ")
+
+    vim.api.nvim_echo({ { msg } }, false, {
+      id = msgId,
+      kind = "progress",
+      title = title,
+      status = "success",
+      percent = value.percentage,
+    })
+  end,
+})
