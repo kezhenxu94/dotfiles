@@ -40,7 +40,7 @@ _load_settings "$XDG_CONFIG_HOME/zsh/configs"
 source $XDG_CONFIG_HOME/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 if [[ -f ~/.fzf.zsh ]]; then
-  export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --color=gutter:-1"
+  export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --gutter=' ' --color gutter:-1"
   source ~/.fzf.zsh
 fi
 

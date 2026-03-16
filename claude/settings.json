@@ -1,6 +1,7 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_ATTRIBUTION_HEADER": "0"
   },
   "attribution": {
     "commit": "",
@@ -21,6 +22,7 @@
       "Bash(yarn *)",
       "Bash(npm *)",
       "Bash(git diff *)",
+      "Bash(git rebase *)",
       "Bash(git fetch *)",
       "Bash(git show *)",
       "Bash(gh pr view *)",
@@ -48,7 +50,6 @@
     ],
     "defaultMode": "plan"
   },
-  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -81,13 +82,14 @@
     "superpowers@superpowers-marketplace": true,
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
-    "commit-commands@claude-plugins-official": true
+    "commit-commands@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
   },
   "spinnerTipsEnabled": false,
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
-      "Clauding"
+      "Thinking"
     ]
   },
   "skipDangerousModePermissionPrompt": true,

@@ -87,6 +87,18 @@ body#gsr * {
 body[class*="lark-web"] *:not([class*="icon"]) {
   font-family: var(--font) !important;
 }
+div.page-view-messenger {
+  width: 300px !important;
+}
+div.page-view-messenger-chat {
+  width: 100% !important;
+}
+.navItem-userAuthList-hasDownloadIcon {
+  bottom: 0 !important;
+}
+.navItem-download {
+  display: none !important;
+}
 
 /* YouTube */
 ytd-app * {
