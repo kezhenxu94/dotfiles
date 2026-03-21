@@ -48,7 +48,7 @@
       "Read(//**/*.env.*)",
       "Read(//**/*credential*)"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "auto"
   },
   "hooks": {
     "Notification": [
@@ -92,7 +92,8 @@
       "Thinking"
     ]
   },
+  "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
   "teammateMode": "in-process",
-  "effortLevel": "medium"
+  "skipAutoPermissionPrompt": true
 }
