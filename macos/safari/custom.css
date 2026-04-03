@@ -99,6 +99,15 @@ div.page-view-messenger-chat {
 .navItem-download {
   display: none !important;
 }
+/* hide the left nav bar */
+  .appNavbar {
+    display: none !important;
+  }
+@media (prefers-color-scheme: light) {
+  .appLayout-content {
+    background-color: transparent !important;
+  }
+}
 
 /* YouTube */
 ytd-app * {

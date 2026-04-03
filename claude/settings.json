@@ -77,7 +77,6 @@
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
-    "ralph-loop@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "superpowers@superpowers-marketplace": true,
     "context7@claude-plugins-official": true,
@@ -94,6 +93,6 @@
   },
   "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
-  "teammateMode": "in-process",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "teammateMode": "in-process"
 }
