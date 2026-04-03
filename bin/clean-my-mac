@@ -56,7 +56,6 @@ fi
 # Verify fd is installed
 if ! command -v fd &>/dev/null; then
   echo "Error: 'fd' is required but not installed" >&2
-  echo "Install with: brew install fd" >&2
   exit 1
 fi
 
@@ -201,56 +200,98 @@ if command -v npm &>/dev/null; then
   fi
 fi
 
+# Yarn cache
+if command -v yarn &>/dev/null; then
+  if [[ "$DRY_RUN" == false ]]; then
+    yarn cache clean 2>/dev/null || true
+  fi
+fi
+
+# uv cache (Python)
+if command -v uv &>/dev/null; then
+  if [[ "$DRY_RUN" == false ]]; then
+    uv cache clean 2>/dev/null || true
+  fi
+fi
+
 # pip cache
 clean_path "$HOME/Library/Caches/pip" "pip cache"
+
+# Gradle caches (keep wrapper to avoid re-downloading Gradle itself)
+clean_path "$HOME/.gradle/caches" "Gradle caches"
+
+# Maven repository
+clean_path "$HOME/.m2/repository" "Maven repository"
+
+echo ""
+echo "==> Cleaning Go caches..."
+if command -v go &>/dev/null; then
+  if [[ "$DRY_RUN" == false ]]; then
+    go clean -cache 2>/dev/null || true
+    go clean -modcache 2>/dev/null || true
+    echo "  Go build cache and module cache cleared"
+  else
+    printf "  %-50s %8s\n" "Go build cache" "$(get_size ~/Library/Caches/go-build)"
+    printf "  %-50s %8s\n" "Go module cache" "$(get_size ~/go/pkg/mod)"
+  fi
+fi
 
 echo ""
 echo "==> Cleaning Docker images and containers..."
 
 # Docker cleanup (if Docker is installed and running)
 if command -v docker &>/dev/null && docker info &>/dev/null 2>&1; then
-  # Clean up dangling images (untagged)
-  DANGLING_IMAGES=$(docker images -f "dangling=true" -q 2>/dev/null || true)
-  if [[ -n "$DANGLING_IMAGES" ]]; then
-    DANGLING_COUNT=$(echo "$DANGLING_IMAGES" | wc -l | tr -d ' ')
+  if [[ "$AGGRESSIVE_MODE" == true ]]; then
     if [[ "$DRY_RUN" == true ]]; then
-      printf "  %-50s %8s\n" "Docker dangling images ($DANGLING_COUNT images)" "N/A"
+      printf "  %-50s %8s\n" "Docker full system prune (aggressive)" "N/A"
     else
-      # shellcheck disable=SC2086
-      docker rmi $DANGLING_IMAGES &>/dev/null || true
-      printf "  %-50s %8s\n" "Docker dangling images" "$DANGLING_COUNT"
-    fi
-  fi
-
-  # Clean up stopped containers
-  STOPPED_CONTAINERS=$(docker ps -a -f "status=exited" -q 2>/dev/null || true)
-  if [[ -n "$STOPPED_CONTAINERS" ]]; then
-    CONTAINER_COUNT=$(echo "$STOPPED_CONTAINERS" | wc -l | tr -d ' ')
-    if [[ "$DRY_RUN" == true ]]; then
-      printf "  %-50s %8s\n" "Docker stopped containers ($CONTAINER_COUNT)" "N/A"
-    else
-      # shellcheck disable=SC2086
-      docker rm $STOPPED_CONTAINERS &>/dev/null || true
-      printf "  %-50s %8s\n" "Docker stopped containers" "$CONTAINER_COUNT"
-    fi
-  fi
-
-  # Clean up unused volumes
-  if [[ "$DRY_RUN" == true ]]; then
-    UNUSED_VOLUMES=$(docker volume ls -f "dangling=true" -q 2>/dev/null || true)
-    if [[ -n "$UNUSED_VOLUMES" ]]; then
-      VOLUME_COUNT=$(echo "$UNUSED_VOLUMES" | wc -l | tr -d ' ')
-      printf "  %-50s %8s\n" "Docker unused volumes ($VOLUME_COUNT)" "N/A"
+      docker system prune -af --volumes &>/dev/null || true
+      echo "  Docker full system prune (aggressive)"
     fi
   else
-    docker volume prune -f &>/dev/null || true
-  fi
+    # Clean up dangling images (untagged)
+    DANGLING_IMAGES=$(docker images -f "dangling=true" -q 2>/dev/null || true)
+    if [[ -n "$DANGLING_IMAGES" ]]; then
+      DANGLING_COUNT=$(echo "$DANGLING_IMAGES" | wc -l | tr -d ' ')
+      if [[ "$DRY_RUN" == true ]]; then
+        printf "  %-50s %8s\n" "Docker dangling images ($DANGLING_COUNT images)" "N/A"
+      else
+        # shellcheck disable=SC2086
+        docker rmi $DANGLING_IMAGES &>/dev/null || true
+        printf "  %-50s %8s\n" "Docker dangling images" "$DANGLING_COUNT"
+      fi
+    fi
 
-  # Clean up build cache
-  if [[ "$DRY_RUN" == true ]]; then
-    printf "  %-50s %8s\n" "Docker build cache" "N/A"
-  else
-    docker builder prune -f &>/dev/null || true
+    # Clean up stopped containers
+    STOPPED_CONTAINERS=$(docker ps -a -f "status=exited" -q 2>/dev/null || true)
+    if [[ -n "$STOPPED_CONTAINERS" ]]; then
+      CONTAINER_COUNT=$(echo "$STOPPED_CONTAINERS" | wc -l | tr -d ' ')
+      if [[ "$DRY_RUN" == true ]]; then
+        printf "  %-50s %8s\n" "Docker stopped containers ($CONTAINER_COUNT)" "N/A"
+      else
+        # shellcheck disable=SC2086
+        docker rm $STOPPED_CONTAINERS &>/dev/null || true
+        printf "  %-50s %8s\n" "Docker stopped containers" "$CONTAINER_COUNT"
+      fi
+    fi
+
+    # Clean up unused volumes
+    if [[ "$DRY_RUN" == true ]]; then
+      UNUSED_VOLUMES=$(docker volume ls -f "dangling=true" -q 2>/dev/null || true)
+      if [[ -n "$UNUSED_VOLUMES" ]]; then
+        VOLUME_COUNT=$(echo "$UNUSED_VOLUMES" | wc -l | tr -d ' ')
+        printf "  %-50s %8s\n" "Docker unused volumes ($VOLUME_COUNT)" "N/A"
+      fi
+    else
+      docker volume prune -f &>/dev/null || true
+    fi
+
+    # Clean up build cache
+    if [[ "$DRY_RUN" == true ]]; then
+      printf "  %-50s %8s\n" "Docker build cache" "N/A"
+    else
+      docker builder prune -f &>/dev/null || true
+    fi
   fi
 fi
 
@@ -272,6 +313,17 @@ fi
 
 # CocoaPods cache
 clean_path "$HOME/Library/Caches/CocoaPods" "CocoaPods cache"
+
+# Go dev tool caches
+clean_path "$HOME/Library/Caches/goimports" "goimports cache"
+clean_path "$HOME/Library/Caches/gopls" "gopls cache"
+clean_path "$HOME/Library/Caches/golangci-lint" "golangci-lint cache"
+clean_path "$HOME/Library/Caches/staticcheck" "staticcheck cache"
+clean_path "$HOME/Library/Caches/typescript" "TypeScript cache"
+
+# Test runner browser caches
+clean_path "$HOME/Library/Caches/Cypress" "Cypress binary cache"
+clean_path "$HOME/Library/Caches/ms-playwright" "Playwright binary cache"
 
 # User cache directory
 if [[ -d "$HOME/Library/Caches" ]]; then
@@ -319,6 +371,7 @@ echo "==> Cleaning editor/IDE caches..."
 # Neovim swap and shada files
 clean_path "$HOME/.local/state/nvim/swap" "Neovim swap files"
 clean_path "$HOME/.local/share/nvim/swap" "Neovim swap files (legacy)"
+clean_path "$HOME/.cache/nvim" "Neovim cache"
 
 # Old vim undo files (keep recent ones)
 if [[ -d "$HOME/.vim/undo" ]]; then
@@ -331,6 +384,21 @@ fi
 
 # VS Code cache (if exists)
 clean_path "$HOME/.vscode/extensions/.obsolete" "VS Code obsolete extensions"
+
+echo ""
+echo "==> Cleaning AI/ML caches..."
+clean_path "$HOME/.cache/huggingface" "Huggingface model cache"
+
+echo ""
+echo "==> Cleaning iOS Simulators..."
+if command -v xcrun &>/dev/null; then
+  if [[ "$DRY_RUN" == true ]]; then
+    xcrun simctl list devices | grep -c "unavailable" | xargs -I{} printf "  %-50s %8s\n" "Unavailable simulators ({})" "N/A" || true
+  else
+    xcrun simctl delete unavailable 2>/dev/null || true
+    echo "  Deleted unavailable iOS simulators"
+  fi
+fi
 
 echo ""
 # Calculate and display total size

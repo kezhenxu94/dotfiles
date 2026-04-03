@@ -118,6 +118,10 @@ div.page-view-messenger-chat {
   padding: 0px !important;
 }
 
+.sidebar-resizer {
+  width: 2px !important;
+}
+
 /* YouTube */
 ytd-app * {
   font-family: var(--font) !important;
