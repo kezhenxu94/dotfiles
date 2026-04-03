@@ -100,13 +100,11 @@ div.page-view-messenger-chat {
   display: none !important;
 }
 /* hide the left nav bar */
-  .appNavbar {
-    display: none !important;
-  }
-@media (prefers-color-scheme: light) {
-  .appLayout-content {
-    background-color: transparent !important;
-  }
+.appNavbar {
+  display: none !important;
+}
+.appLayout-content {
+  background-color: transparent !important;
 }
 
 .appLayout-content {
@@ -118,8 +116,19 @@ div.page-view-messenger-chat {
   padding: 0px !important;
 }
 
+#root-messenger, #root-messenger-chat {
+  border-radius: 0px !important;
+}
+
 .sidebar-resizer {
-  width: 2px !important;
+  width: 0.5px !important;
+}
+
+body[class*="lark-web"] *::-webkit-scrollbar {
+  display: none !important;
+}
+body[class*="lark-web"] * {
+  scrollbar-width: none !important;
 }
 
 /* YouTube */
