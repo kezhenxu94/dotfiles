@@ -109,6 +109,15 @@ div.page-view-messenger-chat {
   }
 }
 
+.appLayout-content {
+  padding: 0px !important;
+}
+
+.page-content-wrapper {
+  border-radius: 0px !important;
+  padding: 0px !important;
+}
+
 /* YouTube */
 ytd-app * {
   font-family: var(--font) !important;
