@@ -110,6 +110,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
 
     vim.api.nvim_echo({ { msg } }, false, {
       id = msgId,
+      source = "lsp",
       kind = "progress",
       title = title,
       status = "success",
