@@ -9,6 +9,10 @@ local function set_transparent_bg()
   vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = normal_hl.fg })
   -- Inactive statusline: linked to LineNr
   vim.api.nvim_set_hl(0, "StatusLineNC", { link = "LineNr" })
+  -- Popup menu: transparent background, border matches pane border
+  vim.api.nvim_set_hl(0, "Pmenu", { bg = "NONE" })
+  vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "NONE" })
+  vim.api.nvim_set_hl(0, "PmenuBorder", { bg = "NONE", fg = cursorline_hl.bg })
 end
 
 -- System appearance detection
