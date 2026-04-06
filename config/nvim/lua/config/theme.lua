@@ -13,6 +13,10 @@ local function set_transparent_bg()
   vim.api.nvim_set_hl(0, "Pmenu", { bg = "NONE" })
   vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "NONE" })
   vim.api.nvim_set_hl(0, "PmenuBorder", { bg = "NONE", fg = cursorline_hl.bg })
+  -- Tab bar: transparent background
+  vim.api.nvim_set_hl(0, "TabLine", { link = "LineNr" })
+  vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
+  vim.api.nvim_set_hl(0, "TabLineSel", { bg = cursorline_hl.bg })
 end
 
 -- System appearance detection
