@@ -1,15 +1,15 @@
-vim.pack.add({
-  { src = "https://github.com/catppuccin/nvim", name = "catppuccin" },
-}, { confirm = false })
-
-require("catppuccin").setup({
-  flavour = "auto",
-  transparent_background = true,
-  float = {
-    transparent = true,
-    solid = false,
-  },
-})
+local function set_transparent_bg()
+  vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
+  vim.api.nvim_set_hl(0, "NormalNC", { bg = "NONE" })
+  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "NONE" })
+  local cursorline_hl = vim.api.nvim_get_hl(0, { name = "CursorLine" })
+  local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+  vim.api.nvim_set_hl(0, "WinSeparator", { bg = "NONE", fg = cursorline_hl.bg })
+  -- Active statusline: transparent bg, normal fg
+  vim.api.nvim_set_hl(0, "StatusLine", { bg = "NONE", fg = normal_hl.fg })
+  -- Inactive statusline: linked to LineNr
+  vim.api.nvim_set_hl(0, "StatusLineNC", { link = "LineNr" })
+end
 
 -- System appearance detection
 if vim.fn.has("osx") == 1 then
@@ -36,6 +36,17 @@ if vim.fn.has("osx") == 1 then
           vim.schedule(function()
             vim.o.background = data:match("[dD]ark") and "dark" or "light"
           end)
+          if data:match("[dD]ark") then
+            vim.schedule(function()
+              vim.cmd.colorscheme("habamax")
+              set_transparent_bg()
+            end)
+          else
+            vim.schedule(function()
+              vim.cmd.colorscheme("shine")
+              set_transparent_bg()
+            end)
+          end
         end
       end)
     end
@@ -50,4 +61,5 @@ if vim.fn.has("osx") == 1 then
 
   start_dark_notify()
 end
-vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("habamax")
+set_transparent_bg()
