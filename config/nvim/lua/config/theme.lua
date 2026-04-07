@@ -17,6 +17,8 @@ local function set_transparent_bg()
   vim.api.nvim_set_hl(0, "TabLine", { link = "LineNr" })
   vim.api.nvim_set_hl(0, "TabLineFill", { bg = "NONE" })
   vim.api.nvim_set_hl(0, "TabLineSel", { bg = cursorline_hl.bg })
+  -- GitSigns inline blame: transparent background, LineNr fg
+  vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { link = "LineNr" })
 end
 
 -- System appearance detection
