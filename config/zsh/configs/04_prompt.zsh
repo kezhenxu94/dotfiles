@@ -7,15 +7,15 @@ function _set_prompt {
   fi
 
   if [[ "$THEME" == "light" ]]; then
-    # Light theme colors (matching tmux theme-light.conf)
+    # Light theme colors
     # Using @accent-color "#2563eb" for directory
     # Using @fg-color "#2c3e50" for prompt symbol
     PS1="${venv}%B%F{#2563eb}%~%f%b %F{#2c3e50}%(!.#.❯)%f "
-    else
-      # Dark theme colors (matching tmux theme-dark.conf)
-      # Using @accent-color "#7aa2f7" for directory
-      # Using @fg-color "#c0caf5" for prompt symbol
-      PS1="${venv}%B%F{#7aa2f7}%~%f%b %F{#c0caf5}%(!.#.❯)%f "
+  else
+    # Dark theme colors
+    # Using @accent-color "#7aa2f7" for directory
+    # Using @fg-color "#c0caf5" for prompt symbol
+    PS1="${venv}%B%F{#7aa2f7}%~%f%b %F{#c0caf5}%(!.#.❯)%f "
   fi
 }
 
