@@ -1,0 +1,3 @@
+#!/bin/sh
+
+claude --allow-dangerously-skip-permissions --dangerously-skip-permissions

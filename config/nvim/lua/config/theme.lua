@@ -67,9 +67,9 @@ if vim.fn.has("osx") == 1 then
     local result = handle:read("*a")
     handle:close()
     vim.o.background = result:match("[dD]ark") and "dark" or "light"
+    vim.cmd.colorscheme(result:match("[dD]ark") and "habamax" or "shine")
   end
 
   start_dark_notify()
 end
-vim.cmd.colorscheme("habamax")
 set_transparent_bg()
