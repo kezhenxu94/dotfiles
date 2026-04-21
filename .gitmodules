@@ -1,6 +1,3 @@
-[submodule "config/zsh/plugins/cappuccin"]
-	path = config/zsh/plugins/cappuccin
-	url = https://github.com/catppuccin/zsh-syntax-highlighting.git
 [submodule "bin/kfc"]
 	path = bin/kfc
 	url = https://github.com/kezhenxu94/kfc.git
@@ -16,6 +13,3 @@
 [submodule "config/vim/pack/vendor/start/copilot.vim"]
 	path = config/vim/pack/vendor/start/copilot.vim
 	url = https://github.com/github/copilot.vim.git
-[submodule "config/zsh/plugins/zsh-syntax-highlighting"]
-	path = config/zsh/plugins/zsh-syntax-highlighting
-	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
