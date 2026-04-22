@@ -41,6 +41,13 @@ source "$XDG_CONFIG_HOME/zsh/plugins/zsh-syntax-highlighting.zsh"
 
 if [[ -f ~/.fzf.zsh ]]; then
   export FZF_DEFAULT_OPTS_PARTIAL=" --inline-info --separator='' --marker '+' --scrollbar '' --preview 'cat {}' --preview-window=hidden --bind 'ctrl-p:toggle-preview,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' --height 100% --gutter=' ' --color gutter:-1"
+  export FZF_DEFAULT_OPTS=" $FZF_DEFAULT_OPTS_PARTIAL \
+    --color=fg:-1,bg:-1,fg+:green,bg+:-1 \
+    --color=hl:cyan,hl+:cyan \
+    --color=prompt:green,pointer:green,marker:green \
+    --color=info:yellow,spinner:yellow \
+    --color=header:blue,label:blue \
+    --color=border:-1,gutter:-1"
   source ~/.fzf.zsh
 fi
 
