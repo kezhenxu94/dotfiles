@@ -25,7 +25,6 @@ require("config.keymaps")
 require("config.autocmds")
 
 require("config.ui")
-require("config.theme")
 require("config.editor")
 require("config.git")
 require("config.mason")

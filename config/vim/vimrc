@@ -13,7 +13,7 @@ if !has('nvim')
   source $XDG_CONFIG_HOME/vim/netrw.vim
 endif
 source $XDG_CONFIG_HOME/vim/git.vim
-source $XDG_CONFIG_HOME/vim/colorscheme.vim
+source $XDG_CONFIG_HOME/vim/theme.vim
 
 if has('persistent_undo')
   let s:target_path=expand('~') .. '/.vim/undo'
