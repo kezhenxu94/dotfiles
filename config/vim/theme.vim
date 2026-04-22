@@ -1,3 +1,5 @@
+if has('nvim') | finish | endif
+
 function! s:SetTransparentBg()
   hi Normal guibg=NONE ctermbg=NONE
   hi NormalNC guibg=NONE ctermbg=NONE
@@ -30,32 +32,6 @@ endfunction
 if has('mac') || has('macunix')
   let s:initial = trim(system('dark-notify -e 2>/dev/null'))
   call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
-
-  if has('nvim')
-    function! s:OnDarkNotifyOutput(_, data, __)
-      for l:line in a:data
-        let l:trimmed = trim(l:line)
-        if !empty(l:trimmed)
-          call s:ApplyTheme(l:trimmed)
-        endif
-      endfor
-    endfunction
-
-    function! s:OnDarkNotifyExit(_, code, __)
-      if a:code != 0
-        call s:StartDarkNotify()
-      endif
-    endfunction
-
-    function! s:StartDarkNotify()
-      call jobstart(['dark-notify'], {
-        \ 'on_stdout': function('s:OnDarkNotifyOutput'),
-        \ 'on_exit':   function('s:OnDarkNotifyExit'),
-      \ })
-    endfunction
-
-    call s:StartDarkNotify()
-  endif
 else
   call s:ApplyTheme('dark')
 endif
