@@ -53,10 +53,6 @@
     "vim-surround": {
       "rev": "3d188ed",
       "src": "https://github.com/tpope/vim-surround"
-    },
-    "which-key.nvim": {
-      "rev": "3aab214",
-      "src": "https://github.com/folke/which-key.nvim"
     }
   }
 }
