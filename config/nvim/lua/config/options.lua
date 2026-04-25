@@ -16,5 +16,4 @@ vim.filetype.add({
 })
 
 vim.o.statuscolumn = "%l%s"
-vim.o.showcmdloc = "statusline"
 vim.o.signcolumn = "yes:1"

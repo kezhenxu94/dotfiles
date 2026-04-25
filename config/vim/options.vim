@@ -21,6 +21,7 @@ set nowritebackup
 set noswapfile    " http://robots.thoughtbot.com/post/18739402579/global-gitignore#comment-458413287
 set history=100
 set showcmd       " display incomplete commands
+set showcmdloc=statusline
 set incsearch     " do incremental searching
 set ignorecase    " case insensitive searching UNLESS /C or capital in search
 set smartcase     " case insensitive searching UNLESS /C or capital in search
