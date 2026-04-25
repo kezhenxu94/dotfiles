@@ -26,6 +26,7 @@ require("config.autocmds")
 
 require("config.theme")
 require("config.ui")
+require("config.findgrep")
 require("config.editor")
 require("config.git")
 require("config.mason")
