@@ -94,7 +94,7 @@
   "syntaxHighlightingDisabled": false,
   "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
-  "skipAutoPermissionPrompt": true,
   "theme": "auto",
-  "teammateMode": "in-process"
+  "teammateMode": "in-process",
+  "skipAutoPermissionPrompt": true
 }

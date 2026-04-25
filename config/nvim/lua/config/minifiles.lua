@@ -25,7 +25,7 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<c-o>", function()
       local entry = minifiles.get_fs_entry()
       if not entry or entry.fs_type ~= "file" then
-        vim.notify("Not a file", vim.log.levels.WARN)
+        vim.api.nvim_echo({ { "Not a file" } }, false, {})
         return
       end
       minifiles.close()
@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<c-v>", function()
       local entry = minifiles.get_fs_entry()
       if not entry or entry.fs_type ~= "file" then
-        vim.notify("Not a file", vim.log.levels.WARN)
+        vim.api.nvim_echo({ { "Not a file" } }, false, {})
         return
       end
       minifiles.close()
@@ -45,7 +45,7 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<c-s>", function()
       local entry = minifiles.get_fs_entry()
       if not entry or entry.fs_type ~= "file" then
-        vim.notify("Not a file", vim.log.levels.WARN)
+        vim.api.nvim_echo({ { "Not a file" } }, false, {})
         return
       end
       minifiles.close()

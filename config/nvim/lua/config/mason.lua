@@ -18,19 +18,16 @@ local function install_wanted()
   for _, name in ipairs(packages) do
     local ok, pkg = pcall(registry.get_package, name)
     if not ok or not pkg then
-      vim.notify("Mason: package not found - " .. name, vim.log.levels.WARN)
+      vim.api.nvim_echo({ { "Mason: package not found - " .. name } }, false, {})
     else
       if not pkg:is_installed() then
-        vim.notify("Installing " .. name, vim.log.levels.INFO)
+        vim.api.nvim_echo({ { "Installing " .. name } }, false, {})
         pkg:install()
       else
         local installed_version = pkg:get_installed_version() or ""
         local latest_version = pkg:get_latest_version()
         if latest_version and installed_version ~= latest_version then
-          vim.notify(
-            string.format("New version available: %s (%s → %s)", name, installed_version, latest_version),
-            vim.log.levels.INFO
-          )
+          vim.api.nvim_echo({ { string.format("New version available: %s (%s → %s)", name, installed_version, latest_version) } }, false, {})
         end
       end
     end
@@ -42,7 +39,7 @@ local function uninstall_unwanted()
     if not vim.tbl_contains(packages, name) then
       local pkg = registry.get_package(name)
       async.run(function()
-        vim.notify("Uninstalling " .. name, vim.log.levels.INFO)
+        vim.api.nvim_echo({ { "Uninstalling " .. name } }, false, {})
         async.wait(function(resolve)
           pkg:uninstall(nil, resolve)
         end)

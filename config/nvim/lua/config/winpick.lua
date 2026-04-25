@@ -121,12 +121,12 @@ end
 ---@param opts? {exclude_current?: boolean}
 function M.open_in_window(file, opts)
   if not file or file == "" then
-    vim.notify("No file specified", vim.log.levels.WARN)
+    vim.api.nvim_echo({ { "No file specified" } }, false, {})
     return
   end
 
   if vim.fn.filereadable(file) == 0 then
-    vim.notify("File does not exist: " .. file, vim.log.levels.WARN)
+    vim.api.nvim_echo({ { "File does not exist: " .. file } }, false, {})
     return
   end
 
