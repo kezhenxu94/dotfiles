@@ -29,7 +29,7 @@ function! s:ApplyTheme(mode)
   call s:SetTransparentBg()
 endfunction
 
-if has('mac') || has('macunix')
+if has('mac')
   let s:initial = trim(system('dark-notify -e 2>/dev/null'))
   call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
 else
