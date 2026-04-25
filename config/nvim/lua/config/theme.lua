@@ -1,13 +1,13 @@
 local uv = vim.uv or vim.loop
 
 local function set_transparent_bg()
-  local cursorline_bg = vim.api.nvim_get_hl(0, { name = "CursorLine" }).bg
+  local cursorline = vim.api.nvim_get_hl(0, { name = "CursorLine" })
 
   local highlights = {
     Normal = { bg = "NONE" },
     NormalNC = { bg = "NONE" },
     NormalFloat = { bg = "NONE" },
-    WinSeparator = { bg = "NONE", fg = cursorline_bg },
+    WinSeparator = { bg = "NONE", fg = cursorline.bg },
     StatusLine = { link = "Normal" },
     StatusLineNC = { link = "LineNr" },
     Pmenu = { bg = "NONE" },
@@ -15,12 +15,12 @@ local function set_transparent_bg()
     PmenuMatch = { link = "Search" },
     PmenuMatchSel = { link = "Search" },
     PmenuSbar = { bg = "NONE" },
-    PmenuBorder = { bg = "NONE", fg = cursorline_bg },
+    PmenuBorder = { bg = "NONE", fg = cursorline.bg },
     TabLine = { link = "LineNr" },
     TabLineFill = { bg = "NONE" },
     TabLineSel = { link = "CursorLine" },
-    CursorLineNr = { bg = cursorline_bg },
-    CursorLineSign = { bg = cursorline_bg },
+    CursorLineNr = { bg = "NONE" },
+    CursorLineSign = { bg = "NONE" },
     GitSignsCurrentLineBlame = { link = "LineNr" },
   }
 
