@@ -26,7 +26,6 @@ require("config.autocmds")
 
 require("config.theme")
 require("config.ui")
-require("config.editor")
 require("config.git")
 require("config.mason")
 require("config.lsp")

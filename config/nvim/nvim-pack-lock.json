@@ -17,7 +17,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "mini.files": {
-      "rev": "34299f5dc9433b3e2f8efd316fff70982d4e0072",
+      "rev": "3e247eb12ca8c05622ceb8745f9004f761b22ef8",
       "src": "https://github.com/echasnovski/mini.files"
     },
     "nvim-dap": {
