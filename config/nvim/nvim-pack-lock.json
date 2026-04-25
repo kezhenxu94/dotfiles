@@ -20,10 +20,6 @@
       "rev": "e8db416c9f5dbce70f5501da28263d45c0a4df6b",
       "src": "https://github.com/echasnovski/mini.files"
     },
-    "nvim-claude-lsp": {
-      "rev": "393fcf45f816eb150a217e8d8da666c7b166b292",
-      "src": "https://github.com/kezhenxu94/nvim-claude-lsp"
-    },
     "nvim-dap": {
       "rev": "45a69eba683a2c448dd9ecfc4de89511f0646b5f",
       "src": "https://github.com/mfussenegger/nvim-dap"
