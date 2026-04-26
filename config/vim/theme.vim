@@ -6,7 +6,9 @@ function! s:SetTransparentBg()
   hi NormalFloat guibg=NONE ctermbg=NONE
   let l:cl_bg = synIDattr(synIDtrans(hlID('CursorLine')), 'bg#')
   let l:n_fg  = synIDattr(synIDtrans(hlID('Normal')), 'fg#')
-  exe 'hi WinSeparator guibg=NONE' . (empty(l:cl_bg) ? '' : ' guifg=' . l:cl_bg)
+  let l:sep_hi = 'guibg=NONE ctermbg=NONE' . (empty(l:cl_bg) ? '' : ' guifg=' . l:cl_bg)
+  exe 'hi WinSeparator ' . l:sep_hi
+  exe 'hi VertSplit '    . l:sep_hi
   exe 'hi StatusLine guibg=NONE'   . (empty(l:n_fg)  ? '' : ' guifg=' . l:n_fg)
   hi! link StatusLineNC LineNr
   hi Pmenu guibg=NONE

@@ -50,10 +50,14 @@ end
 if vim.fn.has("mac") == 1 then
   local watcher_handle
 
+  local initial = vim.fn.system("dark-notify -e 2>/dev/null")
+  apply_theme(initial ~= "" and initial or "dark")
+
   local function start_dark_notify()
     local stdout = uv.new_pipe(false)
     ---@diagnostic disable-next-line: missing-fields
     watcher_handle = uv.spawn("dark-notify", {
+      args = { "--only-changes" },
       stdio = { nil, stdout, nil },
     }, function(code, signal)
       if code ~= 0 or signal ~= 0 then

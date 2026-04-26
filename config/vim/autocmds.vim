@@ -51,3 +51,11 @@ function! s:AutoCreateDir()
     call mkdir(l:dir, 'p')
   endif
 endfunction
+
+augroup kzx_compilers
+  autocmd!
+  autocmd FileType go                                     compiler go
+  autocmd FileType rust                                   compiler cargo
+  autocmd FileType java                                   compiler java
+  autocmd FileType javascript,typescript,typescriptreact  compiler javascript
+augroup END
