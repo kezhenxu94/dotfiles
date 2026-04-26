@@ -1,4 +1,4 @@
-highlight! link TabLineSel PmenuSel
+hi! TabLineSel guibg=NONE ctermbg=NONE gui=bold cterm=bold
 
 function! TabLine()
   let l:tabline = ''
@@ -21,9 +21,7 @@ function! TabLine()
     let l:filename = fnamemodify(l:bufname, ':t')
 
     if empty(l:filename)
-      if l:filetype ==# 'snacks_picker_list'
-        let l:filename = 'Snacks'
-      elseif l:filetype ==# 'checkhealth'
+      if l:filetype ==# 'checkhealth'
         let l:filename = 'Health'
       else
         let l:filename = '[No Name]'
@@ -47,7 +45,7 @@ set tabline=%!TabLine()
 
 augroup TablineHighlights
   autocmd!
-  autocmd ColorScheme * highlight! link TabLineSel PmenuSel
+  autocmd ColorScheme * hi! TabLineSel guibg=NONE ctermbg=NONE gui=bold cterm=bold
 augroup END
 
 nnoremap <silent> <leader><tab>d :tabclose<CR>
