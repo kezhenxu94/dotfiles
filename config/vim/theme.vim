@@ -67,10 +67,12 @@ if has('nvim')
   endfunction
 
   if has('mac')
+    let s:initial = trim(system('dark-notify -e 2>/dev/null'))
+    call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
     call s:StartDarkNotify(0)
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call jobstop(s:watcher_job) | endif
   else
-    autocmd VimEnter * ++once call s:ApplyTheme('dark')
+    call s:ApplyTheme('dark')
   endif
 else
   function! s:OnThemeChange(channel, msg)
@@ -95,9 +97,11 @@ else
   endfunction
 
   if has('mac')
+    let s:initial = trim(system('dark-notify -e 2>/dev/null'))
+    call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
     call s:StartDarkNotify(0)
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call job_stop(s:watcher_job) | endif
   else
-    autocmd VimEnter * ++once call s:ApplyTheme('dark')
+    call s:ApplyTheme('dark')
   endif
 endif
