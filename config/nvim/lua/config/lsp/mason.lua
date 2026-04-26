@@ -7,7 +7,7 @@ local registry = require("mason-registry")
 
 -- stylua: ignore start
 local packages = vim
-  .iter(require("config.languages"))
+  .iter(require("config.lsp.languages"))
   :map(function(srv) return srv.mason end)
   :filter(function(x) return x end)
   :flatten()

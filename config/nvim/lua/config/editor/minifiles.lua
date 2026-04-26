@@ -17,7 +17,7 @@ vim.keymap.set("n", "<leader>E", function()
 end, { desc = "Toggle mini.files (cwd)" })
 
 -- Add keymap for window picker integration
-local winpick = require("config.winpick")
+local winpick = require("config.editor.winpick")
 vim.api.nvim_create_autocmd("User", {
   pattern = "MiniFilesBufferCreate",
   callback = function(args)

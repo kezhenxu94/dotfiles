@@ -1,7 +1,7 @@
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "qf",
   callback = function(args)
-    local winpick = require("config.winpick")
+    local winpick = require("config.editor.winpick")
 
     local function qf_entry()
       local entry = vim.fn.getqflist()[vim.fn.line(".")]

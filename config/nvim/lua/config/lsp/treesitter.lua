@@ -7,7 +7,7 @@ require("nvim-treesitter").setup({})
 
 -- stylua: ignore start
 local packages = vim
-  .iter(require("config.languages"))
+  .iter(require("config.lsp.languages"))
   :map(function(server) return server.treesitter end)
   :filter(function(server) return server end)
   :flatten()

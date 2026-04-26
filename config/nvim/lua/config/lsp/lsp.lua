@@ -2,7 +2,7 @@ vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" }, { confirm = false }
 
 -- stylua: ignore start
 local lsps = vim
-  .iter(require("config.languages"))
+  .iter(require("config.lsp.languages"))
   :map(function(lang) return lang.lsp end)
   :filter(function(lsp) return lsp end)
   :flatten()

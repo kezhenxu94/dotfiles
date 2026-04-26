@@ -1,0 +1,7 @@
+require("config.lsp.languages")
+require("config.lsp.mason")
+require("config.lsp.lsp")
+require("config.lsp.treesitter")
+require("config.lsp.formatter")
+require("config.lsp.linter")
+require("config.lsp.dap")
