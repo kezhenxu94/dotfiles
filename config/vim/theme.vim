@@ -72,7 +72,7 @@ if has('nvim')
     call s:StartDarkNotify(0)
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call jobstop(s:watcher_job) | endif
   else
-    call s:ApplyTheme('dark')
+    call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)
   endif
 else
   function! s:OnThemeChange(channel, msg)
@@ -102,6 +102,6 @@ else
     call s:StartDarkNotify(0)
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call job_stop(s:watcher_job) | endif
   else
-    call s:ApplyTheme('dark')
+    call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)
   endif
 endif
