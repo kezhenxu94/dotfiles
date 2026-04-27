@@ -1,20 +1,8 @@
 let g:mapleader=" "
 
-source $XDG_CONFIG_HOME/vim/options.vim
-source $XDG_CONFIG_HOME/vim/autocmds.vim
-source $XDG_CONFIG_HOME/vim/keymaps.vim
-source $XDG_CONFIG_HOME/vim/tabline.vim
-source $XDG_CONFIG_HOME/vim/session.vim
-source $XDG_CONFIG_HOME/vim/quickfix.vim
-source $XDG_CONFIG_HOME/vim/arglist.vim
-source $XDG_CONFIG_HOME/vim/recent.vim
-source $XDG_CONFIG_HOME/vim/findgrep.vim
-if !has('nvim')
-  source $XDG_CONFIG_HOME/vim/netrw.vim
-endif
-source $XDG_CONFIG_HOME/vim/git.vim
-source $XDG_CONFIG_HOME/vim/theme.vim
-source $XDG_CONFIG_HOME/vim/make.vim
+source $XDG_CONFIG_HOME/vim/config/core/init.vim
+source $XDG_CONFIG_HOME/vim/config/ui/init.vim
+source $XDG_CONFIG_HOME/vim/config/editor/init.vim
 
 if has('persistent_undo')
   let s:target_path=expand('~') .. '/.vim/undo'
