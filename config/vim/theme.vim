@@ -26,11 +26,16 @@ function! SetTransparentBg()
   hi! link GitSignsCurrentLineBlame LineNr
 endfunction
 
+augroup ThemeBackground
+  autocmd!
+  autocmd OptionSet background call s:ApplyTheme(v:option_new)
+augroup END
+
 let s:watcher_job = v:null
 let s:exiting = v:false
 
 function! s:ApplyTheme(mode)
-  let &background = (a:mode =~? 'dark') ? 'dark' : 'light'
+  noautocmd let &background = (a:mode =~? 'dark') ? 'dark' : 'light'
   if a:mode =~? 'dark'
     colorscheme habamax
   else
