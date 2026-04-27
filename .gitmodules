@@ -4,9 +4,6 @@
 [submodule "config/vim/pack/vendor/start/vim-fugitive"]
 	path = config/vim/pack/vendor/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
-[submodule "config/vim/pack/vendor/start/vim-surround"]
-	path = config/vim/pack/vendor/start/vim-surround
-	url = https://github.com/tpope/vim-surround
 [submodule "config/vim/pack/vendor/start/copilot.vim"]
 	path = config/vim/pack/vendor/start/copilot.vim
 	url = https://github.com/github/copilot.vim.git
