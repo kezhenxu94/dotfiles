@@ -1,4 +1,4 @@
-export VISUAL=nvim
+export VISUAL=vim
 export EDITOR=$VISUAL
 export KEYTIMEOUT=2000
 export PROMPT_EOL_MARK=""

@@ -13,7 +13,7 @@ _run_fzf_picker() {
 }
 
 _view_in_editor() {
-  ${EDITOR:-nvim} -R -c "set nomodifiable" -c "nnoremap q :q<CR>" "$@"
+  ${EDITOR:-vim} -R -c "set nomodifiable" -c "nnoremap q :q<CR>" "$@"
 }
 
 _browse_notifications() {
