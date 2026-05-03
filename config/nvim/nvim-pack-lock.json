@@ -49,10 +49,6 @@
     "vim-helm": {
       "rev": "2c8525f",
       "src": "https://github.com/towolf/vim-helm"
-    },
-    "vim-surround": {
-      "rev": "3d188ed",
-      "src": "https://github.com/tpope/vim-surround"
     }
   }
 }
