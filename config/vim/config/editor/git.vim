@@ -15,3 +15,10 @@ nnoremap <silent> <leader>gff :echo "Git fetching..." \| :G fetch<CR>
 nnoremap <silent> <leader>gpl :echo "Git pulling..." \| :G pull<CR>
 nnoremap <silent> <leader>gps :echo "Git pushing..." \| :G push<CR>
 nnoremap <leader>gcm :G commit -m "
+
+" vim-gitgutter (VimEnter ensures these run after pack/start plugins load)
+augroup GitGutterColors
+  autocmd!
+  nmap ]h <Plug>(GitGutterNextHunk)
+  nmap [h <Plug>(GitGutterPrevHunk)
+augroup END

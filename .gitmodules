@@ -7,3 +7,6 @@
 [submodule "config/vim/pack/vendor/start/copilot.vim"]
 	path = config/vim/pack/vendor/start/copilot.vim
 	url = https://github.com/github/copilot.vim.git
+[submodule "config/vim/pack/vendor/start/vim-gitgutter"]
+	path = config/vim/pack/vendor/start/vim-gitgutter
+	url = https://github.com/airblade/vim-gitgutter
