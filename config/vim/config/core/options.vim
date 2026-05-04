@@ -47,6 +47,7 @@ set formatoptions-=t " Do not automatically wrap when typing
 set number
 set relativenumber
 set numberwidth=3
+set signcolumn=yes
 
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
