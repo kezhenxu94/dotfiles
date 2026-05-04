@@ -10,21 +10,35 @@ let g:netrw_keepdir = 1
 let g:netrw_sort_sequence = '[\/]$,*'
 let g:netrw_localcopydircmd = 'cp -r'
 let g:netrw_localrmdir = 'rm -r'
-let g:netrw_list_hide = netrw_gitignore#Hide()
+try
+  let g:netrw_list_hide = netrw_gitignore#Hide()
+catch
+  let g:netrw_list_hide = ''
+endtry
 
 highlight link netrwMarkFile Search
 
-" Function to get full path of file under cursor
+" Function to get full path of file under cursor.
+" In tree mode (liststyle=3), b:netrw_curdir is fixed to the tree root
+" (w:netrw_treetop) regardless of which subdirectory is expanded. We must
+" use netrw's own NetrwTreePath to reconstruct the real directory from the
+" tree display before combining it with the filename.
 function! s:GetFullPath()
-  let filename = expand('<cfile>')
-  if filename == ''
+  if exists('w:netrw_liststyle') && w:netrw_liststyle == 3 && exists('w:netrw_treetop')
+    let dir      = netrw#Call('NetrwTreePath', w:netrw_treetop)
+    let filename = netrw#Call('NetrwGetWord')
+  else
+    let dir      = exists('b:netrw_curdir') ? b:netrw_curdir : getcwd()
+    let filename = expand('<cfile>')
+  endif
+
+  if empty(filename) || filename =~# '/$'
     return ''
   endif
 
-  let netrw_dir = exists('b:netrw_curdir') ? b:netrw_curdir : getcwd()
-  let full_path = fnamemodify(netrw_dir . '/' . filename, ':p')
-  let relative_path = fnamemodify(full_path, ':' . getcwd())
-  return relative_path
+  " dir from NetrwTreePath always has a trailing slash; b:netrw_curdir may not
+  let sep = (dir =~# '/$') ? '' : '/'
+  return fnamemodify(dir . sep . filename, ':p')
 endfunction
 
 " Function to open file in vsplit
@@ -87,7 +101,6 @@ function! s:ToggleNetrw(...)
   let filename = fnamemodify(current_file, ':t')
   let target_dir = a:0 > 0 && !empty(a:1) ? a:1 : fnamemodify(current_file, ':h')
   execute 'Lexplore ' . fnameescape(target_dir)
-  execute 'silent NetrwC ' . (cur_win + 1)
 
   if !empty(filename) && filereadable(current_file)
     call search('\V' . escape(filename, '\'))
