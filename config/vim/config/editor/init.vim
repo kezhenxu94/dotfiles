@@ -6,3 +6,4 @@ source $XDG_CONFIG_HOME/vim/config/editor/findgrep.vim
 source $XDG_CONFIG_HOME/vim/config/editor/netrw.vim
 source $XDG_CONFIG_HOME/vim/config/editor/git.vim
 source $XDG_CONFIG_HOME/vim/config/editor/make.vim
+source $XDG_CONFIG_HOME/vim/config/editor/winpick.vim

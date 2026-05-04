@@ -41,6 +41,18 @@ function! s:GetFullPath()
   return fnamemodify(dir . sep . filename, ':p')
 endfunction
 
+" Function to open file in picked window
+function! s:OpenInPickedWindow()
+  let full_path = s:GetFullPath()
+  if empty(full_path) || !filereadable(full_path)
+    echohl WarningMsg
+    echo 'File does not exist: ' . full_path
+    echohl None
+    return
+  endif
+  call WinPickOpenInWindow(full_path, 1)
+endfunction
+
 " Function to open file in vsplit
 function! s:OpenInVsplit()
   let full_path = s:GetFullPath()
@@ -70,6 +82,7 @@ endfunction
 " Set up netrw-specific keymaps
 augroup NetrwKeymaps
   autocmd!
+  autocmd FileType netrw nnoremap <buffer> <silent> <C-o> :call <SID>OpenInPickedWindow()<CR>
   autocmd FileType netrw nnoremap <buffer> <silent> <C-v> :call <SID>OpenInVsplit()<CR>
   autocmd FileType netrw nnoremap <buffer> <silent> <C-s> :call <SID>OpenInSplit()<CR>
   autocmd FileType netrw silent! nunmap <buffer> <C-l>

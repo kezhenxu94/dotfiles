@@ -1,8 +1,6 @@
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "qf",
   callback = function(args)
-    local winpick = require("config.editor.winpick")
-
     local function qf_entry()
       local entry = vim.fn.getqflist()[vim.fn.line(".")]
       if not entry or entry.bufnr == 0 then
@@ -26,8 +24,8 @@ vim.api.nvim_create_autocmd("FileType", {
       if not e then
         return
       end
-      local win = winpick.pick_window({ exclude_current = false })
-      if not win then
+      local win = vim.fn.WinPickPickWindow(false)
+      if not win or win == 0 then
         return
       end
       vim.cmd("cclose")
