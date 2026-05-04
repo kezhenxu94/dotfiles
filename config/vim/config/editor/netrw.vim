@@ -79,12 +79,32 @@ function! s:OpenInSplit()
   execute 'split ' . fnameescape(full_path)
 endfunction
 
+function! s:FindProjectRoot()
+  let start = exists('b:netrw_curdir') ? b:netrw_curdir : expand('%:p:h')
+  for marker in ['.git', 'package.json', 'go.mod', 'Cargo.toml', 'pom.xml', 'build.gradle', 'Makefile']
+    let found = finddir(marker, start . ';')
+    if empty(found)
+      let found = findfile(marker, start . ';')
+    endif
+    if !empty(found)
+      let abs = substitute(fnamemodify(found, ':p'), '/$', '', '')
+      return fnamemodify(abs, ':h')
+    endif
+  endfor
+  return start
+endfunction
+
+function! s:RevealRoot()
+  call netrw#LocalBrowseCheck(s:FindProjectRoot())
+endfunction
+
 " Set up netrw-specific keymaps
 augroup NetrwKeymaps
   autocmd!
   autocmd FileType netrw nnoremap <buffer> <silent> <C-o> :call <SID>OpenInPickedWindow()<CR>
   autocmd FileType netrw nnoremap <buffer> <silent> <C-v> :call <SID>OpenInVsplit()<CR>
   autocmd FileType netrw nnoremap <buffer> <silent> <C-s> :call <SID>OpenInSplit()<CR>
+  autocmd FileType netrw nnoremap <buffer> <silent> @ :call <SID>RevealRoot()<CR>
   autocmd FileType netrw silent! nunmap <buffer> <C-l>
   autocmd FileType netrw setlocal signcolumn=no
 augroup END

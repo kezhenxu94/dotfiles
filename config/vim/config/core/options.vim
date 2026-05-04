@@ -84,3 +84,8 @@ set autocomplete
 set pumheight=24
 set completeopt=fuzzy,menuone,noselect,popup
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
+
+if !has('nvim')
+  packadd hlyank
+  let g:hlyank_hlgroup = 'IncSearch'
+endif
