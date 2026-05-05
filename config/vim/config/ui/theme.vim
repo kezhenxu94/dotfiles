@@ -60,21 +60,15 @@ if has('nvim')
     endif
   endfunction
 
-  function! s:StartDarkNotify(only_changes)
-    let l:args = ['dark-notify']
-    if a:only_changes
-      call add(l:args, '--only-changes')
-    endif
-    let s:watcher_job = jobstart(l:args, {
+  function! s:StartDarkNotify()
+    let s:watcher_job = jobstart(['dark-notify'], {
       \ 'on_stdout': function('s:OnThemeChange'),
       \ 'on_exit':   function('s:OnWatcherExit'),
       \ })
   endfunction
 
   if has('mac')
-    let s:initial = trim(system('dark-notify -e 2>/dev/null'))
-    call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
-    call s:StartDarkNotify(0)
+    call s:StartDarkNotify()
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call jobstop(s:watcher_job) | endif
   else
     call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)
@@ -86,25 +80,19 @@ else
 
   function! s:OnWatcherExit(job, status)
     if a:status != 0 && !s:exiting
-      call s:StartDarkNotify(1)
+      call s:StartDarkNotify()
     endif
   endfunction
 
-  function! s:StartDarkNotify(only_changes)
-    let l:args = ['dark-notify']
-    if a:only_changes
-      call add(l:args, '--only-changes')
-    endif
-    let s:watcher_job = job_start(l:args, {
+  function! s:StartDarkNotify()
+    let s:watcher_job = job_start(['dark-notify'], {
       \ 'out_cb':  function('s:OnThemeChange'),
       \ 'exit_cb': function('s:OnWatcherExit'),
       \ })
   endfunction
 
   if has('mac')
-    let s:initial = trim(system('dark-notify -e 2>/dev/null'))
-    call s:ApplyTheme(empty(s:initial) ? 'dark' : s:initial)
-    call s:StartDarkNotify(0)
+    call s:StartDarkNotify()
     autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call job_stop(s:watcher_job) | endif
   else
     call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)

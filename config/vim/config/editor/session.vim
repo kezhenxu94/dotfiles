@@ -53,7 +53,7 @@ function! s:SessionLoad() abort
 
   if argc() == 0 && (!exists('g:started_with_stdin') || !g:started_with_stdin)
     if filereadable(s:session_file)
-      execute 'source ' . s:session_file
+      silent execute 'source ' . s:session_file
     endif
   else
     let g:skip_session = 1
