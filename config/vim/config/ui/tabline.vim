@@ -14,24 +14,11 @@ function! TabLine()
     endif
 
     let l:win_num = tabpagewinnr(l:index)
-    let l:buflist = tabpagebuflist(l:index)
-    let l:bufnr = l:buflist[l:win_num - 1]
-    let l:bufname = bufname(l:bufnr)
-    let l:filetype = getbufvar(l:bufnr, '&filetype')
-    let l:filename = fnamemodify(l:bufname, ':t')
-
-    if empty(l:filename)
-      if l:filetype ==# 'checkhealth'
-        let l:filename = 'Health'
-      else
-        let l:filename = '[No Name]'
-      endif
-    endif
+    let l:cwd = fnamemodify(getcwd(l:win_num, l:index), ':t')
 
     if l:index == l:current
-      let l:tabline .= '▎' . l:index . ': ' . l:filename . ''
+      let l:tabline .= '▎' . l:index . ': ' . l:cwd . ''
     else
-      let l:cwd = fnamemodify(getcwd(l:win_num, l:index), ':t')
       let l:tabline .= ' ' . l:index . ': ' . l:cwd . ' '
     endif
   endfor
@@ -55,4 +42,4 @@ nnoremap <silent> ]<tab> :tabnext<CR>
 nnoremap <silent> [<tab> :tabprevious<CR>
 
 " Switch to tab by number using count (only when count is provided)
-nnoremap <silent> <expr> <Tab> v:count ? ':<C-u>execute "tabn" v:count<CR>' : '<Tab>'
+nnoremap <silent> <expr> <Tab> v:count ? ':<C-u>tabn ' . v:count . '<CR>' : '<Tab>'
