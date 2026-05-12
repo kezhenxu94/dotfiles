@@ -96,5 +96,7 @@
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
   "teammateMode": "in-process",
-  "skipAutoPermissionPrompt": true
+  "remoteControlAtStartup": true,
+  "skipAutoPermissionPrompt": true,
+  "agentPushNotifEnabled": true
 }
