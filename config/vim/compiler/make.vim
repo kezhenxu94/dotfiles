@@ -22,10 +22,6 @@ endif
 " drive (javac/Gradle/Kotlin, Maven, tsc/eslint/webpack, Go). Layered: GNU make
 " directory tracking first (so sub-make paths resolve), then compiler patterns,
 " then noise filters.
-"
-" Tradeoff: blending several tools' multi-line %A..%C..%Z chains can occasionally
-" cross-parse. When that bites, the per-tool compilers are kept as focused
-" parsers -- `:compiler gradle` (etc.) then `:make` for a precise read.
 CompilerSet errorformat=
 
 " --- GNU make recursive directory tracking (both `dir' and 'dir' quote styles) ---
