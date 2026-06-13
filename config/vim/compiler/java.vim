@@ -10,11 +10,6 @@ endif
 let s:pomfile = findfile('pom.xml', expand('%:p:h') . ';')
 if !empty(s:pomfile)
   let b:make_root = fnamemodify(s:pomfile, ':p:h')
-  if filereadable(b:make_root . '/mvnw')
-    CompilerSet makeprg=MAVEN_OPTS=\"$MAVEN_OPTS\ -Dmaven.color=false\"\ ./mvnw\ compile
-  else
-    CompilerSet makeprg=MAVEN_OPTS=\"$MAVEN_OPTS\ -Dmaven.color=false\"\ mvn\ compile
-  endif
 
   CompilerSet errorformat=
   CompilerSet errorformat+=[ERROR]\ %f:[%l\\,%v]\ %m
@@ -31,11 +26,6 @@ else
   let s:buildfile = findfile('build.gradle', expand('%:p:h') . ';')
   if !empty(s:buildfile)
     let b:make_root = fnamemodify(s:buildfile, ':p:h')
-    if filereadable(b:make_root . '/gradlew')
-      CompilerSet makeprg=./gradlew\ --console=plain\ build
-    else
-      CompilerSet makeprg=gradle\ --console=plain\ build
-    endif
 
     CompilerSet errorformat=
     CompilerSet errorformat+=%E%f:%l:\ error:\ %m

@@ -7,8 +7,6 @@ if exists(":CompilerSet") != 2
   command -nargs=* CompilerSet setlocal <args>
 endif
 
-CompilerSet makeprg=CI=1\ npm\ run\ build
-
 CompilerSet errorformat=
 CompilerSet errorformat+=%E%f(%l\\,%c):\ error\ TS%n:\ %m
 CompilerSet errorformat+=%W%f(%l\\,%c):\ warning\ TS%n:\ %m

@@ -7,12 +7,6 @@ if exists(":CompilerSet") != 2
   command -nargs=* CompilerSet setlocal <args>
 endif
 
-if filereadable('./gradlew')
-  CompilerSet makeprg=./gradlew\ --console=plain\ build
-else
-  CompilerSet makeprg=gradle\ --console=plain\ build
-endif
-
 CompilerSet errorformat=
 CompilerSet errorformat+=%E%f:%l:\ error:\ %m
 CompilerSet errorformat+=%A%f:%l:\ %m

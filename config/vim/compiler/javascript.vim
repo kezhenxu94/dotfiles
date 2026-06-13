@@ -10,13 +10,11 @@ endif
 let s:lockfile = findfile('yarn.lock', expand('%:p:h') . ';')
 if !empty(s:lockfile)
   let b:make_root = fnamemodify(s:lockfile, ':p:h')
-  CompilerSet makeprg=CI=1\ yarn\ build
 else
   let s:pkgjson = findfile('package.json', expand('%:p:h') . ';')
   if !empty(s:pkgjson)
     let b:make_root = fnamemodify(s:pkgjson, ':p:h')
   endif
-  CompilerSet makeprg=CI=1\ npm\ run\ build
 endif
 
 CompilerSet errorformat=

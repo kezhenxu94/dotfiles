@@ -7,12 +7,6 @@ if exists(":CompilerSet") != 2
   command -nargs=* CompilerSet setlocal <args>
 endif
 
-if filereadable('./mvnw')
-  CompilerSet makeprg=MAVEN_OPTS=\"$MAVEN_OPTS\ -Dmaven.color=false\"\ ./mvnw\ compile
-else
-  CompilerSet makeprg=MAVEN_OPTS=\"$MAVEN_OPTS\ -Dmaven.color=false\"\ mvn\ compile
-endif
-
 CompilerSet errorformat=
 CompilerSet errorformat+=[ERROR]\ %f:[%l\\,%v]\ %m
 CompilerSet errorformat+=%E[ERROR]\ %f:[%l\\,%c]\ %m

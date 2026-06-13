@@ -120,3 +120,6 @@ nnoremap <silent> <leader>yfl :call YankFileLocation()<CR>
 nnoremap <silent> <leader>yghl :call YankGitHubPermalink()<CR>
 
 nnoremap <silent> <leader>mk :make<CR>
+nnoremap          <leader>mm :make<space>
+nnoremap <silent> <leader>mK :Make<CR>
+nnoremap          <leader>mM :Make<space>
