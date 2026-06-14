@@ -19,6 +19,11 @@ end
 
 vim.opt.packpath:prepend(vim.fn.expand("$XDG_CONFIG_HOME/vim"))
 vim.opt.runtimepath:prepend(vim.fn.expand("$XDG_CONFIG_HOME/vim"))
+-- Append the shared Vim 'after' dir so it sorts last in 'runtimepath'. This lets
+-- after/compiler/*.vim override the builtins Nvim ships (e.g. the reset
+-- compiler/make.vim, which otherwise resets makeprg/errorformat to defaults
+-- after our compiler runs). Vim derives this entry automatically; Nvim doesn't.
+vim.opt.runtimepath:append(vim.fn.expand("$XDG_CONFIG_HOME/vim/after"))
 
 require("config.core")
 require("config.ui")

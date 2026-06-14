@@ -56,6 +56,7 @@ augroup kzx_compilers
   autocmd!
   autocmd FileType go                                     compiler go
   autocmd FileType rust                                   compiler cargo
-  autocmd FileType java                                   compiler java
-  autocmd FileType javascript,typescript,typescriptreact  compiler javascript
+  autocmd FileType java,kotlin                            compiler make
+  autocmd FileType javascript,typescript,typescriptreact  compiler make
+  autocmd BufRead,BufNewFile *.gradle,*.gradle.kts,settings.gradle*  compiler make
 augroup END

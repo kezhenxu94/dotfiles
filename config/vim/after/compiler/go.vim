@@ -9,8 +9,9 @@ endif
 
 CompilerSet makeprg=go\ build\ ./...
 
-CompilerSet errorformat=
-CompilerSet errorformat+=%f:%l:%c:\ %m
+" Seed with '=' (not empty '=' then '+=') so the global-local 'errorformat' does
+" not fall back to and append onto Vim's stock default efm.
+CompilerSet errorformat=%f:%l:%c:\ %m
 CompilerSet errorformat+=%f:%l:\ %m
 CompilerSet errorformat+=%-G#\ %.%#
 CompilerSet errorformat+=%-G%.%#
