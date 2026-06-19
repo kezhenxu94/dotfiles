@@ -174,7 +174,6 @@ _show_main_menu() {
       --ghost='select a module | Enter (navigate) | Esc (exit)' \
       --header=$'>> GitHub Fuzzy - Interactive GitHub CLI <<\n' \
       --preview-window=hidden \
-      --height=~50% \
       --bind="enter:become(
         case '{1}' in
           '[notif]'*) source $SCRIPT_FILE && _browse_notifications ;;
