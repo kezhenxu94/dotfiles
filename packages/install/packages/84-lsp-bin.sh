@@ -19,16 +19,29 @@ _lsp_arch_gnu() { [ "$arch" = "amd64" ] && echo x86_64 || echo aarch64; }
 # Usage: _lsp_install_openvsx <publisher> <name> <dest_dir>
 _lsp_install_openvsx() {
   local pub="$1" name="$2" dest="$3"
-  check_installed unzip || { echo "unzip not found; skipping $name"; return 0; }
-  check_installed jq || { echo "jq not found; skipping $name"; return 0; }
+  check_installed unzip || {
+    echo "unzip not found; skipping $name"
+    return 0
+  }
+  check_installed jq || {
+    echo "jq not found; skipping $name"
+    return 0
+  }
   local url tmp
   url="$(curl -sL "https://open-vsx.org/api/${pub}/${name}/latest" | jq -r '.files.download // empty')"
-  [ -n "$url" ] || { echo "no Open VSX download for ${name}"; return 1; }
+  [ -n "$url" ] || {
+    echo "no Open VSX download for ${name}"
+    return 1
+  }
   echo "Installing ${name} (Open VSX)..."
   tmp="/tmp/${name}.$$.vsix"
   curl -sL "$url" -o "$tmp" || return 1
-  rm -rf "$dest"; mkdir -p "$dest"
-  unzip -o -q -j "$tmp" 'extension/server/*.jar' -d "$dest" || { rm -f "$tmp"; return 1; }
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  unzip -o -q -j "$tmp" 'extension/server/*.jar' -d "$dest" || {
+    rm -f "$tmp"
+    return 1
+  }
   rm -f "$tmp"
 }
 
@@ -44,7 +57,8 @@ install_lsp_yq() {
 install_lsp_jq() {
   check_installed jq && return 0
   local ver="${JQ_VERSION:-1.7.1}"
-  local jqos="$os"; [ "$os" = "darwin" ] && jqos=macos
+  local jqos="$os"
+  [ "$os" = "darwin" ] && jqos=macos
   echo "Installing jq ${ver}..."
   curl -sL "https://github.com/jqlang/jq/releases/download/jq-${ver}/jq-${jqos}-${arch}" \
     -o "$BIN/jq.tmp.$$" || return 1
@@ -63,7 +77,8 @@ install_lsp_helm_ls() {
 install_lsp_shellcheck() {
   check_installed shellcheck && return 0
   local ver="${SHELLCHECK_VERSION:-0.10.0}"
-  local scarch; scarch="$(_lsp_arch_gnu)"
+  local scarch
+  scarch="$(_lsp_arch_gnu)"
   local url="https://github.com/koalaman/shellcheck/releases/download/v${ver}/shellcheck-v${ver}.${os}.${scarch}.tar.xz"
   echo "Installing shellcheck ${ver}..."
   curl -sL "$url" | tar -Jxf - --strip-components=1 -C "$BIN" "shellcheck-v${ver}/shellcheck" || return 1
@@ -73,47 +88,56 @@ install_lsp_shellcheck() {
 install_lsp_rust_analyzer() {
   check_installed rust-analyzer && return 0
   local ver="${RUST_ANALYZER_VERSION:-2024-12-09}"
-  local raarch; raarch="$(_lsp_arch_gnu)"
-  local vendor="unknown-linux-gnu"; [ "$os" = "darwin" ] && vendor=apple-darwin
+  local raarch
+  raarch="$(_lsp_arch_gnu)"
+  local vendor="unknown-linux-gnu"
+  [ "$os" = "darwin" ] && vendor=apple-darwin
   echo "Installing rust-analyzer ${ver}..."
-  curl -sL "https://github.com/rust-lang/rust-analyzer/releases/download/${ver}/rust-analyzer-${raarch}-${vendor}.gz" \
-    | gunzip > "$BIN/rust-analyzer.tmp.$$" || return 1
+  curl -sL "https://github.com/rust-lang/rust-analyzer/releases/download/${ver}/rust-analyzer-${raarch}-${vendor}.gz" |
+    gunzip >"$BIN/rust-analyzer.tmp.$$" || return 1
   chmod +x "$BIN/rust-analyzer.tmp.$$" && mv "$BIN/rust-analyzer.tmp.$$" "$BIN/rust-analyzer"
 }
 
 install_lsp_terraform_ls() {
   check_installed terraform-ls && return 0
-  check_installed unzip || { echo "unzip not found; skipping terraform-ls"; return 0; }
+  check_installed unzip || {
+    echo "unzip not found; skipping terraform-ls"
+    return 0
+  }
   local ver="${TERRAFORM_LS_VERSION:-0.36.5}"
   local tmp="/tmp/terraform-ls-${ver}.$$.zip"
   echo "Installing terraform-ls ${ver}..."
   curl -sL "https://releases.hashicorp.com/terraform-ls/${ver}/terraform-ls_${ver}_${os}_${arch}.zip" \
     -o "$tmp" || return 1
-  unzip -o -q "$tmp" terraform-ls -d "$BIN" || { rm -f "$tmp"; return 1; }
-  chmod +x "$BIN/terraform-ls"; rm -f "$tmp"
+  unzip -o -q "$tmp" terraform-ls -d "$BIN" || {
+    rm -f "$tmp"
+    return 1
+  }
+  chmod +x "$BIN/terraform-ls"
+  rm -f "$tmp"
 }
 
 install_lsp_lua_ls() {
-  check_installed lua-language-server && return 0
-  local ver="${LUA_LS_VERSION:-3.13.6}"
-  local llarch=x64; [ "$arch" = "arm64" ] && llarch=arm64
-  local dest="$USR_HOME/lua-language-server"
-  echo "Installing lua-language-server ${ver}..."
-  rm -rf "$dest"; mkdir -p "$dest"
-  curl -sL "https://github.com/LuaLS/lua-language-server/releases/download/${ver}/lua-language-server-${ver}-${os}-${llarch}.tar.gz" \
-    | tar -zxf - -C "$dest" || return 1
-  ln -sf "$dest/bin/lua-language-server" "$BIN/lua-language-server"
+  check_installed mise || {
+    echo "mise not found; skipping lua-language-server"
+    return 0
+  }
+  mise use -g aqua:LuaLS/lua-language-server
 }
 
 install_lsp_jdtls() {
-  check_installed java || { echo "java not found; skipping jdtls"; return 0; }
+  check_installed java || {
+    echo "java not found; skipping jdtls"
+    return 0
+  }
   local dest="$USR_HOME/jdtls"
   if ! check_installed jdtls; then
     echo "Installing jdtls (latest snapshot)..."
-    rm -rf "$dest"; mkdir -p "$dest"
+    rm -rf "$dest"
+    mkdir -p "$dest"
     # The snapshot ships a bin/jdtls python launcher; symlink it onto $PATH.
-    curl -sL "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz" \
-      | tar -zxf - -C "$dest" || return 1
+    curl -sL "https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz" |
+      tar -zxf - -C "$dest" || return 1
     ln -sf "$dest/bin/jdtls" "$BIN/jdtls"
   fi
   # Lombok agent for jdtls. Point the JVM at it via -javaagent, e.g. nvim-jdtls's
@@ -121,19 +145,25 @@ install_lsp_jdtls() {
   if [ ! -f "$dest/lombok.jar" ]; then
     echo "Installing lombok.jar for jdtls..."
     mkdir -p "$dest"
-    curl -sL "https://projectlombok.org/downloads/lombok.jar" -o "$dest/lombok.jar.tmp.$$" \
-      && mv "$dest/lombok.jar.tmp.$$" "$dest/lombok.jar" || return 1
+    curl -sL "https://projectlombok.org/downloads/lombok.jar" -o "$dest/lombok.jar.tmp.$$" &&
+      mv "$dest/lombok.jar.tmp.$$" "$dest/lombok.jar" || return 1
   fi
 }
 
 install_lsp_java_debug() {
-  check_installed java || { echo "java not found; skipping java-debug-adapter"; return 0; }
+  check_installed java || {
+    echo "java not found; skipping java-debug-adapter"
+    return 0
+  }
   [ -d "$USR_HOME/jdtls/java-debug-adapter" ] && return 0
   _lsp_install_openvsx vscjava vscode-java-debug "$USR_HOME/jdtls/java-debug-adapter"
 }
 
 install_lsp_java_test() {
-  check_installed java || { echo "java not found; skipping java-test"; return 0; }
+  check_installed java || {
+    echo "java not found; skipping java-test"
+    return 0
+  }
   [ -d "$USR_HOME/jdtls/java-test" ] && return 0
   _lsp_install_openvsx vscjava vscode-java-test "$USR_HOME/jdtls/java-test"
 }
@@ -152,14 +182,21 @@ install_lsp_gh() {
   local ver="${GH_VERSION:-2.95.0}"
   echo "Installing gh ${ver}..."
   if [ "$os" = "darwin" ]; then
-    check_installed unzip || { echo "unzip not found; skipping gh"; return 0; }
+    check_installed unzip || {
+      echo "unzip not found; skipping gh"
+      return 0
+    }
     local tmp="/tmp/gh-${ver}.$$.zip"
     curl -sL "https://github.com/cli/cli/releases/download/v${ver}/gh_${ver}_macOS_${arch}.zip" -o "$tmp" || return 1
-    unzip -o -q -j "$tmp" "gh_${ver}_macOS_${arch}/bin/gh" -d "$BIN" || { rm -f "$tmp"; return 1; }
-    chmod +x "$BIN/gh"; rm -f "$tmp"
+    unzip -o -q -j "$tmp" "gh_${ver}_macOS_${arch}/bin/gh" -d "$BIN" || {
+      rm -f "$tmp"
+      return 1
+    }
+    chmod +x "$BIN/gh"
+    rm -f "$tmp"
   else
-    curl -sL "https://github.com/cli/cli/releases/download/v${ver}/gh_${ver}_linux_${arch}.tar.gz" \
-      | tar -zxf - --strip-components=2 -C "$BIN" "gh_${ver}_linux_${arch}/bin/gh" || return 1
+    curl -sL "https://github.com/cli/cli/releases/download/v${ver}/gh_${ver}_linux_${arch}.tar.gz" |
+      tar -zxf - --strip-components=2 -C "$BIN" "gh_${ver}_linux_${arch}/bin/gh" || return 1
     chmod +x "$BIN/gh"
   fi
 }
@@ -172,18 +209,18 @@ install_lsp_gh() {
 #   printf '#!/usr/bin/env bash\nexec java -jar "%s" "$@"\n' "$jar" > "$HOME/.bin/google-java-format" && chmod +x "$HOME/.bin/google-java-format"
 
 install_lsp_bin() {
-  install_lsp_yq            || echo "warn: yq install failed"
-  install_lsp_jq            || echo "warn: jq install failed"
-  install_lsp_helm_ls       || echo "warn: helm_ls install failed"
-  install_lsp_shellcheck    || echo "warn: shellcheck install failed"
+  install_lsp_yq || echo "warn: yq install failed"
+  install_lsp_jq || echo "warn: jq install failed"
+  install_lsp_helm_ls || echo "warn: helm_ls install failed"
+  install_lsp_shellcheck || echo "warn: shellcheck install failed"
   install_lsp_rust_analyzer || echo "warn: rust-analyzer install failed"
-  install_lsp_terraform_ls  || echo "warn: terraform-ls install failed"
-  install_lsp_lua_ls        || echo "warn: lua-language-server install failed"
-  install_lsp_jdtls         || echo "warn: jdtls install failed"
-  install_lsp_java_debug    || echo "warn: java-debug-adapter install failed"
-  install_lsp_java_test     || echo "warn: java-test install failed"
-  install_lsp_docker_ls     || echo "warn: docker-language-server install failed"
-  install_lsp_gh            || echo "warn: gh install failed"
+  install_lsp_terraform_ls || echo "warn: terraform-ls install failed"
+  install_lsp_lua_ls || echo "warn: lua-language-server install failed"
+  install_lsp_jdtls || echo "warn: jdtls install failed"
+  install_lsp_java_debug || echo "warn: java-debug-adapter install failed"
+  install_lsp_java_test || echo "warn: java-test install failed"
+  install_lsp_docker_ls || echo "warn: docker-language-server install failed"
+  install_lsp_gh || echo "warn: gh install failed"
   return 0
 }
 
