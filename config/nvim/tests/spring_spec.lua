@@ -173,7 +173,7 @@ public class F {
   ok(m8["/ping"] ~= nil, "method path stands alone without class base")
 
   ----------------------------------------------------------------------
-  print("== tagfunc matching ==")
+  print("== match_entries resolution (find) ==")
   ----------------------------------------------------------------------
   -- Build a small index by hand.
   I.index.paths = {}
@@ -188,20 +188,22 @@ public class UserController {
 }
 ]]))
 
-  local exact = I.match_entries("/users/core", "")
-  eq(#exact, 1, "exact match returns one entry")
+  -- match_entries returns endpoint records (path/file/line/class/method/...).
+  local exact = I.match_entries("/users/core")
+  eq(#exact, 1, "exact match returns one record")
   if exact[1] then
-    eq(exact[1].name, "/users/core", "entry name is the path")
-    eq(exact[1].kind, "GET", "entry kind is the http method")
-    ok(exact[1].filename:match("UserController%.java$") ~= nil, "entry filename set")
-    ok(tonumber(exact[1].cmd) ~= nil, "entry cmd is a line number")
+    eq(exact[1].path, "/users/core", "record path")
+    eq(exact[1].http_method, "GET", "record http method")
+    eq(exact[1].class, "UserController", "record class")
+    ok(exact[1].file:match("UserController%.java$") ~= nil, "record file set")
+    ok(type(exact[1].line) == "number", "record line is a number")
   end
 
-  local prefix = I.match_entries("/users/co", "")
-  ok(#prefix >= 2, "prefix /users/co matches core and comments")
+  local prefix = I.match_entries("/users/co")
+  ok(#prefix == 2, "prefix /users/co matches core and comments")
 
-  local regex = I.match_entries("comments$", "r")
-  ok(#regex == 1, "regexp flag matches by pattern")
+  local none = I.match_entries("/nope")
+  eq(#none, 0, "no match returns empty")
 end
 
 ----------------------------------------------------------------------

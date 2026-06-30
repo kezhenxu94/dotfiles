@@ -1,12 +1,16 @@
--- Spring MVC endpoint navigation via Tree-sitter + Vim's native tag stack.
+-- Spring MVC endpoint navigation via Tree-sitter.
 --
--- Indexes Spring controllers from Java source and exposes each endpoint's fully
--- resolved URL path (e.g. "/users/core") as a tag, so `:tjump /users/core`,
--- `<C-]>`, `:tselect`, `<C-t>`, `:pop` and `:tags` all behave like ctags --
--- without generating a tags file, running Spring, or invoking Maven/Gradle.
+-- Indexes Spring controllers from Java source and lets you jump to a controller
+-- method by its fully resolved URL path (e.g. "/users/core") -- without
+-- generating a tags file, running Spring, or invoking Maven/Gradle.
 --
--- Enable: this module's setup() sets `tagfunc` buffer-local on Java buffers to
---   v:lua.require'config.lsp.spring'.tagfunc
+-- Navigation is exposed through a single command (NOT 'tagfunc'/tags, which are
+-- left to the LSP/jdtls in Java buffers):
+--   :SpringEndpoint find <path>   jump to a matching endpoint (or list choices)
+--   :SpringEndpoint list          show all endpoints in the location list
+--   :SpringEndpoint refresh       force a full reindex
+-- `find` jumps via the jumplist (<C-o> / '' to go back); it never touches the
+-- tag stack, so jdtls keeps owning <C-]>/:tjump in Java buffers.
 --
 -- Limitations (static source analysis only):
 --   * Non-literal paths (@GetMapping(Endpoints.FOO), string concatenation) are
@@ -429,7 +433,7 @@ end
 
 -- Drive the full project scan as a coroutine resumed in batches, yielding
 -- between batches so the UI stays responsive. A `generation` token lets a new
--- build (e.g. :SpringEndpointRefresh) cancel an in-flight one.
+-- build (e.g. :SpringEndpoint refresh) cancel an in-flight one.
 local function build_async(on_done)
   if not ensure_java() then
     vim.notify("[spring] Java tree-sitter parser unavailable; endpoint index disabled", vim.log.levels.WARN)
@@ -548,45 +552,23 @@ function M.endpoints()
   return names
 end
 
--- Build the list of tag entries matching `pattern`, in the shape Vim's tagfunc
--- expects. Shared by jumps and command-line completion.
-local function match_entries(pattern, flags)
+-- Resolve `pattern` to a list of endpoint records, in priority order: an exact
+-- path match first, then prefix matches, then remaining substring matches.
+-- Used by both :SpringEndpoint find and its completion. Does NOT touch tags.
+local function match_entries(pattern)
   local results = {}
-  local seen_order = {}
-
   local function emit(path)
     for _, ep in ipairs(index.paths[path] or {}) do
-      table.insert(results, {
-        name = ep.path,
-        filename = ep.file,
-        cmd = tostring(ep.line),
-        kind = ep.http_method,
-        user_data = ep.class .. "#" .. ep.method,
-      })
+      table.insert(results, ep)
     end
   end
 
-  if flags:find("r") then
-    -- :tag /re -- treat pattern as a regexp over endpoint paths.
-    local ok, re = pcall(vim.regex, pattern)
-    if ok then
-      for _, path in ipairs(M.endpoints()) do
-        if re:match_str(path) then
-          emit(path)
-        end
-      end
-    end
-    return results
-  end
-
-  -- Exact match takes priority so `:tjump /users/core` jumps straight in.
-  if index.paths[pattern] then
+  -- Exact match takes priority so `find /users/core` jumps straight in.
+  if pattern ~= "" and index.paths[pattern] then
     emit(pattern)
     return results
   end
 
-  -- Otherwise: prefix matches first, then remaining substring matches. This
-  -- powers `:tjump /users/co<Tab>` completion and `:tselect`.
   local prefix, substr = {}, {}
   for _, path in ipairs(M.endpoints()) do
     local at = path:find(pattern, 1, true)
@@ -605,53 +587,77 @@ local function match_entries(pattern, flags)
   return results
 end
 
--- 'tagfunc' implementation. Resolver only -- it returns matches and lets Vim
--- perform the jump and manage the tag stack (so <C-t>/:pop/:tags all work).
-function M.tagfunc(pattern, flags, _info)
-  ensure_index()
-  local ok, results = pcall(match_entries, pattern or "", flags or "")
-  if not ok then
-    return nil -- degrade gracefully; Vim falls back to default tag search
+-- Jump to an endpoint record. Uses the jumplist (m' before the jump) for
+-- back-navigation via <C-o> / '' -- the tag stack and 'tagfunc' are untouched.
+local function jump_to(ep)
+  vim.cmd("normal! m'")
+  vim.cmd("edit " .. vim.fn.fnameescape(ep.file))
+  pcall(vim.api.nvim_win_set_cursor, 0, { ep.line, math.max((ep.column or 1) - 1, 0) })
+end
+
+-- Populate the location list from a set of endpoint records and open it.
+local function fill_loclist(eps, title)
+  local items = {}
+  for _, ep in ipairs(eps) do
+    table.insert(items, {
+      filename = ep.file,
+      lnum = ep.line,
+      col = ep.column,
+      text = string.format("%-40s %s#%s", ep.path, ep.class, ep.method),
+    })
   end
-  return results
+  table.sort(items, function(a, b)
+    return a.text < b.text
+  end)
+  vim.fn.setloclist(0, {}, " ", { title = title, items = items })
+  vim.cmd("lopen")
+end
+
+-- Collect every indexed endpoint record (flattened across shared paths).
+local function all_endpoints()
+  local eps = {}
+  for _, path in ipairs(M.endpoints()) do
+    for _, ep in ipairs(index.paths[path]) do
+      table.insert(eps, ep)
+    end
+  end
+  return eps
 end
 
 -- Populate the location list with every endpoint and open it.
 function M.list()
   ensure_index()
-  local items = {}
-  for _, path in ipairs(M.endpoints()) do
-    for _, ep in ipairs(index.paths[path]) do
-      table.insert(items, {
-        filename = ep.file,
-        lnum = ep.line,
-        col = ep.column,
-        text = string.format("%-40s %s#%s", ep.path, ep.class, ep.method),
-      })
-    end
+  fill_loclist(all_endpoints(), "Spring Endpoints")
+end
+
+-- Find an endpoint by (possibly partial) path. One match jumps; several open
+-- the location list to choose from; none notifies.
+function M.find(arg)
+  ensure_index()
+  arg = arg or ""
+  if arg == "" then
+    return M.list()
   end
-  table.sort(items, function(a, b)
-    return a.text < b.text
-  end)
-  vim.fn.setloclist(0, {}, " ", { title = "Spring Endpoints", items = items })
-  vim.cmd("lopen")
+  local matches = match_entries(arg)
+  if #matches == 0 then
+    vim.notify("[spring] no endpoint matching " .. arg, vim.log.levels.WARN)
+  elseif #matches == 1 then
+    jump_to(matches[1])
+  else
+    fill_loclist(matches, "Spring Endpoints: " .. arg)
+  end
 end
 
 ----------------------------------------------------------------------
--- Setup: commands, autocmds, buffer-local tagfunc
+-- Setup: the :SpringEndpoint command + incremental-refresh autocmd.
+-- Deliberately does NOT set 'tagfunc' or touch the tag stack, so the built-in
+-- LSP tagfunc (jdtls) keeps owning <C-]>/:tjump/:tselect in Java buffers.
 ----------------------------------------------------------------------
+
+local SUBCOMMANDS = { "find", "list", "refresh" }
 
 function M.setup()
   local group = vim.api.nvim_create_augroup("kezhenxu94_spring_endpoint", { clear = true })
-
-  -- Attach tagfunc to Java buffers only, leaving other filetypes untouched.
-  vim.api.nvim_create_autocmd("FileType", {
-    group = group,
-    pattern = "java",
-    callback = function(args)
-      vim.bo[args.buf].tagfunc = "v:lua.require'config.lsp.spring'.tagfunc"
-    end,
-  })
 
   -- Incremental reindex on save.
   vim.api.nvim_create_autocmd("BufWritePost", {
@@ -662,13 +668,38 @@ function M.setup()
     end,
   })
 
-  vim.api.nvim_create_user_command("SpringEndpointRefresh", function()
-    M.refresh()
-  end, { desc = "Reindex Spring MVC endpoints" })
-
-  vim.api.nvim_create_user_command("SpringEndpointList", function()
-    M.list()
-  end, { desc = "List Spring MVC endpoints in the location list" })
+  vim.api.nvim_create_user_command("SpringEndpoint", function(opts)
+    local sub = opts.fargs[1]
+    if sub == "list" then
+      M.list()
+    elseif sub == "refresh" then
+      M.refresh()
+    elseif sub == "find" then
+      M.find(table.concat({ unpack(opts.fargs, 2) }, " "))
+    else
+      vim.notify("[spring] usage: SpringEndpoint {find <path>|list|refresh}", vim.log.levels.WARN)
+    end
+  end, {
+    nargs = "*",
+    desc = "Spring MVC endpoints: find <path> | list | refresh",
+    complete = function(arg_lead, cmd_line, _cursor)
+      local tokens = vim.split(cmd_line, "%s+", { trimempty = true })
+      -- Complete the subcommand while it is still the token being typed.
+      if #tokens <= 1 or (#tokens == 2 and arg_lead ~= "") then
+        return vim.tbl_filter(function(s)
+          return s:find(arg_lead, 1, true) == 1
+        end, SUBCOMMANDS)
+      end
+      -- `find <path>`: complete against indexed endpoint paths.
+      if tokens[2] == "find" then
+        ensure_index()
+        return vim.tbl_filter(function(p)
+          return arg_lead == "" or p:find(arg_lead, 1, true) == 1
+        end, M.endpoints())
+      end
+      return {}
+    end,
+  })
 
   -- Kick off the first build without blocking startup.
   vim.schedule(ensure_index)
