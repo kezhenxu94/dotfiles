@@ -1,14 +1,15 @@
 vim.pack.add({ "https://github.com/mfussenegger/nvim-jdtls" }, { confirm = false, load = true })
 
-local function get_mason_bundles()
-  local function jars(path, pattern)
-    return vim.split(vim.fn.glob(vim.fn.expand(path) .. "/" .. pattern), "\n")
+-- java-debug-adapter and java-test jars are installed (from their VS Code
+-- extensions) by packages/install/packages/84-lsp-bin.sh.
+local function get_bundles()
+  local function jars(glob)
+    return vim.split(vim.fn.glob(vim.fn.expand(glob)), "\n", { trimempty = true })
   end
 
   local bundles = {}
-  vim.list_extend(bundles, jars("$MASON/packages/java-debug-adapter/extension/server", "*.jar"))
-  vim.list_extend(bundles, jars("$MASON/packages/java-test/extension/server", "*.jar"))
-  vim.list_extend(bundles, jars("$MASON/packages/jdtls", "*.jar"))
+  vim.list_extend(bundles, jars("~/usr/local/jdtls/java-debug-adapter/*.jar"))
+  vim.list_extend(bundles, jars("~/usr/local/jdtls/java-test/*.jar"))
   return bundles
 end
 
@@ -63,7 +64,7 @@ return {
     },
   },
   init_options = {
-    bundles = get_mason_bundles(),
+    bundles = get_bundles(),
     workspace = {
       didChangeWatchedFiles = {
         dynamicRegistration = true,

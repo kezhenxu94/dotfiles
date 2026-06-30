@@ -1,9 +1,6 @@
 vim.g.java_ignore_markdown = true
 
-local function get_mason_lombok_agent()
-  return vim.fn.expand("$MASON/share/jdtls") .. "/lombok.jar"
-end
-
+-- lombok.jar is installed by packages/install/packages/84-lsp-bin.sh.
 vim.env.JDTLS_JVM_ARGS = "-javaagent:"
-  .. get_mason_lombok_agent()
+  .. vim.fn.expand("~/usr/local/jdtls/lombok.jar")
   .. " -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Xmx6G -Xms1G "
