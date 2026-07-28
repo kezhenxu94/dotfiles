@@ -201,12 +201,21 @@ install_lsp_gh() {
   fi
 }
 
-# NOTE: google-java-format is intentionally NOT installed here. It is a
-# per-project formatter, not part of the global toolchain. Install it where
-# needed, e.g.:
-#   ver=1.24.0; jar="$USR_HOME/google-java-format.jar"
-#   curl -sL "https://github.com/google/google-java-format/releases/download/v${ver}/google-java-format-${ver}-all-deps.jar" -o "$jar"
-#   printf '#!/usr/bin/env bash\nexec java -jar "%s" "$@"\n' "$jar" > "$HOME/.bin/google-java-format" && chmod +x "$HOME/.bin/google-java-format"
+install_lsp_google_java_format() {
+  check_installed java || {
+    echo "java not found; skipping google-java-format"
+    return 0
+  }
+  check_installed google-java-format && return 0
+  local ver="${GOOGLE_JAVA_FORMAT_VERSION:-1.24.0}"
+  local jar="$USR_HOME/google-java-format.jar"
+  echo "Installing google-java-format ${ver}..."
+  curl -sL "https://github.com/google/google-java-format/releases/download/v${ver}/google-java-format-${ver}-all-deps.jar" \
+    -o "$jar.tmp.$$" || return 1
+  mv "$jar.tmp.$$" "$jar"
+  printf '#!/usr/bin/env bash\nexec java -jar "%s" "$@"\n' "$jar" >"$BIN/google-java-format.tmp.$$" &&
+    chmod +x "$BIN/google-java-format.tmp.$$" && mv "$BIN/google-java-format.tmp.$$" "$BIN/google-java-format"
+}
 
 install_lsp_bin() {
   install_lsp_yq || echo "warn: yq install failed"
@@ -221,6 +230,7 @@ install_lsp_bin() {
   install_lsp_java_test || echo "warn: java-test install failed"
   install_lsp_docker_ls || echo "warn: docker-language-server install failed"
   install_lsp_gh || echo "warn: gh install failed"
+  install_lsp_google_java_format || echo "warn: google-java-format install failed"
   return 0
 }
 
