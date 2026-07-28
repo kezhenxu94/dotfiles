@@ -59,6 +59,10 @@ return {
             name = "JavaSE-21",
             path = vim.fn.expand("~/.local/share/mise/installs/java/21/"),
           },
+          {
+            name = "JavaSE-23",
+            path = vim.fn.expand("~/.local/share/mise/installs/java/23/"),
+          },
         },
       },
     },
