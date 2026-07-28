@@ -45,26 +45,6 @@ _lsp_install_openvsx() {
   rm -f "$tmp"
 }
 
-install_lsp_yq() {
-  check_installed yq && return 0
-  local ver="${YQ_VERSION:-4.44.3}"
-  echo "Installing yq ${ver}..."
-  curl -sL "https://github.com/mikefarah/yq/releases/download/v${ver}/yq_${os}_${arch}" \
-    -o "$BIN/yq.tmp.$$" || return 1
-  chmod +x "$BIN/yq.tmp.$$" && mv "$BIN/yq.tmp.$$" "$BIN/yq"
-}
-
-install_lsp_jq() {
-  check_installed jq && return 0
-  local ver="${JQ_VERSION:-1.7.1}"
-  local jqos="$os"
-  [ "$os" = "darwin" ] && jqos=macos
-  echo "Installing jq ${ver}..."
-  curl -sL "https://github.com/jqlang/jq/releases/download/jq-${ver}/jq-${jqos}-${arch}" \
-    -o "$BIN/jq.tmp.$$" || return 1
-  chmod +x "$BIN/jq.tmp.$$" && mv "$BIN/jq.tmp.$$" "$BIN/jq"
-}
-
 install_lsp_helm_ls() {
   check_installed helm_ls && return 0
   local ver="${HELM_LS_VERSION:-0.0.99}"
@@ -218,8 +198,6 @@ install_lsp_google_java_format() {
 }
 
 install_lsp_bin() {
-  install_lsp_yq || echo "warn: yq install failed"
-  install_lsp_jq || echo "warn: jq install failed"
   install_lsp_helm_ls || echo "warn: helm_ls install failed"
   install_lsp_shellcheck || echo "warn: shellcheck install failed"
   install_lsp_rust_analyzer || echo "warn: rust-analyzer install failed"
