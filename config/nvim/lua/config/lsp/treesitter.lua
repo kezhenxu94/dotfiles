@@ -4,17 +4,6 @@ vim.pack.add({
 }, { confirm = false, load = true })
 
 require("nvim-treesitter").setup({})
-
--- stylua: ignore start
-local packages = vim
-  .iter(require("config.lsp.languages"))
-  :map(function(server) return server.treesitter end)
-  :filter(function(server) return server end)
-  :flatten()
-  :totable()
--- stylua: ignore end
-require("nvim-treesitter").install(packages)
-
 require("nvim-treesitter-textobjects").setup({
   select = { lookahead = true },
   move = { set_jumps = true },

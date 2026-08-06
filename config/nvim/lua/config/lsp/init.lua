@@ -1,4 +1,3 @@
-require("config.lsp.languages")
 require("config.lsp.lsp")
 require("config.lsp.treesitter")
 require("config.lsp.formatter")

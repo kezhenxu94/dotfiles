@@ -1,15 +1,22 @@
 vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" }, { confirm = false })
 
--- stylua: ignore start
-local lsps = vim
-  .iter(require("config.lsp.languages"))
-  :map(function(lang) return lang.lsp end)
-  :filter(function(lsp) return lsp end)
-  :flatten()
-  :totable()
--- stylua: ignore end
-vim.lsp.enable(lsps)
-vim.lsp.enable("jdtls")
+vim.lsp.enable({
+  "jdtls",
+  "lua_ls",
+  "gopls",
+  "yamlls",
+  "vtsls",
+  "bashls",
+  "rust_analyzer",
+  "vue_ls",
+  "pyright",
+  "terraformls",
+  "tailwindcss",
+  "markdown_oxide",
+  "helm_ls",
+  "docker_language_server",
+  "gh_actions_ls",
+})
 
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("kezhenxu94_lsp_attach", {}),
