@@ -5,7 +5,7 @@
 @font-face {
   font-family: 'JetBrains Mono';
   src: local('JetBrains Mono') format('truetype');
-  src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
+  src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
