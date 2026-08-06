@@ -8,6 +8,7 @@ else
 endif
 
 let s:disabled_dirs = [s:home, s:home . '/Downloads', '/private/tmp']
+let s:max_session_bufs = 100
 
 augroup persistence
   autocmd!
@@ -33,6 +34,17 @@ function! s:SessionSave() abort
     return
   endif
 
+  " Cap how many listed buffers get persisted, keeping the most recently
+  " used ones, so the session file can't grow unbounded over time.
+  if len(l:valid_bufs) > s:max_session_bufs
+    call sort(l:valid_bufs, {a, b -> b.lastused - a.lastused})
+    for l:buf in l:valid_bufs[s:max_session_bufs :]
+      if bufexists(l:buf.bufnr) && bufnr('%') != l:buf.bufnr
+        execute 'bwipeout! ' . l:buf.bufnr
+      endif
+    endfor
+  endif
+
   let l:session_dir = fnamemodify(s:session_file, ':h')
   if !isdirectory(l:session_dir)
     call mkdir(l:session_dir, 'p')
@@ -53,7 +65,8 @@ function! s:SessionLoad() abort
 
   if argc() == 0 && (!exists('g:started_with_stdin') || !g:started_with_stdin)
     if filereadable(s:session_file)
-      silent execute 'source ' . s:session_file
+      let l:session_file = s:session_file
+      call timer_start(0, {-> execute('silent source ' . l:session_file)})
     endif
   else
     let g:skip_session = 1
