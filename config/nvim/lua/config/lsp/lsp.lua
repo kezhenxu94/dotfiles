@@ -9,6 +9,7 @@ local lsps = vim
   :totable()
 -- stylua: ignore end
 vim.lsp.enable(lsps)
+vim.lsp.enable("jdtls")
 
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("kezhenxu94_lsp_attach", {}),

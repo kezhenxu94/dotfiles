@@ -2,7 +2,6 @@
 -- packages/install/packages/8x-lsp-*.sh scripts, not by mason.
 return {
   -- stylua: ignore start
-  { treesitter = { "java" }, lsp = { "jdtls" }, },
   { treesitter = { "lua" }, lsp = { "lua_ls" }, },
   { treesitter = { "go" }, lsp = { "gopls" }, },
   { treesitter = { "json" }, },

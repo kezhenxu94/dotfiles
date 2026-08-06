@@ -1,10 +1,10 @@
 vim.pack.add({ "https://github.com/mfussenegger/nvim-jdtls" }, { confirm = false, load = true })
 
 -- java-debug-adapter and java-test jars are installed (from their VS Code
--- extensions) by packages/install/packages/84-lsp-bin.sh.
+-- extensions) by packages/install/packages/85-lsp-java.sh.
 local function get_bundles()
   local function jars(glob)
-    return vim.split(vim.fn.glob(vim.fn.expand(glob)), "\n", { trimempty = true })
+    return vim.split(vim.fn.glob(glob), "\n", { trimempty = true })
   end
 
   local bundles = {}
