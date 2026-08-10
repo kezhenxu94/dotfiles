@@ -53,7 +53,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 
     -- stylua: ignore start
-    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Actions" })
     vim.keymap.set("n", "<leader>tih", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = 0 }), { bufnr = 0 }) end, { desc = "Toggle Inlay Hint (Buffer)" })
     vim.keymap.set("n", "<leader>tiH", function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) end, { desc = "Toggle Inlay Hint (Global)" })
     -- stylua: ignore end
