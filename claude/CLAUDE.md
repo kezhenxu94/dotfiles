@@ -8,3 +8,4 @@
 
 - Never use homebrew, it's good but I just don't like it, if you need to install something, ask me and I will install it for you.
 - Prefer using `jq`, `yq` and other common command line tools over Python scripts.
+- When moving or renaming files, prefer using `git mv` instead of `mv` to preserve git history and minimize the diff.
