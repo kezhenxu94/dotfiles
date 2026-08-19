@@ -33,11 +33,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       })
     end
 
-    if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_foldingRange, event.buf) then
-      vim.o.foldmethod = "expr"
-      vim.o.foldexpr = "v:lua.vim.lsp.foldexpr()"
-    end
-
     if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion, event.buf) then
       if
         client.server_capabilities.completionProvider
