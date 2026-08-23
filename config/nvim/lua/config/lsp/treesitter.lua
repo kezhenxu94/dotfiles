@@ -76,3 +76,16 @@ vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = t
 vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
 vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
 vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
+
+-- Plug into the same repeat system for vim-gitgutter's ]h/[h hunk jumps, so ;/,
+-- (already bound above) repeat them too, without redefining f/F/t/T/;/,.
+local hunk_move = ts_repeat_move.make_repeatable_move(function(opts)
+  local plug = opts.forward and "<Plug>(GitGutterNextHunk)" or "<Plug>(GitGutterPrevHunk)"
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(plug, true, true, true), "m", false)
+end)
+vim.keymap.set("n", "]h", function()
+  hunk_move({ forward = true })
+end)
+vim.keymap.set("n", "[h", function()
+  hunk_move({ forward = false })
+end)
