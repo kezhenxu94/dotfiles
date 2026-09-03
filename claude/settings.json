@@ -8,6 +8,7 @@
     "pr": "",
     "sessionUrl": false
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(ls *)",

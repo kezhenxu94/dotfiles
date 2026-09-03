@@ -90,3 +90,5 @@ if !has('nvim')
   packadd hlyank
   let g:hlyank_hlgroup = 'IncSearch'
 endif
+
+set maxmempattern=65536
