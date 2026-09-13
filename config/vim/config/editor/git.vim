@@ -6,7 +6,8 @@ function! s:ShowGitStatus()
     echo "Git status: working tree clean"
     echohl None
   else
-    G
+    vertical topleft G
+    execute 'vertical resize ' . float2nr(&columns * 0.3)
   endif
 endfunction
 
