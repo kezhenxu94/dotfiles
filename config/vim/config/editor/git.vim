@@ -7,7 +7,7 @@ function! s:ShowGitStatus()
     echohl None
   else
     vertical topleft G
-    execute 'vertical resize ' . float2nr(&columns * 0.3)
+    execute 'vertical resize ' . float2nr(&columns * 0.5)
   endif
 endfunction
 
