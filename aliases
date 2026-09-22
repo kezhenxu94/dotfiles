@@ -4,6 +4,7 @@ alias ln="ln -v"
 alias svn="docker run -it --rm -v \$PWD:/workspace -w /workspace python:3 svn"
 
 alias n='nvim'
+alias k='kubectl'
 
 # Include custom aliases
 if [[ -f ~/.aliases.local ]]; then

@@ -74,6 +74,7 @@
   "theme": "auto",
   "teammateMode": "in-process",
   "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }

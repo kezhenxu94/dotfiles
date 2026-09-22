@@ -12,6 +12,10 @@ export ASDF_GOLANG_MOD_VERSION_ENABLED=true
 if ls ~/usr/local/lib > /dev/null 2>&1; then
   export LD_LIBRARY_PATH=~/usr/local/lib:$LD_LIBRARY_PATH
   export DYLD_LIBRARY_PATH=~/usr/local/lib:$DYLD_LIBRARY_PATH
+  export ACLOCAL_PATH=~/usr/local/share/aclocal:$ACLOCAL_PATH
+  export CPPFLAGS="-I$HOME/usr/local/include${CPPFLAGS:+ $CPPFLAGS}"
+  export LDFLAGS="-L$HOME/usr/local/lib${LDFLAGS:+ $LDFLAGS}"
+  export PKG_CONFIG_PATH=~/usr/local/lib/pkgconfig:~/usr/local/lib64/pkgconfig:$PKG_CONFIG_PATH
 fi
 
 local _old_path="$PATH"

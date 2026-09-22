@@ -5,8 +5,6 @@ if ! grep -q "host.docker.internal" /etc/hosts; then
   exit 1
 fi
 
-ENV_FILE="$HOME/.zshrc.local" # Make sure this is sourced in the ~/.zshrc or ~/.zshenv
-
 setup() {
   networksetup -setwebproxy Wi-Fi host.docker.internal 7890
   networksetup -setsecurewebproxy Wi-Fi host.docker.internal 7890
@@ -21,17 +19,6 @@ setup() {
   networksetup -setproxybypassdomains F50 host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.* *.local
   networksetup -setdnsservers F50 119.29.29.29 223.5.5.5 223.6.6.6 114.114.114.114 114.114.115.115 1.1.1.1
   networksetup -setsearchdomains F50 119.29.29.29 223.5.5.5 223.6.6.6 114.114.114.114 114.114.115.115 1.1.1.1
-
-  cat <<EOF >>"$ENV_FILE"
-export HTTPS_PROXY=http://host.docker.internal:7890
-export HTTP_PROXY=http://host.docker.internal:7890
-export ALL_PROXY=socks5://host.docker.internal:7891
-export NO_PROXY="127.0.0.1,192.168.0.0/16,10.0.0.0/8,host.docker.internal,*.apple.com,.local,localhost,local-docker-registry,pi5,kind-control-plane" # Don't proxy *.apple.com for "Translate" application to work
-export https_proxy=http://host.docker.internal:7890
-export http_proxy=http://host.docker.internal:7890
-export all_proxy=socks5://host.docker.internal:7891
-export no_proxy="127.0.0.1,192.168.0.0/16,10.0.0.0/8,host.docker.internal,*.apple.com,.local,localhost,local-docker-registry,pi5,kind-control-plane" # Don't proxy *.apple.com for "Translate" application to work
-EOF
 }
 
 teardown() {
@@ -48,9 +35,6 @@ teardown() {
   networksetup -setproxybypassdomains F50 Empty
   networksetup -setdnsservers F50 Empty
   networksetup -setsearchdomains F50 Empty
-
-  /usr/bin/sed -i '' '/export HTTP_PROXY/d; /export HTTPS_PROXY/d; /export ALL_PROXY/d; /export NO_PROXY/d' "$ENV_FILE"
-  /usr/bin/sed -i '' '/export http_proxy/d; /export https_proxy/d; /export all_proxy/d; /export no_proxy/d' "$ENV_FILE"
 }
 
 trap teardown EXIT

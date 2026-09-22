@@ -142,7 +142,7 @@ install_gnu_tool() {
   local env_vars=()
   local config_flags=()
 
-  for arg in "${configure_args[@]}"; do
+  for arg in ${configure_args[@]+"${configure_args[@]}"}; do
     if [[ "$arg" == *"="* ]] && [[ "$arg" != --* ]]; then
       env_vars+=("$arg")
     else
