@@ -1,21 +1,13 @@
 #!/bin/env zsh
 
 function envup {
-  envfile="${1:-.env}"
-  if [ -f "$envfile" ]; then
-    while IFS= read -r line; do
-      if [ -z "$line" ]; then
-        continue
-      fi
-      if [[ "$line" == \#* ]]; then
-        continue
-      fi
-      key=$(echo "$line" | cut -d'=' -f1)
-      value=$(echo "$line" | cut -d'=' -f2-)
-      export "$key"="$value"
-    done < "$envfile"
-  else
+  local envfile="${1:-.env}" line
+  if [[ ! -f "$envfile" ]]; then
     echo 'No .env file found' 1>&2
     return 1
   fi
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    export "${line%%=*}"="${line#*=}"
+  done < "$envfile"
 }
