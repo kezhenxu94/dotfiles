@@ -11,6 +11,8 @@ augroup END
 augroup kzx_close_with_q
   autocmd!
   autocmd FileType qf,git,help,netrw,fugitive,nvim-pack,fugitiveblame,dap-*,nvim-undotree,directory setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q :call <SID>CloseSpecialBuffer()<CR>
+  " Buffers read from stdin (e.g. `kubectl get pod -o yaml | vim -`)
+  autocmd StdinReadPost * nnoremap <buffer> <silent> <nowait> q :quit!<CR>
 augroup END
 
 function! s:CloseSpecialBuffer()

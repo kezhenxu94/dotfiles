@@ -5,14 +5,6 @@ nnoremap <silent> <M-=> <C-w>=
 nnoremap <silent> <M->> <C-w>>
 nnoremap <silent> <M-_> <C-w>-
 
-" Move lines up/down
-nnoremap <M-j> :<C-u>execute 'move .+' . v:count1<CR>==
-nnoremap <M-k> :<C-u>execute 'move .-' . (v:count1 + 1)<CR>==
-inoremap <M-j> <Esc>:m .+1<CR>==gi
-inoremap <M-k> <Esc>:m .-2<CR>==gi
-vnoremap <M-j> :<C-u>execute "'<,'>move '>+" . v:count1<CR>gv=gv
-vnoremap <M-k> :<C-u>execute "'<,'>move '<-" . (v:count1 + 1)<CR>gv=gv
-
 " Buffer and window operations
 nnoremap <silent> <leader>xx :qa<CR>
 nnoremap <silent> <leader>bd :bdelete! <CR>
