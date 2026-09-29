@@ -2,17 +2,19 @@
 
 _ENVUP_ALLOWED="${XDG_DATA_HOME:-$HOME/.local/share}/envup/allowed"
 
+# Sets REPLY to the SHA-256 of $1, avoiding a $(...) subshell around the call.
 function _envup_hash {
-  if command -v sha256sum &>/dev/null; then
-    sha256sum "$1" 2>/dev/null | cut -d' ' -f1
+  if (( $+commands[sha256sum] )); then
+    REPLY=$(sha256sum "$1" 2>/dev/null)
   else
-    shasum -a 256 "$1" 2>/dev/null | cut -d' ' -f1
+    REPLY=$(shasum -a 256 "$1" 2>/dev/null)
   fi
+  REPLY=${REPLY%% *}
 }
 
 function _envup_is_allowed {
   local dir="$1" hash="$2"
-  [[ -f "$_ENVUP_ALLOWED" ]] && grep -qxF "${dir}:${hash}" "$_ENVUP_ALLOWED"
+  [[ -f "$_ENVUP_ALLOWED" ]] && (( ${${(f)"$(<$_ENVUP_ALLOWED)"}[(Ie)${dir}:${hash}]} ))
 }
 
 function _envup_allow {
@@ -25,8 +27,9 @@ function _chpwd_envup {
   [[ -f .env ]] || return
   [[ -t 1 ]]   || return
 
-  local hash
-  hash=$(_envup_hash .env)
+  local REPLY
+  _envup_hash .env
+  local hash=$REPLY
 
   if _envup_is_allowed "$PWD" "$hash"; then
     envup

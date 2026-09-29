@@ -16,7 +16,7 @@ function _activate_venv {
 
   # Activate if venv folder exists and (not activated, or venv bin missing from PATH due to mise overwriting it)
   if [[ -n "$venv_path" ]]; then
-    venv_path="$(cd "$venv_path" && pwd -P)"
+    venv_path="${venv_path:A}"
     if [[ -f "${venv_path}/bin/activate" ]]; then
       if [[ -z "$VIRTUAL_ENV" ]] || [[ ":$PATH:" != *":${venv_path}/bin:"* ]]; then
         source "${venv_path}/bin/activate"
