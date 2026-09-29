@@ -1,9 +1,0 @@
-#!/bin/sh
-
-local_hook="$HOME"/.git_template.local/hooks/post-commit
-
-if [ -f "$local_hook" ]; then
-  . "$local_hook";
-fi
-
-.git/hooks/ctags >/dev/null 2>&1 &
