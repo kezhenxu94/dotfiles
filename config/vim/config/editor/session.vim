@@ -66,7 +66,8 @@ function! s:SessionLoad() abort
   if argc() == 0 && (!exists('g:started_with_stdin') || !g:started_with_stdin)
     if filereadable(s:session_file)
       let l:session_file = s:session_file
-      call timer_start(0, {-> execute('silent source ' . l:session_file)})
+      " Timer callbacks don't return to the main loop, so redraw to refresh the title.
+      call timer_start(0, {-> execute(['silent source ' . l:session_file, 'redraw'])})
     endif
   else
     let g:skip_session = 1

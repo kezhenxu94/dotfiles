@@ -92,3 +92,5 @@ if !has('nvim')
 endif
 
 set maxmempattern=65536
+set title
+set titlestring=%t%(\ %M%)
