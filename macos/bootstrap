@@ -269,7 +269,8 @@ defaults write com.apple.terminal StringEncodings -array 4
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
 # Set Terminal profile
-open ~/dotfiles/macos/terminal/kezhenxu94.terminal -a Terminal && sleep 3 # wait for the profile to be loaded
+open ~/dotfiles/macos/terminal/kezhenxu94.terminal -a Terminal
+until defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q '^    kezhenxu94 = '; do sleep 1; done # wait for the profile to be loaded
 defaults -currentHost write com.apple.terminal "Default Window Settings" "kezhenxu94"
 defaults -currentHost write com.apple.terminal "Startup Window Settings" "kezhenxu94"
 
