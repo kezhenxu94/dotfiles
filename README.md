@@ -1,32 +1,17 @@
-# My minimal dotfiles for both local macOS and remote Linux (including GitHub Codespaces)
+# dotfiles
 
-| Dark | Light |
-| --- | --- |
-| ![Dark](https://github.com/user-attachments/assets/663538fa-b779-46a9-91f0-0514843452ce) | ![Light](https://github.com/user-attachments/assets/13a33de4-4b06-4f42-9efc-64ebe9512e83) |
-
-## Requirements
-
-* Set zsh as your login shell:
-
-  ```shell
-  chsh -s $(which zsh)
-  ```
+Minimal dotfiles for macOS and Linux (including GitHub Codespaces).
 
 ## Install
 
-Clone onto your laptop:
-
 ```shell
-git clone --recurse-submodules git@github.com:kezhenxu94/dotfiles.git ~/dotfiles
+git clone git@github.com:kezhenxu94/dotfiles.git ~/dotfiles
+~/dotfiles/bootstrap.sh
 ```
 
-Install the dotfiles
+`bootstrap.sh` installs packages (and sets zsh as the login shell), then runs `setup.sh` to symlink the dotfiles into `$HOME`. Run `setup.sh` alone to only link the dotfiles.
 
-```shell
-~/dotfiles/setup.sh
-```
-
-Update the dotfiles:
+## Update
 
 ```shell
 git -C ~/dotfiles pull
