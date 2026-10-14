@@ -1,5 +1,6 @@
 export PATH="$HOME/.bin:$HOME/.local/bin:$HOME/usr/local/bin:$PATH"
 export PATH="$HOME/.bin/kfc:$PATH"
+export PATH="$HOME/.bin/hif:$PATH"
 export PATH="$HOME/usr/local/nvim/bin:$PATH"
 export PATH="$HOME/usr/local/nvim-nightly/bin:$PATH"
 export PATH="$PATH:$HOME/.local/share/solana/install/active_release/bin"
