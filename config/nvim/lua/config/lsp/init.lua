@@ -1,4 +1,5 @@
 require("config.lsp.lsp")
+require("config.lsp.diagnostics")
 require("config.lsp.treesitter")
 require("config.lsp.formatter")
 require("config.lsp.linter")

@@ -54,31 +54,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.diagnostic.config({
-  severity_sort = true,
-  virtual_text = true,
-  virtual_lines = {
-    current_line = true,
-  },
-  float = {
-    border = "rounded",
-  },
-  signs = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = "",
-      [vim.diagnostic.severity.WARN] = "",
-      [vim.diagnostic.severity.INFO] = "",
-      [vim.diagnostic.severity.HINT] = "",
-    },
-    numhl = {
-      [vim.diagnostic.severity.ERROR] = "ErrorMsg",
-      [vim.diagnostic.severity.WARN] = "WarningMsg",
-      [vim.diagnostic.severity.HINT] = "DiagnosticInfo",
-      [vim.diagnostic.severity.INFO] = "DiagnosticHint",
-    },
-  },
-})
-
 vim.lsp.inlay_hint.enable()
 
 vim.api.nvim_create_autocmd("LspProgress", {
