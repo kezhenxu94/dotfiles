@@ -88,34 +88,18 @@ vim.api.nvim_create_autocmd("LspProgress", {
     local name = client and client.name or "LSP"
 
     local value = ev.data.params.value
-    local parts = {}
-
-    if value.kind == "end" then
-      table.insert(parts, "✔ Done")
-    else
-      if value.title and value.title ~= "" then
-        table.insert(parts, value.title)
-      end
-
-      if value.message and value.message ~= "" then
-        table.insert(parts, value.message)
-      end
-
-      if value.percentage then
-        table.insert(parts, string.format("(%d%%%%)", value.percentage))
-      end
+    local done = value.kind == "end"
+    local msg = value.message
+    if done then
+      msg = "✔ Done"
     end
 
-    local msgId = ("progress-lsp-%s-%s"):format(clientId, value.title)
-    local title = ("[%s] %s"):format(name or clientId, value.title)
-    local msg = table.concat(parts, " ")
-
-    vim.api.nvim_echo({ { msg } }, false, {
-      id = msgId,
+    vim.api.nvim_echo({ { msg or "" } }, false, {
+      id = ("lsp.%s.%s"):format(clientId, ev.data.params.token),
       source = "lsp",
       kind = "progress",
-      title = title,
-      status = "success",
+      title = value.title and ("[%s] %s"):format(name, value.title) or nil,
+      status = done and "success" or "running",
       percent = value.percentage,
     })
   end,
