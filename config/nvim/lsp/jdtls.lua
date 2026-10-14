@@ -13,6 +13,35 @@ local function get_bundles()
   return bundles
 end
 
+-- One runtime per major version from mise-installed JDKs; the mise-active
+-- install wins and becomes the default, otherwise the first listed wins.
+-- Broken installs (no bin/java) are skipped.
+local function get_runtimes()
+  local res = vim.system({ "mise", "ls", "--json", "--installed", "java" }, { text = true }):wait()
+  if res.code ~= 0 then
+    return {}
+  end
+
+  local runtimes, seen = {}, {}
+  for _, install in ipairs(vim.json.decode(res.stdout)) do
+    local major = install.version:match("(%d+)")
+    local name = major and "JavaSE-" .. major
+    if name and vim.fn.executable(install.install_path .. "/bin/java") == 1 then
+      local runtime = seen[name]
+      if not runtime then
+        runtime = { name = name, path = install.install_path }
+        seen[name] = runtime
+        table.insert(runtimes, runtime)
+      end
+      if install.active then
+        runtime.path = install.install_path
+        runtime.default = true
+      end
+    end
+  end
+  return runtimes
+end
+
 ---@type vim.lsp.Config
 return {
   on_attach = function(_, bufnr)
@@ -50,20 +79,7 @@ return {
   settings = {
     java = {
       configuration = {
-        runtimes = {
-          {
-            name = "JavaSE-17",
-            path = vim.fn.expand("~/.local/share/mise/installs/java/17/"),
-          },
-          {
-            name = "JavaSE-21",
-            path = vim.fn.expand("~/.local/share/mise/installs/java/21/"),
-          },
-          {
-            name = "JavaSE-23",
-            path = vim.fn.expand("~/.local/share/mise/installs/java/23/"),
-          },
-        },
+        runtimes = get_runtimes(),
       },
     },
   },
