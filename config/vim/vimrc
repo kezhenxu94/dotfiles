@@ -1,4 +1,5 @@
 let g:mapleader=" "
+let g:maplocalleader=" "
 
 source $XDG_CONFIG_HOME/vim/config/core/init.vim
 source $XDG_CONFIG_HOME/vim/config/ui/init.vim

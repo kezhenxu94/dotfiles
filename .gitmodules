@@ -13,3 +13,6 @@
 [submodule "bin/hif"]
 	path = bin/hif
 	url = https://github.com/kezhenxu94/himalaya-fzf.git
+[submodule "config/vim/pack/vendor/start/mongo.vim"]
+	path = config/vim/pack/vendor/start/mongo.vim
+	url = https://github.com/kezhenxu94/mongo.vim.git
