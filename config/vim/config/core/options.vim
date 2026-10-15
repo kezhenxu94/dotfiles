@@ -84,7 +84,6 @@ set complete=
 set autocomplete
 set pumheight=24
 set completeopt=fuzzy,menuone,noselect,popup
-set completefuzzycollect=files
 inoremap <expr> <cr> pumvisible() ? '<c-y>' : '<cr>'
 
 if !has('nvim')
