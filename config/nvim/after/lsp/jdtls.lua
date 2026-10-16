@@ -42,8 +42,32 @@ local function get_runtimes()
   return runtimes
 end
 
+-- Lives in after/ so it overrides the lsp/jdtls.lua bundled with nvim-jdtls.
 ---@type vim.lsp.Config
 return {
+  cmd = function(dispatchers, config)
+    local data_dir = vim.fn.stdpath("cache") .. "/jdtls/workspace"
+    if config.root_dir then
+      data_dir = data_dir .. "/" .. vim.fn.fnamemodify(config.root_dir, ":p:h:t")
+    end
+
+    local cmd = { "jdtls", "-data", data_dir }
+    for arg in string.gmatch(os.getenv("JDTLS_JVM_ARGS") or "", "%S+") do
+      table.insert(cmd, "--jvm-arg=" .. arg)
+    end
+
+    return vim.lsp.rpc.start(cmd, dispatchers, {
+      cwd = config.cmd_cwd,
+      env = config.cmd_env,
+      detached = config.detached,
+    })
+  end,
+  root_markers = {
+    -- Multi-module projects; .git is the last resort for multi-module Maven projects
+    { "mvnw", "gradlew", "settings.gradle", "settings.gradle.kts", ".git" },
+    -- Single-module projects
+    { "build.xml", "pom.xml", "build.gradle", "build.gradle.kts" },
+  },
   on_attach = function(_, bufnr)
     local jdtls = require("jdtls")
     local opts = {
