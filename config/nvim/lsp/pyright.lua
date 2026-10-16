@@ -5,12 +5,8 @@ local function set_python_path(command)
     name = 'pyright',
   }
   for _, client in ipairs(clients) do
-    if client.settings then
-      client.settings.python =
-        vim.tbl_deep_extend('force', client.settings.python --[[@as table]], { pythonPath = path })
-    else
-      client.config.settings = vim.tbl_deep_extend('force', client.config.settings, { python = { pythonPath = path } })
-    end
+    client.settings.python =
+      vim.tbl_deep_extend('force', client.settings.python --[[@as table]], { pythonPath = path })
     client:notify('workspace/didChangeConfiguration', { settings = nil })
   end
 end
@@ -47,11 +43,11 @@ return {
         arguments = { vim.uri_from_bufnr(bufnr) },
       }
 
-      -- Using client.request() directly because "pyright.organizeimports" is private
+      -- Using client:request() directly because "pyright.organizeimports" is private
       -- (not advertised via capabilities), which client:exec_cmd() refuses to call.
       -- https://github.com/neovim/neovim/blob/c333d64663d3b6e0dd9aa440e433d346af4a3d81/runtime/lua/vim/lsp/client.lua#L1024-L1030
       ---@diagnostic disable-next-line: param-type-mismatch
-      client.request('workspace/executeCommand', params, nil, bufnr)
+      client:request('workspace/executeCommand', params, nil, bufnr)
     end, {
       desc = 'Organize Imports',
     })
