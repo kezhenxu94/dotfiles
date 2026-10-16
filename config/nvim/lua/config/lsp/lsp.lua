@@ -1,5 +1,3 @@
-vim.pack.add({ "https://github.com/neovim/nvim-lspconfig" }, { confirm = false })
-
 vim.lsp.enable({
   "jdtls",
   "lua_ls",
