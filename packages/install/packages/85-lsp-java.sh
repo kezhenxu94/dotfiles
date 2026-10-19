@@ -58,8 +58,7 @@ install_lsp_jdtls() {
       tar -zxf - -C "$dest" || return 1
     ln -sf "$dest/bin/jdtls" "$BIN/jdtls"
   fi
-  # Lombok agent for jdtls. Point the JVM at it via -javaagent, e.g. nvim-jdtls's
-  # JDTLS_JVM_ARGS=-javaagent:~/usr/local/jdtls/lombok.jar.
+  # Lombok agent for jdtls, loaded via -javaagent in config/nvim/after/lsp/jdtls.lua.
   if [ ! -f "$dest/lombok.jar" ]; then
     echo "Installing lombok.jar for jdtls..."
     mkdir -p "$dest"

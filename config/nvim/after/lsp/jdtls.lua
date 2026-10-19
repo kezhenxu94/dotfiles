@@ -51,10 +51,18 @@ return {
       data_dir = data_dir .. "/" .. vim.fn.fnamemodify(config.root_dir, ":p:h:t")
     end
 
-    local cmd = { "jdtls", "-data", data_dir }
-    for arg in string.gmatch(os.getenv("JDTLS_JVM_ARGS") or "", "%S+") do
-      table.insert(cmd, "--jvm-arg=" .. arg)
-    end
+    local cmd = {
+      "jdtls",
+      "-data",
+      data_dir,
+      -- lombok.jar is installed by packages/install/packages/85-lsp-java.sh.
+      "--jvm-arg=-javaagent:" .. vim.fn.expand("~/usr/local/jdtls/lombok.jar"),
+      "--jvm-arg=-XX:+UseParallelGC",
+      "--jvm-arg=-XX:GCTimeRatio=4",
+      "--jvm-arg=-XX:AdaptiveSizePolicyWeight=90",
+      "--jvm-arg=-Xmx6G",
+      "--jvm-arg=-Xms1G",
+    }
 
     return vim.lsp.rpc.start(cmd, dispatchers, {
       cwd = config.cmd_cwd,

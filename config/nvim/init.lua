@@ -8,6 +8,12 @@ if vim.loop.fs_stat(vim_info_dir) == nil and vim.loop.fs_access(vim.fn.getcwd(),
 end
 vim.opt.shadafile = vim_info_dir .. "/main.shada"
 
+-- XDG_STATE_HOME is overridden below and inherited by child processes; keep
+-- mise's state out of the project (its trusted-configs are directory symlinks
+-- to $HOME etc., which jdtls follows while importing).
+vim.env.MISE_STATE_DIR = vim.env.MISE_STATE_DIR
+  or (vim.env.XDG_STATE_HOME or vim.fn.expand("~/.local/state")) .. "/mise"
+
 for _, name in ipairs({ "state" }) do
   local folder = vim_info_dir .. "/" .. name
   if vim.loop.fs_stat(folder) == nil and vim.loop.fs_access(vim_info_dir, "W") then
