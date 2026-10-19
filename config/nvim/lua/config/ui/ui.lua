@@ -4,7 +4,9 @@ require("vim._core.ui2").enable({
   enable = true,
   msg = {
     -- cmdheight=0 hides the cmd window, so show messages in the msg window.
-    targets = { default = "msg" },
+    -- Prompt messages (inputlist(), confirm(), z=, ...) go to cmd so ui2 moves
+    -- them to the dialog window above the prompt.
+    targets = { default = "msg", confirm = "cmd" },
     dialog = {
       height = 0.5,
     },
