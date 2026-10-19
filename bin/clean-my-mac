@@ -200,12 +200,9 @@ if command -v npm &>/dev/null; then
   fi
 fi
 
-# Yarn cache
-if command -v yarn &>/dev/null; then
-  if [[ "$DRY_RUN" == false ]]; then
-    yarn cache clean 2>/dev/null || true
-  fi
-fi
+# Yarn cache, removed directly: `yarn` may be a Corepack shim that silently
+# prompts to download Yarn once ~/.cache (where Corepack keeps it) is wiped
+clean_path "$HOME/Library/Caches/Yarn" "Yarn cache"
 
 # uv cache (Python)
 if command -v uv &>/dev/null; then

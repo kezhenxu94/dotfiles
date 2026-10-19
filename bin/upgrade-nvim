@@ -8,5 +8,5 @@ INSTALL_DIR="$SCRIPT_DIR/packages/install"
 source "$INSTALL_DIR/lib/env.sh"
 source "$INSTALL_DIR/lib/helpers.sh"
 
-NVIM_FORCE=true NVIM_VERSION="${NVIM_VERSION:-latest}" \
+NVIM_FORCE=true NVIM_VERSION="${NVIM_VERSION:-nightly}" \
   source "$INSTALL_DIR/packages/50-nvim.sh"
