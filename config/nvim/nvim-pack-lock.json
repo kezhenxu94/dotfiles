@@ -4,6 +4,10 @@
       "rev": "016802de402556da54c36bd7359b441266b01cdd",
       "src": "https://github.com/stevearc/conform.nvim"
     },
+    "docker.nvim": {
+      "rev": "6569c86eaad93aac264b712e544e5aee6488f8ac",
+      "src": "https://github.com/kezhenxu94/docker.nvim"
+    },
     "kube.nvim": {
       "rev": "11643a22103271bf762ffa1b10bd3af3c1748467",
       "src": "https://github.com/kezhenxu94/kube.nvim"
@@ -25,7 +29,7 @@
       "src": "https://github.com/mfussenegger/nvim-lint"
     },
     "nvim-treesitter": {
-      "rev": "ca581c3436fc2b236847f5b739ebc263739e5ca6",
+      "rev": "29212d826054bb2948fa9d3a99eca9bf6a050eb2",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter",
       "version": "'main'"
     },

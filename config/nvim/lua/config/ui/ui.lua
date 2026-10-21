@@ -18,10 +18,3 @@ require("vim._core.ui2").enable({
     },
   },
 })
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "pager",
-  callback = function(ev)
-    vim.keymap.set("n", "<Esc>", "<Cmd>wincmd c<CR>", { buffer = ev.buf })
-  end,
-})

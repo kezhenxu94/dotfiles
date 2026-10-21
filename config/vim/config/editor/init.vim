@@ -8,3 +8,4 @@ source $XDG_CONFIG_HOME/vim/config/editor/git.vim
 source $XDG_CONFIG_HOME/vim/config/editor/make.vim
 source $XDG_CONFIG_HOME/vim/config/editor/winpick.vim
 source $XDG_CONFIG_HOME/vim/config/editor/jump.vim
+source $XDG_CONFIG_HOME/vim/config/editor/shell.vim

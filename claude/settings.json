@@ -58,7 +58,8 @@
     "context7@claude-plugins-official": true,
     "feature-dev@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "spinnerTipsEnabled": false,
   "spinnerVerbs": {

@@ -10,3 +10,6 @@ vim/undo/*
 .installignore
 setup.sh
 bootstrap.sh
+
+# Project-only Claude config
+.claude/skills/workflow-plugin-ideas/SKILL.md
