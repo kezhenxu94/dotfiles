@@ -15,5 +15,5 @@ vim.filetype.add({
   extension = { mdx = "markdown" },
 })
 
-vim.o.statuscolumn = "%l%s"
+vim.o.statuscolumn = "%s%l "
 vim.o.signcolumn = "yes:1"
