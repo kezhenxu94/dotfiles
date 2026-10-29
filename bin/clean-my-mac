@@ -92,6 +92,13 @@ add_to_total() {
   fi
 }
 
+# jdtls keeps its workspace in ~/.cache/nvim and reads jars from
+# ~/.gradle/caches and ~/.m2/repository; wiping them under a running server corrupts its state.
+JDTLS_RUNNING=false
+if pgrep -f org.eclipse.jdt.ls.core >/dev/null; then
+  JDTLS_RUNNING=true
+fi
+
 # Helper function to remove directory or files
 clean_path() {
   local path="$1"
@@ -215,10 +222,18 @@ fi
 clean_path "$HOME/Library/Caches/pip" "pip cache"
 
 # Gradle caches (keep wrapper to avoid re-downloading Gradle itself)
-clean_path "$HOME/.gradle/caches" "Gradle caches"
+if [[ "$JDTLS_RUNNING" == true ]]; then
+  echo "  Skipping Gradle caches: jdtls is running"
+else
+  clean_path "$HOME/.gradle/caches" "Gradle caches"
+fi
 
 # Maven repository
-clean_path "$HOME/.m2/repository" "Maven repository"
+if [[ "$JDTLS_RUNNING" == true ]]; then
+  echo "  Skipping Maven repository: jdtls is running"
+else
+  clean_path "$HOME/.m2/repository" "Maven repository"
+fi
 
 echo ""
 echo "==> Cleaning Go caches..."
@@ -368,7 +383,11 @@ echo "==> Cleaning editor/IDE caches..."
 # Neovim swap and shada files
 clean_path "$HOME/.local/state/nvim/swap" "Neovim swap files"
 clean_path "$HOME/.local/share/nvim/swap" "Neovim swap files (legacy)"
-clean_path "$HOME/.cache/nvim" "Neovim cache"
+if [[ "$JDTLS_RUNNING" == true ]]; then
+  echo "  Skipping Neovim cache: jdtls is running"
+else
+  clean_path "$HOME/.cache/nvim" "Neovim cache"
+fi
 
 # Old vim undo files (keep recent ones)
 if [[ -d "$HOME/.vim/undo" ]]; then

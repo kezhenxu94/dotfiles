@@ -11,28 +11,28 @@ install_lsp_npm() {
 		return 0
 	}
 
-	# "command|npm-package" — install only those whose command is missing.
-	local specs=(
-		"bash-language-server|bash-language-server"             # bashls
-		"vtsls|@vtsls/language-server"                          # vtsls (ts/js/vue)
-		"yaml-language-server|yaml-language-server"             # yamlls
-		"vue-language-server|@vue/language-server"              # vtsls vue plugin
-		"tailwindcss-language-server|@tailwindcss/language-server" # tailwindcss
-		"pyright|pyright"                                       # pyright
-		"prettier|prettier"                                     # ts/vue formatter
-		"prettierd|@fsouza/prettierd"                           # js formatter
-		"eslint_d|eslint_d"                                     # ts/vue fixer
-		"jsonlint|jsonlint"                                     # json lint
-		"markdownlint|markdownlint-cli"                         # markdownlint
-		"gh-actions-language-server|gh-actions-language-server" # gh_actions_ls
+	# Install only packages missing from the active node's global root;
+	# `command -v` is fooled by mise shims left behind by other node versions.
+	local pkgs=(
+		"bash-language-server"           # bashls
+		"@vtsls/language-server"         # vtsls (ts/js/vue)
+		"yaml-language-server"           # yamlls
+		"@vue/language-server"           # vtsls vue plugin
+		"@tailwindcss/language-server"   # tailwindcss
+		"pyright"                        # pyright
+		"prettier"                       # ts/vue formatter
+		"@fsouza/prettierd"              # js formatter
+		"eslint_d"                       # ts/vue fixer
+		"jsonlint"                       # json lint
+		"markdownlint-cli"               # markdownlint
+		"gh-actions-language-server"     # gh_actions_ls
 	)
 
 	local missing=()
-	local spec cmd pkg
-	for spec in "${specs[@]}"; do
-		cmd="${spec%%|*}"
-		pkg="${spec#*|}"
-		check_installed "$cmd" || missing+=("$pkg")
+	local pkg root
+	root="$(npm root -g)"
+	for pkg in "${pkgs[@]}"; do
+		[ -d "$root/$pkg" ] || missing+=("$pkg")
 	done
 
 	if [ ${#missing[@]} -eq 0 ]; then

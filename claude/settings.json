@@ -44,12 +44,6 @@
       "Skill(superpowers:systematic-debugging)",
       "mcp__plugin_context7_context7"
     ],
-    "deny": [
-      "Read(//**/.env)",
-      "Read(//**/*.env)",
-      "Read(//**/*.env.*)",
-      "Read(//**/*credential*)"
-    ],
     "defaultMode": "auto"
   },
   "enabledPlugins": {
@@ -81,5 +75,6 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "idleCompaction": false
 }
