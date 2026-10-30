@@ -76,5 +76,10 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": false,
-  "idleCompaction": false
+  "idleCompaction": false,
+  "statusLine": {
+    "type": "command",
+    "command": "~/dotfiles/claude/statusline.sh",
+    "refreshInterval": 60
+  }
 }
