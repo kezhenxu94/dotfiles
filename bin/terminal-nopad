@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Build a copy of Terminal.app with the hardcoded window padding set to 0.
+# +[TTView initialize] does: padding = NSSolariumEnabled() ? 10 : 5;
+# we patch both constants to 0. The system Terminal.app is never modified.
+# Re-run after macOS updates. Revert: `terminal-nopad uninstall`.
+
+set -euo pipefail
+
+SRC=/System/Applications/Utilities/Terminal.app
+DST="/Applications/Terminal NoPad.app"
+
+if [[ "${1:-}" == uninstall ]]; then
+  rm -rf "$DST"
+  echo "Removed $DST"
+  exit 0
+fi
+
+tmp="$(mktemp -d)"
+trap 'rm -rf "$tmp"' EXIT
+cp -R "$SRC" "$tmp/"
+bin="$tmp/Terminal.app/Contents/MacOS/Terminal"
+
+# patch <hex pattern> <byte offset within pattern> <replacement bytes>
+patch() {
+  local offsets off
+  offsets=$(xxd -p "$bin" | tr -d '\n' | grep -ob "$1" | awk -F: '$1 % 2 == 0 { print $1 / 2 }' || true)
+  if [[ -z "$offsets" ]]; then
+    echo "Pattern $1 not found; this Terminal version is unsupported." >&2
+    exit 1
+  fi
+  for off in $offsets; do
+    printf "$3" | dd of="$bin" bs=1 seek=$((off + $2)) conv=notrunc 2>/dev/null
+  done
+}
+
+# +[TTView initialize]: cmp w0,#0 ; fmov d0,#5.0 ; fmov d1,#10.0 ; fcsel
+# -> movi d0,#0 ; movi d1,#0  (padding = 0)
+patch 1f0000710090621e0190641e201c601e 4 '\x00\xe4\x00\x2f\x01\xe4\x00\x2f'
+
+# +[TTView rectWithoutPadding:font:]: height = h - 2*pad + ceil(|font metric|).
+# The extra metric overflows into the bottom padding; with no padding it clips
+# the top row. fnmsub d0,d4,d2,d0 -> fmul d0,d4,d2  (height = h - 2*pad)
+patch 0110701e8124411f0210601e8080621f 12 '\x80\x08\x62\x1e'
+
+# -[TTView contentSizeForLogicalContentSize:]: height = rows*cell + 2*pad - descender.
+# Rows are anchored from this, so the top row sat `descender` above the view.
+# fsub d1,d8,d0 -> fmov d1,d8  (height = rows*cell + 2*pad)
+patch 0139601e201da94efd7b42a9 0 '\x01\x41\x60\x1e'
+
+# Ad-hoc sign with hardened runtime (blocks dylib injection). Apple's private
+# entitlements cannot be kept on a non-Apple signature, so they are dropped.
+codesign --force --sign - --options runtime "$tmp/Terminal.app"
+
+rm -rf "$DST"
+mv "$tmp/Terminal.app" "$DST"
+echo "Installed $DST"
