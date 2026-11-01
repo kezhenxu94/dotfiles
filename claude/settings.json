@@ -46,6 +46,11 @@
     ],
     "defaultMode": "auto"
   },
+  "statusLine": {
+    "type": "command",
+    "command": "~/dotfiles/claude/statusline.sh",
+    "refreshInterval": 60
+  },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
@@ -70,16 +75,11 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
+  "idleCompaction": false,
   "teammateMode": "in-process",
   "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": false,
-  "idleCompaction": false,
-  "statusLine": {
-    "type": "command",
-    "command": "~/dotfiles/claude/statusline.sh",
-    "refreshInterval": 60
-  }
+  "voiceEnabled": false
 }
