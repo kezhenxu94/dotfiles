@@ -1,6 +1,16 @@
+-- vue-component-meta's `typescript: "*"` peer makes npm nest the latest
+-- TypeScript (7.x, native, no JS API), which crashes the server; use the
+-- TypeScript bundled with vtsls instead.
+local cmd = { 'vue-language-server', '--stdio' }
+local npm_root = vim.fn.trim(vim.fn.system({ 'npm', 'root', '-g' }))
+local tsdk = npm_root .. '/@vtsls/language-server/node_modules/typescript/lib'
+if vim.v.shell_error == 0 and vim.uv.fs_stat(tsdk) then
+  table.insert(cmd, '--tsdk=' .. tsdk)
+end
+
 ---@type vim.lsp.Config
 return {
-  cmd = { 'vue-language-server', '--stdio' },
+  cmd = cmd,
   filetypes = { 'vue' },
   root_markers = { 'package.json' },
   on_init = function(client)
