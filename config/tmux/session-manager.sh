@@ -11,9 +11,15 @@ save() {
   mkdir -p "$SESSION_DIR"
   local dated_file="${SESSION_DIR}/sessions-$(date +%Y%m%d).txt"
   tmux list-panes -a -F \
-    '#{session_name}	#{window_index}	#{window_name}	#{window_active}	#{window_layout}	#{pane_index}	#{pane_active}	#{pane_current_path}' \
+    '#{session_name}	#{window_index}	#{window_name}	#{window_active}	#{window_layout}	#{pane_index}	#{pane_active}	#{pane_current_path}	#{@remote_host}	#{@remote_session}' \
     > "$dated_file"
   ln -sf "$dated_file" "$SESSION_FILE"
+}
+
+# Respawn the newly created (active) pane of a window as a remote pane (remote.sh)
+reattach_remote() {
+  [ -n "$3" ] || return 0
+  tmux respawn-pane -k -t "$1" "~/.config/tmux/remote.sh attach $2 $3"
 }
 
 restore() {
@@ -33,7 +39,7 @@ restore() {
 
   local prev_session="" prev_window=""
 
-  while IFS=$'\t' read -r session_name window_index window_name window_active window_layout pane_index pane_active pane_current_path; do
+  while IFS=$'\t' read -r session_name window_index window_name window_active window_layout pane_index pane_active pane_current_path remote_host remote_session; do
     [ -z "$session_name" ] && continue
 
     local target="${session_name}:${window_index}"
@@ -46,6 +52,7 @@ restore() {
 
       if [ "$window_index" = "$init_win" ]; then
         tmux rename-window -t "${session_name}:${init_win}" "$window_name"
+        reattach_remote "$target" "$remote_host" "$remote_session"
         prev_session="$session_name"
         prev_window="$window_index"
         if [ "$pane_active" = "1" ]; then
@@ -58,6 +65,7 @@ restore() {
       else
         # Initial window index doesn't match; create needed window, then kill initial
         tmux new-window -t "$target" -n "$window_name" -c "$pane_current_path"
+        reattach_remote "$target" "$remote_host" "$remote_session"
         tmux kill-window -t "${session_name}:${init_win}" 2>/dev/null
         prev_session="$session_name"
         prev_window="$window_index"
@@ -82,6 +90,7 @@ restore() {
       # Additional pane in existing window — split
       tmux split-window -t "$target" -c "$pane_current_path"
     fi
+    reattach_remote "$target" "$remote_host" "$remote_session"
 
     # Select active pane/window
     if [ "$pane_active" = "1" ]; then
