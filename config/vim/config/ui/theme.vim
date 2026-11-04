@@ -45,34 +45,25 @@ function! s:ApplyTheme(mode)
 endfunction
 
 if has('nvim')
-  function! s:OnThemeChange(job_id, data, event) abort
-    for l:line in a:data
-      if l:line !=# ''
-        call s:ApplyTheme(l:line)
-        break
-      endif
-    endfor
-  endfunction
-
-  function! s:OnWatcherExit(job_id, status, event) abort
-    if a:status != 0 && !s:exiting
-      call s:StartDarkNotify()
+  " Follow the terminal (locally and over ssh): start from the background Nvim
+  " detected, then on theme changes (mode 2031) Nvim re-queries OSC 11 and fires
+  " TermResponse. Nvim's own detection stops once a colorscheme sets
+  " 'background', so handle the replies here.
+  " Reply -> dark/light by luminance; components have 1-4 hex digits
+  function! s:OnTermResponse(seq) abort
+    let l:rgb = matchlist(a:seq, '\]11;rgba\=:\(\x\+\)/\(\x\+\)/\(\x\+\)')
+    if empty(l:rgb)
+      return
+    endif
+    let [l:r, l:g, l:b] = map(l:rgb[1:3], {_, x -> str2nr(x, 16) / (pow(16, len(x)) - 1.0)})
+    let l:mode = (0.299 * l:r + 0.587 * l:g + 0.114 * l:b) < 0.5 ? 'dark' : 'light'
+    if l:mode !=# &background
+      call s:ApplyTheme(l:mode)
     endif
   endfunction
 
-  function! s:StartDarkNotify()
-    let s:watcher_job = jobstart(['dark-notify'], {
-      \ 'on_stdout': function('s:OnThemeChange'),
-      \ 'on_exit':   function('s:OnWatcherExit'),
-      \ })
-  endfunction
-
-  if has('mac')
-    call s:StartDarkNotify()
-    autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call jobstop(s:watcher_job) | endif
-  else
-    call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)
-  endif
+  autocmd ThemeBackground TermResponse * call s:OnTermResponse(v:termresponse)
+  call s:ApplyTheme(&background)
 else
   function! s:OnThemeChange(channel, msg)
     call s:ApplyTheme(a:msg)
