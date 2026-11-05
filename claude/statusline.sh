@@ -1,6 +1,6 @@
 #!/bin/sh
 # Claude Code status line: org name and subscription usage.
-org=$(jq -r '.oauthAccount.organizationName // empty' "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/.claude.json")
+org=$(jq -r '.oauthAccount.organizationName // empty' "${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json")
 
 jq -r --arg org "$org" '.rate_limits // {} | [
   ($org | select(. != "")),
