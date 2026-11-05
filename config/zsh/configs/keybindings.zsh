@@ -1,3 +1,7 @@
+# Vi mode explicitly: zsh only picks it from $EDITOR/$VISUAL at startup, before
+# options.zsh exports them, so a fresh login (e.g. ssh) would otherwise be emacs
+bindkey -v
+
 bindkey -M viins '^a' beginning-of-line
 bindkey -M viins '^e' end-of-line
 bindkey -M viins '^w' backward-kill-word
