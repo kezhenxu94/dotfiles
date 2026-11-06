@@ -9,7 +9,7 @@ set -euo pipefail
 
 SOCKET=local-panes
 # Invisible remote server: no status/prefix, vi copy-mode like local, copies
-# sent to the local tmux as OSC 52 (local set-clipboard on + pbcopy hook)
+# sent to the local tmux as OSC 52, which passes them on to the terminal
 OPTIONS='set -g status off \; set -g prefix None \; set -s escape-time 0 \; set -g history-limit 100000 \; set -g mode-keys vi \; set -s set-clipboard on \; bind -T copy-mode-vi v send -X begin-selection \; bind -T copy-mode-vi y send -X copy-selection-and-cancel'
 
 # POSIX single-quoting, so any path survives the local and remote shells

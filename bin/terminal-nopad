@@ -5,7 +5,10 @@
 #     dark mode and pure white in light mode (stock: #1E1E1E / white), and a
 #     System textColor foreground a softer grey (stock: pure white / black);
 #   - theme reporting: DSR `CSI ? 996 n` and DEC mode 2031 (`CSI ? 997 ; 1|2 n`
-#     on appearance change), so tmux / Claude Code follow light/dark mode.
+#     on appearance change), so tmux / Claude Code follow light/dark mode;
+#   - OSC 52 clipboard write (`OSC 52 ; c ; <base64>`); reading it is refused;
+#   - synchronized output, DEC mode 2026 (drawing held for ~1s at most);
+#   - DECRQM (`CSI ? Ps $ p` -> `CSI ? Ps ; Pm $ y`).
 # The system Terminal.app is never modified. Re-run after macOS updates; it
 # fails loudly if Terminal changed in a way the patches no longer fit.
 # Needs the Xcode command line tools (clang, otool, lipo).
@@ -14,7 +17,7 @@
 set -euo pipefail
 
 SRC=/System/Applications/Utilities/Terminal.app
-DST="/Applications/Terminal NoPad.app"
+DST="${TERMINAL_NOPAD_DST:-/Applications/Terminal NoPad.app}"
 # Text grey for a System textColor profile foreground (dark / light mode); must be
 # AArch64 fmov immediates (n/16 * 2^k): 0.8125 = #CFCFCF, 0.1875 = #303030.
 TEXT_DARK=0.8125 TEXT_LIGHT=0.1875
@@ -59,7 +62,7 @@ patch 0110701e8124411f0210601e8080621f 12 '\x80\x08\x62\x1e'
 # fsub d1,d8,d0 -> fmov d1,d8  (height = rows*cell + 2*pad)
 patch 0139601e201da94efd7b42a9 0 '\x01\x41\x60\x1e'
 
-# --- Background colour and theme reporting (code cave) -----------------------
+# --- Code cave ---------------------------------------------------------------
 # New code goes into the zero padding at the end of __TEXT. Hooks branch to it:
 #   bg    exit of -[TTProfile valueForUndefinedKey:] (all profile reads):
 #         textBackgroundColor -> [NSColor blackColor] / [NSColor whiteColor]
@@ -67,19 +70,29 @@ patch 0139601e201da94efd7b42a9 0 '\x01\x41\x60\x1e'
 #         by [NSApp effectiveAppearance]
 #   set   DECSET dispatch (`CSI ? Pm h`), after its last known mode:
 #         2031 -> set a flag in the padding byte after _trackFocusInOut
-#   rst   DECRST dispatch (`CSI ? Pm l`): 2031 -> clear the flag
+#         2026 -> set a held-update counter in the padding after it
+#   rst   DECRST dispatch (`CSI ? Pm l`): 2031 / 2026 -> clear them
 #   dsr   DSR dispatch (`CSI Ps n`), after Ps=5: 996 -> report
 #   pane  exit of -[TTPane viewDidChangeEffectiveAppearance]: report if flagged
+#   osc   -[TTVT100Emulator performOperatingSystemCommand], before its number
+#         dispatch: 52 -> clipboard
+#   gate  -[TTView needsDisplayTimer:] calls it instead of setNeedsImmediateDisplay:
+#         while 2026 is set the view is not updated and the update is retried,
+#         so the frame shows once the mode is reset (or after ~100 retries)
+#   tok   jump-table entry of parser token 60 (an unused alias of "ignore"):
+#         reached from the private CSI table on `p` (DECRQM; `$` is ignored there)
 #   report writes `CSI ? 997 ; 1 n` (dark) or `CSI ? 997 ; 2 n` (light) to the
 #         shell, using [NSApp effectiveAppearance].
-# plus one data change: in the private CSI (`ESC [ ?`) state table, `n` maps to
-# the DSR token instead of "ignore", so `CSI ? 996 n` reaches the DSR handler.
-# Everything is located by pattern / ObjC metadata, and only stubs, GOT slots
-# and ivar offset variables Terminal already has are used.
+# plus data changes: in the private CSI (`ESC [ ?`) state table, `n` maps to
+# the DSR token instead of "ignore", so `CSI ? 996 n` reaches the DSR handler;
+# `$` is ignored and `p` maps to token 60 there, as does `q` in the `CSI >` table.
+# Everything is located by pattern / ObjC metadata, and only stubs, GOT slots,
+# selector refs and ivar offset variables Terminal already has are used.
 
 W="$tmp/work"; mkdir "$W"
 H='function strtonum(s,  i,n){ s=tolower(s); sub(/^0x/,"",s); n=0; for(i=1;i<=length(s);i++) n=n*16+index("0123456789abcdef",substr(s,i,1))-1; return n }'
 hex() { printf '0x%x' "$1"; }
+le32() { local v=$(( $1 & 0xffffffff )); printf '%02x%02x%02x%02x' $((v & 255)) $((v >> 8 & 255)) $((v >> 16 & 255)) $((v >> 24 & 255)); }
 
 cave_patch() {
   local off=$1 size=$2 F=$W/slice
@@ -103,6 +116,10 @@ cave_patch() {
                                              /^ +fileoff/ { if (v>=a && v<a+s) { printf "%d\n", ($2+0)+v-a; exit } }'; }
   # objc_msgSend$<selector> stub
   stub() { awk -v s="$1" '$2==s { print "0x" $1; exit }' $W/stubmap; }
+  # stub of an imported C function
+  cfn() { awk -v s="$1" '/symbol stub for: / && $NF==s { print $3; exit }' $W/dis; }
+  # selector reference (the SEL slot) of a selector
+  selref() { awk -v s="$1" '$2==s { print "0x" $1; exit }' $W/selmap; }
   # GOT slot of an imported symbol
   got() { awk -v s="$1" "$H"'/adrp\t/ { split($0,p,"; "); pg=strtonum(p[2]) }
             /ldr\t/ && substr($0, length($0)-length(s)+1)==s && index($0, "literal pool symbol address: " s) {
@@ -110,6 +127,9 @@ cave_patch() {
   # ivar offset variable of Class.ivar
   ivar() { awk -v c="$1" -v i="$2" '/^        name +0x/ { cls=$3 } /^            offset/ { va=$2; fresh=1; next }
             /^            name/ { if (fresh && cls==c && $3==i) { print va; exit } fresh=0 }' $W/objc; }
+  # value of that ivar offset variable
+  ivoff() { awk -v c="$1" -v i="$2" '/^        name +0x/ { cls=$3 } /^            offset/ { val=$3; fresh=1; next }
+            /^            name/ { if (fresh && cls==c && $3==i) { print val; exit } fresh=0 }' $W/objc; }
   # `ldp x29, x30` of the epilogue after the super call in the method named $1.
   # The cave reloads x29/x30 and branches back to the next instruction, so the
   # original (possibly PC-bound, e.g. arm64e.x1) authenticated return is kept.
@@ -140,50 +160,110 @@ cave_patch() {
   S_ARR=$(stub arrayWithObjects:count:) S_BEST=$(stub bestMatchFromAppearancesWithNames:)
   S_EQS=$(stub isEqualToString:) S_BLACK=$(stub blackColor) S_WHITE=$(stub whiteColor)
   S_EFF=$(stub effectiveAppearance) S_DATA=$(stub dataWithBytes:length:) S_WRITE=$(stub writeData:)
-  local G_COLOR G_ARRAY G_DATA G_NSAPP G_AQUA G_DARK
+  local S_UTF8 S_SPLIT S_COUNT S_OBJAT S_GENPB S_CLEAR S_SETDATA
+  S_UTF8=$(stub stringWithUTF8String:) S_SPLIT=$(stub componentsSeparatedByString:) S_COUNT=$(stub count) S_OBJAT=$(stub objectAtIndex:)
+  S_GENPB=$(stub generalPasteboard) S_CLEAR=$(stub clearContents) S_SETDATA=$(stub setData:forType:)
+  local S_PERFORM S_SNID S_INVAL
+  S_PERFORM=$(stub performSelector:withObject:afterDelay:) S_SNID=$(stub setNeedsImmediateDisplay) S_INVAL=$(stub invalidate)
+  local F_SEL F_ALLOC F_RELEASE R_NDT
+  F_SEL=$(cfn _NSSelectorFromString) F_ALLOC=$(cfn _objc_alloc) F_RELEASE=$(cfn _objc_release)
+  R_NDT=$(selref needsDisplayTimer:)
+  local G_COLOR G_ARRAY G_DATA G_NSAPP G_AQUA G_DARK G_STRING G_PB G_PBSTR
   G_COLOR=$(got '_OBJC_CLASS_$_NSColor')
   G_ARRAY=$(got '_OBJC_CLASS_$_NSArray') G_DATA=$(got '_OBJC_CLASS_$_NSData') G_NSAPP=$(got _NSApp)
   G_AQUA=$(got _NSAppearanceNameAqua) G_DARK=$(got _NSAppearanceNameDarkAqua)
-  local V_PANE_CTRL V_TC_DEC V_TC_SHELL V_EMU_SHELL
+  G_STRING=$(got '_OBJC_CLASS_$_NSString') G_PB=$(got '_OBJC_CLASS_$_NSPasteboard') G_PBSTR=$(got _NSPasteboardTypeString)
+  # objc_msgSend with x1 already set: any objc stub past its `adrp x1 ; ldr x1`
+  local MSG; MSG=$(hex $(( S_DATA + 8 )))
+  awk -v a="$(printf '%016x' $MSG)" '$1==a { ok=($2=="adrp" && $3=="x17,") } END { exit !ok }' $W/stubs || die "objc stub layout changed"
+  local V_PANE_CTRL V_TC_DEC V_VIEW_CTRL
   V_PANE_CTRL=$(ivar TTPane controller) V_TC_DEC=$(ivar TTTabController _outputDecoder)
-  V_TC_SHELL=$(ivar TTTabController _shell) V_EMU_SHELL=$(ivar TTVT100Emulator _shell)
-  local H_BG H_PANE H_SET T_SET H_RST T_RST H_DSR T_DSR
+  V_VIEW_CTRL=$(ivar TTView _controller)
+  # TTVT100Emulator ivars are at fixed offsets (Terminal's own code uses immediates)
+  local O_SHELL O_OSC O_PARAMS O_NPARAMS O_TABLE
+  O_SHELL=$(ivoff TTVT100Emulator _shell) O_OSC=$(ivoff TTVT100Emulator _operatingSystemCommand)
+  O_PARAMS=$(ivoff TTVT100Emulator _params)
+  O_NPARAMS=$(ivoff TTVT100Emulator _numParams) O_TABLE=$(ivoff TTVT100Emulator _stateTable)
+  local H_BG H_PANE H_SET T_SET H_RST T_RST H_DSR T_DSR H_OSC X_OSC H_GATE GROUND
   H_BG=$(super_exit valueForUndefinedKey:) H_PANE=$(super_exit viewDidChangeEffectiveAppearance)
   read -r H_SET T_SET <<< "$(bne_after 0x7d4 $'ldr\tx0, \\[x19, #0x10\\]' $'mov\tw2, #0x1')"
   read -r H_RST T_RST <<< "$(bne_after 0x7d4 $'ldr\tx0, \\[x19, #0x10\\]' $'mov\tw2, #0x0')"
   read -r H_DSR T_DSR <<< "$(bne_after 0x5 $'ldr\tx25, \\[x19, #0x18\\]' $'adrp\tx0')"
+  # OSC number dispatch (`cmp w8, #0x67`, the target of the default-number
+  # check's b.lo) and its common exit, which releases the OSC string
+  read -r H_OSC X_OSC <<< "$(awk -v p="$(printf '0x%x' $O_PARAMS)" -v o="$(printf '0x%x' $O_OSC)" '
+      { t[NR]=$0; a[NR]=$1; n["0x" substr($1, match($1, /[^0]/))]=NR }
+      END { for (i=2;i<NR;i++) if (t[i] ~ /cmn\tw8, #0x2$/ && t[i-1] ~ ("ldr\tw8, \\[x0, #" p "\\]$") && t[i+1] ~ /b\.lo\t/) {
+              split(t[i+1], f, "\t"); k=n[f[3]]; break }
+            if (!k || t[k] !~ /cmp\tw8, #0x67$/) exit
+            for (j=i;j<i+2000;j++) if (t[j] ~ ("ldr\tx0, \\[x19, #" o "\\]$") && t[j+1] ~ /_objc_release$/ && t[j+2] ~ ("str\txzr, \\[x19, #" o "\\]$")) {
+              print "0x" a[k], "0x" a[j]; exit } }' $W/dis)"
+  # -[TTView needsDisplayTimer:]: mov x19, x0 ; bl setNeedsImmediateDisplay ; ... ; bl invalidate
+  H_GATE=$(awk -v s="bl\t$(hex $S_SNID)" -v v="bl\t$(hex $S_INVAL)" '{ t[NR]=$0; a[NR]=$1 }
+      END { for (i=2;i<NR-5;i++) if (t[i-1] ~ /mov\tx19, x0$/ && substr(t[i], length(t[i])-length(s)+1)==s)
+              for (j=i+1;j<=i+5;j++) if (substr(t[j], length(t[j])-length(v)+1)==v) { print "0x" a[i]; exit } }' $W/dis)
+  # parser: back to the base state table, then on to the next character
+  GROUND=$(awk '{ t[NR]=$0; a[NR]=$1 } END { for (i=1;i<NR-1;i++)
+      if (t[i] ~ /ldr\tx8, \[x19, #0x38\]$/ && t[i+1] ~ /str\tx8, \[x19, #0x30\]$/ && t[i+2] ~ /ldursb\tw9, \[x29, #-0x79\]$/) { print "0x" a[i]; exit } }' $W/dis)
 
   # The escape parser keeps &emulator->_currentCharSet at [x29, #-0x90]; DECRST
   # 1004 clears _trackFocusInOut at +0x40. The 2031 flag goes in +0x41, which
-  # must be the padding byte right after the last ivar.
+  # must be the padding byte right after the last ivar, and the 2026 state (a
+  # u16 display-tick count, 0 = off) in +0x42, still within the malloc granule.
   local BASE SIZE
   BASE=$(awk '{ t[NR]=$0 } END { for (i=3;i<=NR;i++) if (t[i] ~ /stur\tx8, \[x29, #-0x90\]/ && t[i-1] ~ /add\tx8, x19, x8/ && t[i-2] ~ /mov\tw8, #0x/) { s=t[i-2]; sub(/.*#/,"",s); print s; exit } }' $W/dis)
   SIZE=$(awk '/^        instanceSize/ { s=$2 } /^        name +0x/ && $3=="TTVT100Emulator" { print s; exit }' $W/objc)
   grep -q $'strb\twzr, \\[x10, #0x40\\]' $W/dis || die "focus flag layout changed"
   [[ -n "$BASE" && $(( BASE + 0x41 )) -eq $SIZE ]] || die "emulator layout changed (base=$BASE size=$SIZE)"
-  local FLAG=$(( BASE + 0x41 ))
+  local FLAG=$(( BASE + 0x41 )) FOCUS=$(( BASE + 0x40 )) SYNC=$(( BASE + 0x42 ))
 
-  # CSI dispatch jump table (token-1 -> handler) and the private CSI state table
-  # (129 u64 tokens; h=37, l=38, n=2 "ignore").
+  # CSI dispatch jump table (token-1 -> handler) and the state tables (129 u64
+  # tokens each; 2 = ignore the sequence, 8 = ignore the character).
   local JT_TAB JT_BASE DSR_TOK DS DSZ PRIV
   read -r JT_TAB JT_BASE <<< "$(awk "$H"'/cmp\tx16, #0x64/ { armed=1 } armed && /adrp\tx17,/ { split($0,p,"; "); pg=strtonum(p[2]) }
       armed && /add\tx17, x17, #/ { o=$NF; sub("#","",o); jt=pg+strtonum(o) }
       armed && /adr\tx17, #0/ { printf "0x%x 0x%s\n", jt, $1; exit }' $W/dis)"
+  jt() { xxd -p -c 4 -s $(( $(vfo $JT_TAB) + ($1 - 1) * 4 )) -l 4 "$F" | s32s | awk -v b=$((JT_BASE)) '{ printf "0x%x\n", b + $1 }'; }
   # the DSR handler starts 5 instructions before its b.ne (ldr, ldr, cmp 6, b.eq, cmp 5)
   DSR_TOK=$(xxd -p -c 4 -s $(vfo $JT_TAB) -l $((101*4)) "$F" | s32s | awk -v b=$((JT_BASE)) -v w=$((H_DSR - 20)) 'b+$1==w { print NR; exit }')
   read -r DS DSZ <<< "$(otool -l "$F" | awk '/sectname __data$/ { f=1 } f && /^ +addr/ { a=$2 } f && /^ +size/ { print a, $2; exit }')"
-  PRIV=$(xxd -p -c 8 -s $(vfo $DS) -l $((DSZ)) "$F" | u64s | awk -v s=$((DS)) '{ a[NR-1]=$1 }
-      END { for (b=0; b+128<NR; b++) if (a[b+104]==37 && a[b+108]==38 && a[b+110]==2) { printf "0x%x\n", s+b*8; exit } }')
+  xxd -p -c 8 -s $(vfo $DS) -l $((DSZ)) "$F" | u64s > $W/data
+  # private CSI (`?`): h=37 l=38, n/$/p ignored
+  PRIV=$(awk -v s=$((DS)) '{ a[NR-1]=$1 }
+      END { for (b=0; b+128<NR; b++) if (a[b+104]==37 && a[b+108]==38 && a[b+110]==2 && a[b+36]==2 && a[b+112]==2) { printf "0x%x\n", s+b*8; exit } }' $W/data)
+  [[ -n "$GROUND" && -n "$JT_TAB" ]] || die "cannot locate the escape parser"
+  [[ "$(jt 60)" == "$(jt 2)" && "$(jt 8)" == "$(hex $(( GROUND + 8 )))" ]] || die "parser tokens changed"
 
-  local CAVE
+  # Code goes after the last __TEXT section, constant data into the zero padding
+  # between the load commands and the first section (both are in __TEXT).
+  local CAVE HDR HDR_END
   CAVE=$(otool -l "$F" | awk "$H"'/segname/ { g=$2 } /^ +addr/ { a=strtonum($2) } /^ +size/ { if (g=="__TEXT" && a+strtonum($2)>e) e=a+strtonum($2) } END { printf "0x%x\n", int((e+15)/16)*16 }')
+  HDR=$(hex $(( 0x100000000 + ($(otool -h "$F" | awk 'NR==4 { print $7 }') + 32 + 15) / 16 * 16 )))
+  HDR_END=$(otool -l "$F" | awk '/sectname __text$/ { f=1 } f && /^ +addr/ { print $2; exit }')
 
   local v
   for v in S_TBG S_TXT S_RGB S_EQ S_ARR S_BEST S_EQS S_BLACK S_WHITE S_EFF S_DATA S_WRITE \
-           G_COLOR G_ARRAY G_DATA G_NSAPP G_AQUA G_DARK V_PANE_CTRL V_TC_DEC V_TC_SHELL V_EMU_SHELL \
-           H_BG H_PANE H_SET T_SET H_RST T_RST H_DSR T_DSR JT_TAB DSR_TOK PRIV; do
+           S_UTF8 S_SPLIT S_COUNT S_OBJAT S_GENPB S_CLEAR S_SETDATA S_PERFORM S_SNID S_INVAL \
+           F_SEL F_ALLOC F_RELEASE R_NDT G_COLOR G_ARRAY G_DATA G_NSAPP G_AQUA G_DARK G_STRING G_PB G_PBSTR \
+           V_PANE_CTRL V_TC_DEC V_VIEW_CTRL O_SHELL O_OSC O_PARAMS O_NPARAMS O_TABLE \
+           H_BG H_PANE H_SET T_SET H_RST T_RST H_DSR T_DSR H_OSC X_OSC H_GATE JT_TAB DSR_TOK PRIV HDR_END; do
     [[ -n "${!v:-}" ]] || die "cannot locate $v; this Terminal version is unsupported"
   done
+
+  # Constant data, assembled first so the code can address it.
+  {
+    echo 'd_quiet: .short 1, 2, 3, 5, 6, 7, 8, 25, 40, 47, 1000, 1001, 1002, 1003, 1005, 1006, 1015, 1048, 1049, 2004, 0'
+    echo 'd_semi: .asciz ";"'
+    echo 'd_sel: .asciz "initWithBase64EncodedString:options:"'
+    echo 'd_dark: .ascii "\033[?997;1n"'
+    echo 'd_light: .ascii "\033[?997;2n"'
+    echo 'd_end:'
+  } > $W/data.s
+  clang -arch arm64e -c $W/data.s -o $W/data.o
+  local s a
+  while read -r a _ s; do eval "D_${s#d_}=$(( HDR + 0x$a ))"; done < <(nm -n $W/data.o | grep ' d_')
+  (( D_end <= HDR_END )) || die "no free space after the load commands"
+  [[ "$(xxd -p -s $(vfo $HDR) -l $(( D_end - HDR )) "$F" | tr -d '\n0')" == "" ]] || die "the load command padding is not free"
 
   # Assemble the cave; pc tracks each instruction's address for PC-relative operands.
   local asm=$W/cave.s pc=$CAVE
@@ -193,11 +273,17 @@ cave_patch() {
   bl()     { e "bl #$(( $1 - pc ))"; }
   b()      { e "b #$(( $1 - pc ))"; }
   bne()    { e "b.ne #$(( $1 - pc ))"; }
+  adr()    { e "adr $1, #$(( $2 - pc ))"; }
   adrp()   { e "adrp $1, #$(( ($2 & ~0xfff) - (pc & ~0xfff) ))"; }
   ldgot()  { adrp "$1" "$2"; e "ldr $1, [$1, #$(( $2 & 0xfff ))]"; }
   ldivar() { adrp "$1" "$2"; e "ldrsw $1, [$1, #$(( $2 & 0xfff ))]"; }
+  ldaddr() { adrp "$1" "$2"; e "add $1, $1, #$(( $2 & 0xfff ))"; }
   # resume the hooked method at its original epilogue (hook address + 4)
   back()   { e "ldp x29, x30, [sp, #0x20]"; b $(( $1 + 4 )); }
+  # cave function: frame (x29 not updated) with x19-x24 saved and 32 bytes of scratch at sp+0x40,
+  # left by branching to Lret (cave functions are only called from cave code
+  # or hooks, so their return addresses are not signed)
+  fn()     { L "$1"; e "stp x29, x30, [sp, #-0x60]!"; e "bl Lsave"; }
 
   L bg      # x0 = value being returned; w19 = 1 background, 2 text
   e "mov x20, x0"; e "cbz x0, Lbg_done"
@@ -218,60 +304,136 @@ cave_patch() {
   L Lbg_done; e "mov x0, x20"
   back $H_BG
 
-  L set; e "cmp w8, #2031"; bne $T_SET
-  e "ldur x9, [x29, #-0x90]"; e "mov w10, #1"; e "strb w10, [x9, #0x41]"; b $T_SET
-  L rst; e "cmp w8, #2031"; bne $T_RST
-  e "ldur x9, [x29, #-0x90]"; e "strb wzr, [x9, #0x41]"; b $T_RST
+  # DECSET/DECRST loops keep &_currentCharSet in x9 (set) / x10 (rst)
+  L set; e "ldur x9, [x29, #-0x90]"; e "mov w10, #1"
+  e "cmp w8, #2026"; e "b.ne Lset_2031"; e "strb w10, [x9, #0x42]"; b $T_SET
+  L Lset_2031; e "cmp w8, #2031"; bne $T_SET; e "strb w10, [x9, #0x41]"; b $T_SET
+  L rst; e "ldur x9, [x29, #-0x90]"
+  e "cmp w8, #2026"; e "b.ne Lrst_2031"; e "strb wzr, [x9, #0x42]"; b $T_RST
+  L Lrst_2031; e "cmp w8, #2031"; bne $T_RST; e "strb wzr, [x9, #0x41]"; b $T_RST
   L dsr; e "cmp w8, #996"; bne $T_DSR
   e "mov x0, x19"; e "bl Lreport"; b $T_DSR
 
   L pane    # x19 = TTPane
   ldivar x9 $V_PANE_CTRL; e "ldr x8, [x19, x9]"; e "cbz x8, Lpane_done"
   ldivar x9 $V_TC_DEC;    e "ldr x0, [x8, x9]";  e "cbz x0, Lpane_done"
-  ldivar x9 $V_EMU_SHELL; e "ldr x11, [x0, x9]"
-  ldivar x9 $V_TC_SHELL;  e "ldr x10, [x8, x9]"; e "cmp x10, x11"; e "b.ne Lpane_done"
   e "mov w9, #$FLAG"; e "ldrb w9, [x0, x9]"; e "cbz w9, Lpane_done"
   e "bl Lreport"
   L Lpane_done; back $H_PANE
 
-  L Lreport # x0 = TTVT100Emulator
-  e "pacibsp"; e "sub sp, sp, #0x30"; e "stp x20, x19, [sp, #0x10]"; e "stp x29, x30, [sp, #0x20]"; e "add x29, sp, #0x20"
-  ldivar x9 $V_EMU_SHELL; e "ldr x20, [x0, x9]"; e "cbz x20, Lreport_done"
-  e "bl Lisdark"
-  e "adr x2, Lreport_light"; e "adr x8, Lreport_dark"; e "cmp w0, #0"; e "csel x2, x8, x2, ne"
-  ldgot x0 $G_DATA; e "mov w3, #9"; bl $S_DATA
-  e "mov x2, x0"; e "mov x0, x20"; bl $S_WRITE
-  L Lreport_done
-  e "ldp x29, x30, [sp, #0x20]"; e "ldp x20, x19, [sp, #0x10]"; e "add sp, sp, #0x30"; e "retab"
+  L osc     # x19 = emulator, w8 = OSC number; the hooked `cmp w8, #0x67` is redone on the way back
+  e "cmp w8, #52"; e "b.eq Losc_52"
+  e "cmp w8, #0x67"; b $(( H_OSC + 4 ))
+  L Losc_52; e "bl Lclip"; b $X_OSC
 
-  L Lisdark # w0 = [[NSApp effectiveAppearance] bestMatchFromAppearancesWithNames:@[Aqua, DarkAqua]] == DarkAqua
-  e "pacibsp"; e "sub sp, sp, #0x30"; e "stp x20, x19, [sp, #0x10]"; e "stp x29, x30, [sp, #0x20]"; e "add x29, sp, #0x20"
+  # x0 = TTView: setNeedsImmediateDisplay, unless its emulator is in mode 2026.
+  # Then the update is retried in 10ms; after 100 held updates (~1s) the sync is dropped.
+  fn gate; e "mov x19, x0"
+  ldivar x9 $V_VIEW_CTRL; e "ldr x8, [x19, x9]"; e "cbz x8, Lgate_draw"
+  ldivar x9 $V_TC_DEC;    e "ldr x8, [x8, x9]";  e "cbz x8, Lgate_draw"
+  e "mov w9, #$SYNC"; e "add x8, x8, x9"; e "ldrb w9, [x8]"; e "cbz w9, Lgate_draw"
+  e "add w9, w9, #1"; e "cmp w9, #100"; e "b.hi Lgate_expire"; e "strb w9, [x8]"
+  e "mov x0, x19"; ldgot x2 $R_NDT; e "mov x3, #0"; e "ldr d0, Lpoll"; bl $S_PERFORM; e "b Lret"
+  L Lgate_expire; e "strb wzr, [x8]"
+  L Lgate_draw; e "mov x0, x19"; bl $S_SNID; e "b Lret"
+
+  L tok     # parser token 60 (from the private CSI table only), x19 = emulator
+  e "ldr x8, [x19, #$O_TABLE]"; ldaddr x10 $PRIV; e "cmp x8, x10"; bne $GROUND
+  e "mov x0, x19"; e "bl Lrqm"; b $GROUND
+
+  # x0 = emulator -> x0 = [OSC string componentsSeparatedByString:@";"] (nil: none), x1 = count
+  fn Lfields
+  e "ldr x19, [x0, #$O_OSC]"; e "mov x0, x19"; e "cbz x19, Lret"
+  ldgot x0 $G_STRING; adr x2 $D_semi; bl $S_UTF8; e "mov x2, x0"; e "mov x0, x19"; bl $S_SPLIT
+  e "mov x19, x0"; bl $S_COUNT; e "mov x1, x0"; e "mov x0, x19"; e "b Lret"
+
+  fn Lclip  # OSC 52 ; <selection> ; <base64>: set the clipboard; `?` (read) fails to decode
+  e "bl Lfields"; e "cbz x0, Lret"; e "cmp x1, #2"; e "b.ne Lret"
+  e "mov x2, #1"; bl $S_OBJAT; e "mov x20, x0"
+  # [[NSData alloc] initWithBase64EncodedString:x20 options:0]
+  ldgot x0 $G_STRING; adr x2 $D_sel; bl $S_UTF8; bl $F_SEL; e "mov x21, x0"
+  ldgot x0 $G_DATA; bl $F_ALLOC
+  e "mov x1, x21"; e "mov x2, x20"; e "mov x3, #0"; bl $MSG; e "mov x21, x0"; e "cbz x0, Lret"
+  ldgot x0 $G_PB; bl $S_GENPB; e "mov x20, x0"; bl $S_CLEAR
+  e "mov x0, x20"; e "mov x2, x21"; ldgot x3 $G_PBSTR; e "ldr x3, [x3]"; bl $S_SETDATA
+  e "mov x0, x21"; bl $F_RELEASE; e "b Lret"
+
+  # CSI ? Ps $ p -> CSI ? Ps ; Pm $ y (Pm: 0 unknown, 1 set, 2 reset); no reply for
+  # the modes Terminal implements but keeps no state for that is cheap to read
+  fn Lrqm
+  e "mov x19, x0"; e "ldr w8, [x19, #$O_NPARAMS]"; e "cbz w8, Lret"
+  e "ldr w20, [x19, #$O_PARAMS]"; e "cmn w20, #3"; e "b.hi Lret"
+  e "mov w9, #$SYNC"; e "cmp w20, #2026"; e "b.eq Lrqm_byte"
+  e "mov w9, #$FLAG"; e "cmp w20, #2031"; e "b.eq Lrqm_byte"
+  e "mov w9, #$FOCUS"; e "cmp w20, #1004"; e "b.eq Lrqm_byte"
+  adr x9 $D_quiet
+  L Lrqm_scan; e "ldrh w10, [x9], #2"; e "cmp w10, w20"; e "b.eq Lret"; e "cbnz w10, Lrqm_scan"
+  e "mov w21, #0"; e "b Lrqm_reply"
+  L Lrqm_byte; e "ldrb w0, [x19, x9]"; e "b Lrqm_bool"
+  L Lrqm_bool; e "cmp w0, #0"; e "mov w21, #1"; e "cinc w21, w21, eq"
+  L Lrqm_reply
+  e "add x0, sp, #0x40"; e "mov w8, #0x5b1b"; e "movk w8, #0x3f, lsl #16"; e "str w8, [x0], #3"
+  e "mov w1, w20"; e "bl Lutoa"; e "mov w8, #0x3b"; e "strb w8, [x0], #1"
+  e "mov w1, w21"; e "bl Lutoa"; e "mov w8, #0x7924"; e "strh w8, [x0], #2"
+  e "add x2, sp, #0x40"; e "sub x3, x0, x2"; e "mov x0, x19"; e "bl Lwrite"; e "b Lret"
+
+  L Lutoa   # write w1 in decimal at x0; x0 = end
+  e "mov w9, w1"; e "mov w12, #10"
+  L Lutoa_len; e "udiv w9, w9, w12"; e "add x0, x0, #1"; e "cbnz w9, Lutoa_len"
+  e "mov x11, x0"; e "mov w9, w1"
+  L Lutoa_digit; e "udiv w13, w9, w12"; e "msub w14, w13, w12, w9"; e "add w14, w14, #0x30"
+  e "strb w14, [x11, #-1]!"; e "mov w9, w13"; e "cbnz w9, Lutoa_digit"
+  e "ret"
+
+  fn Lwrite # write x3 bytes at x2 to the shell of emulator x0
+  e "ldr x20, [x0, #$O_SHELL]"; e "cbz x20, Lret"
+  ldgot x0 $G_DATA; bl $S_DATA
+  e "mov x2, x0"; e "mov x0, x20"; bl $S_WRITE; e "b Lret"
+
+  fn Lreport # x0 = TTVT100Emulator: CSI ? 997 ; 1|2 n
+  e "mov x19, x0"; e "bl Lisdark"
+  adr x2 $D_light; adr x8 $D_dark; e "cmp w0, #0"; e "csel x2, x8, x2, ne"
+  e "mov x0, x19"; e "mov x3, #9"; e "bl Lwrite"; e "b Lret"
+
+  fn Lisdark # w0 = [[NSApp effectiveAppearance] bestMatchFromAppearancesWithNames:@[Aqua, DarkAqua]] == DarkAqua
   ldgot x0 $G_NSAPP; e "ldr x0, [x0]"; bl $S_EFF; e "mov x19, x0"
-  ldgot x8 $G_AQUA; e "ldr x8, [x8]"; ldgot x9 $G_DARK; e "ldr x9, [x9]"; e "stp x8, x9, [sp]"
-  ldgot x0 $G_ARRAY; e "mov x2, sp"; e "mov w3, #2"; bl $S_ARR
+  ldgot x8 $G_AQUA; e "ldr x8, [x8]"; ldgot x9 $G_DARK; e "ldr x9, [x9]"; e "stp x8, x9, [sp, #0x40]"
+  ldgot x0 $G_ARRAY; e "add x2, sp, #0x40"; e "mov w3, #2"; bl $S_ARR
   e "mov x2, x0"; e "mov x0, x19"; bl $S_BEST
   ldgot x2 $G_DARK; e "ldr x2, [x2]"; bl $S_EQS
-  e "ldp x29, x30, [sp, #0x20]"; e "ldp x20, x19, [sp, #0x10]"; e "add sp, sp, #0x30"; e "retab"
 
-  echo 'Lreport_dark: .ascii "\033[?997;1n"' >> $asm; pc=$((pc + 9))
-  echo 'Lreport_light: .ascii "\033[?997;2n"' >> $asm; pc=$((pc + 9))
+  L Lret
+  e "ldp x19, x20, [sp, #0x10]"; e "ldp x21, x22, [sp, #0x20]"; e "ldp x23, x24, [sp, #0x30]"
+  e "ldp x29, x30, [sp], #0x60"; e "ret"
+  L Lsave
+  e "stp x19, x20, [sp, #0x10]"; e "stp x21, x22, [sp, #0x20]"; e "stp x23, x24, [sp, #0x30]"
+  e "ret"
+  L Lpoll; echo '.double 0.01' >> $asm; pc=$((pc + 8))
 
   # write <vmaddr> <hex bytes> into the fat binary
   put() { xxd -r -p <<< "$2" | dd of="$bin" bs=1 seek=$(( $(vfo $1) + off )) conv=notrunc 2>/dev/null; }
   text_of() { local so; so=$(otool -l "$1" | awk '/sectname __text/ { f=1 } f && /^ +offset/ { print $2; exit }'); xxd -p -s $so -l $2 "$1" | tr -d '\n'; }
   ins() { echo "$1" > $W/i.s; clang -arch arm64e -c $W/i.s -o $W/i.o; text_of $W/i.o 4; }
+  u64() { printf '%02x00000000000000' "$1"; }
+  table() { [[ "$(xxd -p -s $(( $(vfo $1) + $2 * 8 )) -l 8 "$F")" == "$(u64 $3)" ]] || die "state table entry $2 changed"; put $(hex $(( $1 + $2 * 8 ))) "$(u64 $4)"; }
 
   local clen=$((pc - CAVE))
-  [[ "$(xxd -p -s $(vfo $CAVE) -l $clen "$F" | tr -d '\n0')" == "" ]] || die "no free space at the end of __TEXT"
-  [[ $(( $(vfo $CAVE) + clen )) -le $(otool -l "$F" | awk '/segname __TEXT$/ { f=1 } f && /filesize/ { print $2; exit }') ]] || die "cave exceeds __TEXT"
+  [[ "$(xxd -p -s $(vfo $CAVE) -l $clen "$F" | tr -d '\n0')" == "" ]] || die "no free space at the end of __TEXT for the $clen-byte cave"
+  [[ $(( $(vfo $CAVE) + clen )) -le $(otool -l "$F" | awk '/segname __TEXT$/ { f=1 } f && /filesize/ { print $2; exit }') ]] || die "the $clen-byte cave exceeds __TEXT"
   clang -arch arm64e -c $asm -o $W/cave.o
   put $CAVE "$(text_of $W/cave.o $clen)"
+  put $HDR "$(text_of $W/data.o $(( D_end - HDR )))"
   put $H_BG   "$(ins "b #$(( A_bg - H_BG ))")"
   put $H_PANE "$(ins "b #$(( A_pane - H_PANE ))")"
   put $H_SET  "$(ins "b.ne #$(( A_set - H_SET ))")"
   put $H_RST  "$(ins "b.ne #$(( A_rst - H_RST ))")"
   put $H_DSR  "$(ins "b.ne #$(( A_dsr - H_DSR ))")"
-  put $(hex $(( PRIV + 110*8 ))) "$(printf '%02x00000000000000' $DSR_TOK)"
+  put $H_OSC  "$(ins "b #$(( A_osc - H_OSC ))")"
+  put $H_GATE "$(ins "bl #$(( A_gate - H_GATE ))")"
+  put $(hex $(( JT_TAB + 59 * 4 ))) "$(le32 $(( A_tok - JT_BASE )))"
+  table $PRIV 110 2 $DSR_TOK  # n  -> DSR
+  table $PRIV 36 2 8          # $  -> ignore the character
+  table $PRIV 112 2 60        # p  -> DECRQM
 }
 
 while read -r off size; do
