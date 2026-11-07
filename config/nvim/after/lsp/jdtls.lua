@@ -42,6 +42,19 @@ local function get_runtimes()
   return runtimes
 end
 
+-- jdtls itself needs a newer JDK than projects may use (current snapshots
+-- require Java 25), so launch it with the newest installed runtime.
+local function newest_java()
+  local newest
+  for _, runtime in ipairs(get_runtimes()) do
+    local major = tonumber(runtime.name:match("(%d+)$"))
+    if not newest or major > newest.major then
+      newest = { major = major, path = runtime.path }
+    end
+  end
+  return newest and newest.path .. "/bin/java"
+end
+
 -- Lives in after/ so it overrides the lsp/jdtls.lua bundled with nvim-jdtls.
 ---@type vim.lsp.Config
 return {
@@ -63,6 +76,10 @@ return {
       "--jvm-arg=-Xmx6G",
       "--jvm-arg=-Xms1G",
     }
+    local java = newest_java()
+    if java then
+      vim.list_extend(cmd, { "--java-executable", java })
+    end
 
     return vim.lsp.rpc.start(cmd, dispatchers, {
       cwd = config.cmd_cwd,
