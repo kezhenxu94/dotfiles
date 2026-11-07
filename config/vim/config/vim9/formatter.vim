@@ -15,10 +15,13 @@ const formatters: dict<list<string>> = {
   prettierd: ['prettierd', '$FILENAME'],
   yq: ['yq', '-P', '-'],
   black: ['black', '--stdin-filename', '$FILENAME', '--quiet', '-'],
+  'google-java-format': ['google-java-format', '-'],
 }
 
 # A list runs every available formatter in turn; {first: [...]} runs only the
-# first available one (stop_after_first).
+# first available one (stop_after_first). Projects override it per filetype in
+# g:formatters_by_ft, e.g. from a .vimrc ('exrc'), like conform's
+# formatters_by_ft in .nvim.lua.
 const formatters_by_ft: dict<any> = {
   lua: ['stylua'],
   json: ['jq'],
@@ -46,9 +49,14 @@ def Run(name: string, lines: list<string>): list<string>
   if name == 'shfmt' && &expandtab && findfile('.editorconfig', expand('%:p:h') .. ';')->empty()
     cmd += ['-i', string(shiftwidth())]
   endif
-  var out = systemlist(cmd->mapnew((_, a) => shellescape(a))->join(' '), lines)
+  # Like conform, only stdout is the result: stderr (e.g. the JVM's "Picked up
+  # JDK_JAVA_OPTIONS" note) is only shown when the formatter fails.
+  var errfile = tempname()
+  var out = systemlist(cmd->mapnew((_, a) => shellescape(a))->join(' ') .. ' 2>' .. shellescape(errfile), lines)
+  var err = filereadable(errfile) ? readfile(errfile) : []
+  delete(errfile)
   if v:shell_error != 0
-    echohl WarningMsg | echomsg $'{name} failed: {out->join(" ")}' | echohl None
+    echohl WarningMsg | echomsg $'{name} failed: {(out + err)->join(" ")}' | echohl None
     return null_list
   endif
   return out
@@ -59,9 +67,10 @@ def Format()
     return
   endif
   # Like conform, a compound filetype ("yaml.github-actions") uses its parts.
+  var by_ft = formatters_by_ft->extendnew(get(g:, 'formatters_by_ft', {}))
   var ft = &filetype->split('\.')->insert(&filetype)
-    ->filter((_, f) => formatters_by_ft->has_key(f))->get(0, '')
-  var config = formatters_by_ft->get(ft, [])
+    ->filter((_, f) => by_ft->has_key(f))->get(0, '')
+  var config = by_ft->get(ft, [])
   var names = type(config) == v:t_dict ? Available(config.first)[: 0] : Available(config)
   if names->empty()
     if !lspbuf.BufLspServerGet(bufnr(), 'documentFormatting')->empty()

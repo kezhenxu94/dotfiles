@@ -85,3 +85,17 @@ def g:Test_GlobalDisable()
     unlet g:disable_autoformat
   endtry
 enddef
+
+def g:Test_ProjectOverrideIgnoresStderr()
+  if Skip('google-java-format') | return | endif
+  # Like formatters_by_ft of conform in a project's .nvim.lua; the JVM notes
+  # "Picked up JDK_JAVA_OPTIONS" on stderr, which must not end in the buffer.
+  g:formatters_by_ft = {java: ['google-java-format']}
+  setenv('JDK_JAVA_OPTIONS', '-Xss2m')
+  try
+    assert_equal(['class A {', '  void f() {', '    int x = 1;', '  }', '}'], Saved('A.java'))
+  finally
+    unlet g:formatters_by_ft
+    setenv('JDK_JAVA_OPTIONS', null)
+  endtry
+enddef
