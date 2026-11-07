@@ -131,12 +131,17 @@ def Symbols(): list<dict<any>>
   var bnr = bufnr()
   listener_flush()
   var reply = server.rpc('textDocument/documentSymbol',
-    {textDocument: {uri: lsputil.LspBufnrToUri(bnr)}}, {timeout: 2000})
+    {textDocument: {uri: lsputil.LspBufnrToUri(bnr)}}, {timeout: 5000})
   var symbols: list<dict<any>> = []
   Flatten(server, bnr, reply->get('result', []) ?? [], symbols)
-  b:kzx_symbols = symbols->sort((a, b) => a.start[0] - b.start[0] ?? a.start[1] - b.start[1])
-  b:kzx_symbols_tick = b:changedtick
-  return b:kzx_symbols
+  symbols->sort((a, b) => a.start[0] - b.start[0] ?? a.start[1] - b.start[1])
+  # Cache only real replies: a busy server's timeout must not stick until
+  # the next change.
+  if reply->has_key('result')
+    b:kzx_symbols = symbols
+    b:kzx_symbols_tick = b:changedtick
+  endif
+  return symbols
 enddef
 
 def Pos(p: dict<number>): list<number>
