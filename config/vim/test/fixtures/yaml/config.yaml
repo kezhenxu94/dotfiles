@@ -1,0 +1,7 @@
+server:
+  host: localhost
+  port: 8080
+storage:
+  type: h2
+  options:
+    path: /tmp/db
