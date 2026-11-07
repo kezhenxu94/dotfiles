@@ -7,6 +7,10 @@ else
   let s:session_file = fnameescape(s:state_dir . '/session.vim')
 endif
 
+" Like Neovim's default: don't save options and mappings, sourcing the session
+" replays the <ScriptCmd> mappings of vim9 scripts in its legacy context (E492).
+set sessionoptions-=options
+
 let s:disabled_dirs = [s:home, s:home . '/Downloads', '/private/tmp']
 let s:max_session_bufs = 100
 
