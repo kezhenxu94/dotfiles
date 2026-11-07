@@ -16,9 +16,9 @@ _lsp_arch_gnu() { [ "$arch" = "amd64" ] && echo x86_64 || echo aarch64; }
 
 install_lsp_helm_ls() {
   check_installed helm_ls && return 0
-  local ver="${HELM_LS_VERSION:-0.0.99}"
+  local ver="${HELM_LS_VERSION:-0.5.4}"
   echo "Installing helm_ls ${ver}..."
-  curl -sL "https://github.com/mrjosh/helm-ls/releases/download/v${ver}/helm_ls_${os}_${arch}" \
+  curl -fsSL "https://github.com/mrjosh/helm-ls/releases/download/v${ver}/helm_ls_${os}_${arch}" \
     -o "$BIN/helm_ls.tmp.$$" || return 1
   chmod +x "$BIN/helm_ls.tmp.$$" && mv "$BIN/helm_ls.tmp.$$" "$BIN/helm_ls"
 }
@@ -35,14 +35,16 @@ install_lsp_shellcheck() {
 }
 
 install_lsp_rust_analyzer() {
-  check_installed rust-analyzer && return 0
-  local ver="${RUST_ANALYZER_VERSION:-2024-12-09}"
+  # ~/.cargo/bin/rust-analyzer is a rustup proxy even without the component
+  # installed, so check that it actually runs.
+  rust-analyzer --version >/dev/null 2>&1 && return 0
+  local ver="${RUST_ANALYZER_VERSION:-2026-11-02}"
   local raarch
   raarch="$(_lsp_arch_gnu)"
   local vendor="unknown-linux-gnu"
   [ "$os" = "darwin" ] && vendor=apple-darwin
   echo "Installing rust-analyzer ${ver}..."
-  curl -sL "https://github.com/rust-lang/rust-analyzer/releases/download/${ver}/rust-analyzer-${raarch}-${vendor}.gz" |
+  curl -fsSL "https://github.com/rust-lang/rust-analyzer/releases/download/${ver}/rust-analyzer-${raarch}-${vendor}.gz" |
     gunzip >"$BIN/rust-analyzer.tmp.$$" || return 1
   chmod +x "$BIN/rust-analyzer.tmp.$$" && mv "$BIN/rust-analyzer.tmp.$$" "$BIN/rust-analyzer"
 }
