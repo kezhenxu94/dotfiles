@@ -142,6 +142,15 @@ body[class*="lark-web"] * {
   scrollbar-width: none !important;
 }
 
+/* Reddit ads */
+shreddit-ad-post,
+shreddit-comments-page-ad,
+shreddit-comment-tree-ad,
+shreddit-sidebar-ad,
+#siteTable .promotedlink {
+  display: none !important;
+}
+
 /* YouTube */
 ytd-app * {
   font-family: var(--font) !important;
