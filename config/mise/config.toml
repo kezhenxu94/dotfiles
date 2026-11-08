@@ -1,14 +1,49 @@
 [tools]
-"aqua:LuaLS/lua-language-server" = "latest"
+# Runtimes
 go = "latest"
 java = "21"
 node = "24"
-"pipx:html2text" = "latest"
 python = "3.10.16"
 ruby = "latest"
-rust = "stable"
-tree-sitter = "latest"
+rust = { version = "stable", components = "rust-analyzer" }
 uv = "latest"
+
+# CLI tools
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+jq = "latest"
+kubectl = "latest"
+tree-sitter = "latest"
+yq = "latest"
+"github:cormacrelf/dark-notify" = { version = "latest", os = ["macos"] }
+"pipx:html2text" = "latest"
+
+# LSP servers, linters and formatters
+actionlint = "latest"
+black = "latest"
+google-java-format = "latest"
+helm-ls = "latest"
+shellcheck = "latest"
+shfmt = "latest"
+stylua = "latest"
+terraform-ls = "latest"
+yamllint = "latest"
+"aqua:LuaLS/lua-language-server" = "latest"
+"github:docker/docker-language-server" = "latest"
+"github:Feel-ix-343/markdown-oxide" = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"npm:@fsouza/prettierd" = "latest"
+"npm:@tailwindcss/language-server" = "latest"
+"npm:@vtsls/language-server" = "latest"
+"npm:@vue/language-server" = "latest"
+"npm:bash-language-server" = "latest"
+"npm:eslint_d" = "latest"
+"npm:jsonlint" = "latest"
+"npm:markdownlint-cli" = "latest"
+"npm:prettier" = "latest"
+"npm:pyright" = "latest"
+"npm:yaml-language-server" = "latest"
 
 [settings]
 idiomatic_version_file_enable_tools = ["node"]

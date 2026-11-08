@@ -26,8 +26,8 @@ install_mise() {
 
 install_mise
 
-# Install the runtimes in the dotfiles' mise config (node, go, java, python, ...)
-# and expose their shims, so later packages (LSP tools) find npm/go/java.
+# Install every tool in the dotfiles' mise config (runtimes, CLIs, LSP servers)
+# and expose their shims, so later packages find java/jq.
 # setup.sh links the config only after packages run, so point mise at it here.
 install_mise_tools() {
   export MISE_GLOBAL_CONFIG_FILE="$SCRIPT_DIR/../../config/mise/config.toml"
