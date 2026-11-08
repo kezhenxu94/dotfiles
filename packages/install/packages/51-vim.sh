@@ -4,6 +4,14 @@ pkg_name="vim"
 pkg_version="${VIM_VERSION:-9.2.1302}"
 
 install_vim() {
+  if [ "$pkg_version" = "latest" ]; then
+    pkg_version=$(git ls-remote --tags --refs https://github.com/vim/vim "v*" | sed "s|.*refs/tags/v||" | sort -V | tail -1)
+    if [ -z "$pkg_version" ]; then
+      echo "Error: Failed to resolve latest vim version" >&2
+      return 1
+    fi
+  fi
+
   # Distro packages lag behind (e.g. Debian 13 ships 9.1.1244, without
   # 'autocomplete'), so accept only vim >= pkg_version and build it otherwise
   local have
