@@ -6,7 +6,6 @@ import autoload 'lsp/buffer.vim' as lspbuf
 
 # $FILENAME is replaced with the buffer's file name; the buffer goes to stdin.
 const formatters: dict<list<string>> = {
-  stylua: ['stylua', '--search-parent-directories', '--respect-ignores', '--stdin-filepath', '$FILENAME', '-'],
   jq: ['jq', '--indent', '$SHIFTWIDTH'],
   gofmt: ['gofmt'],
   shfmt: ['shfmt', '-filename', '$FILENAME'],
@@ -23,7 +22,6 @@ const formatters: dict<list<string>> = {
 # g:formatters_by_ft, e.g. from a .vimrc ('exrc'), like conform's
 # formatters_by_ft in .nvim.lua.
 const formatters_by_ft: dict<any> = {
-  lua: ['stylua'],
   json: ['jq'],
   go: ['gofmt'],
   # Vim (and Neovim) detect shell scripts as "sh", never "bash".

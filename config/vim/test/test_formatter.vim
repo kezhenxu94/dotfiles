@@ -28,11 +28,6 @@ def g:Test_ShfmtIndentsWithShiftwidth()
   assert_equal(['if true; then', '  echo hi', 'fi'], Saved('a.sh'))
 enddef
 
-def g:Test_Stylua()
-  if Skip('stylua') | return | endif
-  assert_equal(['local x = { 1, 2 }', 'return x'], Saved('a.lua'))
-enddef
-
 def g:Test_Yq()
   if Skip('yq') | return | endif
   assert_equal(['a: 1', 'b:', '  - x'], Saved('a.yaml'))

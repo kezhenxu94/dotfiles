@@ -24,7 +24,7 @@ def FoldExpr(): string
 enddef
 
 # Closing lines that tree-sitter folds include but many servers leave out.
-const CLOSER = '^\s*\%([]})]\|end\>\)'
+const CLOSER = '^\s*[]})]'
 
 def FoldReply(bnr: number, ranges: any)
   if type(ranges) != v:t_list || !bufexists(bnr)
@@ -168,11 +168,6 @@ def Flatten(server: dict<any>, bnr: number, items: list<any>, symbols: list<dict
       # Start at the declaration line like tree-sitter: not at a leading
       # comment/javadoc/decorator, and not at the name ("type Foo struct").
       start = [name.start.line + 1, FirstNonBlank(bnr, name.start.line + 1)]
-      # Lua "M.f = function(...)": the function starts at "function".
-      var assigned = getbufline(bnr, start[0])->get(0, '')->matchstrpos('=\s*\zsfunction\>')
-      if getbufvar(bnr, '&filetype') == 'lua' && assigned[1] >= 0
-        start[1] = charidx(getbufline(bnr, start[0])[0], assigned[1]) + 1
-      endif
     endif
     # Go interface method specs aren't functions for tree-sitter.
     if !(getbufvar(bnr, '&filetype') == 'go' && parent_kind == 11)
@@ -276,10 +271,10 @@ def Select(kinds: list<number>, inner: bool)
   endif
 enddef
 
-const BRACELESS = ['python', 'lua']
+const BRACELESS = ['python']
 
 # The lines after the header (name plus a parenthesised parameter list),
-# without a closing "end", from the first non-blank character.
+# from the first non-blank character.
 def SelectIndentedBody(target: dict<any>, last: list<number>, skip: string)
   setcursorcharpos(target.name_end[0], target.name_end[1])
   var header_end = target.name_end[0]
@@ -289,9 +284,6 @@ def SelectIndentedBody(target: dict<any>, last: list<number>, skip: string)
   endif
   var first = header_end + 1
   var final = last[0]
-  if getline(final) =~ '^\s*end\>' && final > target.start[0]
-    final -= 1
-  endif
   if first <= final
     SelectRange([first, FirstNonBlank(bufnr(), first)], [final, max([strcharlen(getline(final)), 1])])
   endif

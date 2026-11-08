@@ -236,24 +236,6 @@ def ForwardToTsserver(vue: dict<any>, notif: dict<any>, retries = 0)
   })
 enddef
 
-# lazydev.nvim: Neovim's runtime (and luv) types for lua_ls.
-def AddLuaLs()
-  var runtime = system('env -u VIMRUNTIME -u VIM nvim --clean --headless +"lua io.write(vim.env.VIMRUNTIME)" +qa')
-  var library = v:shell_error == 0 ? [$'{runtime}/lua'] : []
-  g:LspAddServer([Primary({
-    name: 'lua_ls', path: 'lua-language-server', filetype: ['lua'],
-    rootSearch: ['.emmyrc.json', '.luarc.json', '.luarc.jsonc', '.luacheckrc',
-      '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git/'],
-    workspaceConfig: {Lua: {
-      codeLens: {enable: true},
-      hint: {enable: true, semicolon: 'Disable'},
-      completion: {callSnippet: 'Replace'},
-      runtime: {version: 'LuaJIT', path: ['lua/?.lua', 'lua/?/init.lua'], pathStrict: true},
-      workspace: {library: library + ['${3rd}/luv/library'], checkThirdParty: false},
-    }},
-  })])
-enddef
-
 def AddTsServers()
   var root = NpmRoot()
   var vue_plugin = $'{root}/@vue/language-server'
@@ -287,7 +269,6 @@ enddef
 augroup kzx_lsp_lazy
   autocmd!
   autocmd FileType javascript,javascriptreact,typescript,typescriptreact,vue ++once AddTsServers()
-  autocmd FileType lua ++once AddLuaLs()
 augroup END
 
 def BufServer(name: string): dict<any>
