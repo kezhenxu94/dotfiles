@@ -21,6 +21,7 @@ __debug_bin*
 .vim
 .lazy.lua
 .nvim.lua
+.vimrc
 mise.toml
 .venv
 venv

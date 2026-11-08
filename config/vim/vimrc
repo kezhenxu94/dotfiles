@@ -5,6 +5,11 @@ source $XDG_CONFIG_HOME/vim/config/core/init.vim
 source $XDG_CONFIG_HOME/vim/config/ui/init.vim
 source $XDG_CONFIG_HOME/vim/config/editor/init.vim
 
+" Vim-only (vim9script) ports of the Neovim-only features.
+if !has('nvim')
+  source $XDG_CONFIG_HOME/vim/config/vim9/init.vim
+endif
+
 if has('persistent_undo')
   let s:target_path=expand('~') .. '/.vim/undo'
   if has('nvim')

@@ -19,3 +19,13 @@
 [submodule "config/vim/pack/vendor/start/shell.vim"]
 	path = config/vim/pack/vendor/start/shell.vim
 	url = https://github.com/kezhenxu94/shell.vim
+[submodule "config/vim/pack/vendor/opt/lsp"]
+	path = config/vim/pack/vendor/opt/lsp
+	url = https://github.com/kezhenxu94/lsp
+	branch = dotfiles
+[submodule "config/vim/pack/vendor/opt/vim-helm"]
+	path = config/vim/pack/vendor/opt/vim-helm
+	url = https://github.com/towolf/vim-helm
+[submodule "config/vim/pack/vendor/opt/undotree"]
+	path = config/vim/pack/vendor/opt/undotree
+	url = https://github.com/mbbill/undotree
