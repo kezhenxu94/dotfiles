@@ -26,6 +26,3 @@
 [submodule "config/vim/pack/vendor/opt/vim-helm"]
 	path = config/vim/pack/vendor/opt/vim-helm
 	url = https://github.com/towolf/vim-helm
-[submodule "config/vim/pack/vendor/opt/undotree"]
-	path = config/vim/pack/vendor/opt/undotree
-	url = https://github.com/mbbill/undotree

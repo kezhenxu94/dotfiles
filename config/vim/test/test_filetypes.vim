@@ -24,14 +24,3 @@ def g:Test_HelmCommentstring()
   Ft('chart/templates/a.yaml')
   assert_equal('{{/* %s */}}', &commentstring)
 enddef
-
-def g:Test_UndotreeWindow()
-  enew
-  setline(1, 'a')
-  Undotree
-  assert_equal('undotree', &filetype)
-  assert_equal(1, winnr(), 'undotree opens on the left')
-  assert_equal(40, winwidth(0))
-  h.Feed('q')
-  assert_equal(1, winnr('$'), 'q closes it')
-enddef

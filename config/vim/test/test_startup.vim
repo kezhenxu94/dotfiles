@@ -4,8 +4,6 @@ import './helper.vim' as h
 
 def g:Test_PluginsLoaded()
   assert_equal(2, exists(':LspHover'), 'yegappan/lsp')
-  assert_equal(2, exists(':UndotreeToggle'), 'undotree')
-  assert_equal(2, exists(':Undotree'), ':Undotree alias')
   assert_true(exists('#filetypedetect') || exists('#BufRead'), 'filetype detection')
   assert_equal(1, g:java_ignore_markdown)
 enddef
@@ -25,6 +23,6 @@ def g:Test_NvimStartsCleanly()
   assert_notmatch('\<E\d\+:\|Error', out)
   # The Vim-only plugins stay out of Neovim.
   var loaded = system($'env -u VIMRUNTIME -u VIM XDG_CONFIG_HOME={shellescape(config)} nvim --headless -i NONE '
-    .. '+"lua io.write(vim.fn.exists([[:LspHover]]) .. vim.fn.exists([[:UndotreeToggle]]))" +qa! 2>&1')
-  assert_equal('00', loaded->trim())
+    .. '+"lua io.write(vim.fn.exists([[:LspHover]]))" +qa! 2>&1')
+  assert_equal('0', loaded->trim())
 enddef

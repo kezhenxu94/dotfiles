@@ -1,14 +1,7 @@
 vim9script
 
-# vim-helm (helm filetype) and undotree (nvim.undotree).
+# vim-helm (helm filetype).
 packadd vim-helm
-packadd undotree
-
-g:undotree_WindowLayout = 2
-g:undotree_DiffAutoOpen = 0
-g:undotree_SplitWidth = 40
-g:undotree_SetFocusWhenToggle = 1
-command! Undotree UndotreeToggle
 
 g:java_ignore_markdown = 1
 
@@ -43,5 +36,4 @@ augroup kzx_vim9_filetypes
   # Helm has no indent script; the global cindent/smartindent treat "key:"
   # as a C label.
   autocmd FileType helm setlocal nocindent nosmartindent foldmethod=expr foldexpr=HelmFold()
-  autocmd FileType undotree setlocal nobuflisted | nnoremap <buffer> <silent> <nowait> q <Cmd>UndotreeHide<CR>
 augroup END
