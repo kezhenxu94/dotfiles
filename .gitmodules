@@ -26,3 +26,12 @@
 [submodule "config/vim/pack/vendor/opt/vim-helm"]
 	path = config/vim/pack/vendor/opt/vim-helm
 	url = https://github.com/towolf/vim-helm
+[submodule "config/vim/pack/vendor/start/resource.vim"]
+	path = config/vim/pack/vendor/start/resource.vim
+	url = https://github.com/kezhenxu94/resource.vim
+[submodule "config/vim/pack/vendor/start/kube.nvim"]
+	path = config/vim/pack/vendor/start/kube.nvim
+	url = https://github.com/kezhenxu94/kube.nvim
+[submodule "config/vim/pack/vendor/start/docker.nvim"]
+	path = config/vim/pack/vendor/start/docker.nvim
+	url = https://github.com/kezhenxu94/docker.nvim

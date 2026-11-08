@@ -33,6 +33,5 @@ vim.opt.runtimepath:append(vim.fn.expand("$XDG_CONFIG_HOME/vim/after"))
 
 require("config.core")
 require("config.ui")
-require("config.editor")
 require("config.lsp")
 require("config.lang")

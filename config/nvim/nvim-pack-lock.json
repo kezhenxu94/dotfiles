@@ -5,12 +5,12 @@
       "src": "https://github.com/stevearc/conform.nvim"
     },
     "docker.nvim": {
-      "rev": "6569c86eaad93aac264b712e544e5aee6488f8ac",
-      "src": "https://github.com/kezhenxu94/docker.nvim"
+      "rev": "66a0e2d702a3fd14cd3a39ff42a863cc836033e8",
+      "src": "git@github.com:kezhenxu94/docker.nvim"
     },
     "kube.nvim": {
-      "rev": "11643a22103271bf762ffa1b10bd3af3c1748467",
-      "src": "https://github.com/kezhenxu94/kube.nvim"
+      "rev": "692dc555755951cf94945109d13118bec60d617a",
+      "src": "git@github.com:kezhenxu94/kube.nvim"
     },
     "lazydev.nvim": {
       "rev": "ff2cbcba459b637ec3fd165a2be59b7bbaeedf0d",
@@ -37,6 +37,10 @@
       "rev": "5c7b0263797dfd1bd6202f2b219f3b53a80b2187",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter-textobjects",
       "version": "'main'"
+    },
+    "resource.vim": {
+      "rev": "2004052ea635efe45719b38e75c05b7b1a69baf8",
+      "src": "git@github.com:kezhenxu94/resource.vim.git"
     },
     "vim-helm": {
       "rev": "2c8525f",
