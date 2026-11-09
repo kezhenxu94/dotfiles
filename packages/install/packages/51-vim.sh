@@ -19,10 +19,18 @@ install_vim() {
     /^VIM - Vi IMproved/ { v = $5 }
     /^Included patches:/ { n = $3; sub(/.*-/, "", n) }
     END { if (v) print v (n ? "." n : "") }')
-  if [ -n "$have" ] && [ "$(printf '%s\n%s\n' "$pkg_version" "$have" | sort -V | head -1)" = "$pkg_version" ]; then
-    return 0
+  if [ -z "$have" ] || [ "$(printf '%s\n%s\n' "$pkg_version" "$have" | sort -V | head -1)" != "$pkg_version" ]; then
+    build_vim || return 1
   fi
 
+  # make install links ex, view, rvim, ... but not vi, which would otherwise
+  # resolve to the system's older vi
+  if [ -x "$USR_HOME/bin/vim" ]; then
+    ln -sf vim "$USR_HOME/bin/vi"
+  fi
+}
+
+build_vim() {
   install_library "$pkg_name" "$pkg_version" \
     "https://github.com/vim/vim/archive/refs/tags/v${pkg_version}.tar.gz" \
     --with-features=huge \
