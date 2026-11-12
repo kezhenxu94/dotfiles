@@ -124,6 +124,32 @@ def g:Test_Java_OrganizeImports()
   assert_equal(-1, getline(1, '$')->index('import java.util.Map;'))
 enddef
 
+# Vim does not watch pom.xml, so jdtls only sees its changes on :JdtUpdateConfig.
+def g:Test_Java_UpdateConfig()
+  if !Open('Shapes.java')
+    return
+  endif
+  var pom = $'{$VIM_TEST_TMP}/java/pom.xml'
+  var rec = $'{$VIM_TEST_TMP}/java/src/main/java/demo/Rec.java'
+  var orig = readfile(pom)
+  writefile(['package demo;', 'public record Rec(int x) {}'], rec)
+  execute $'edit {rec}'
+  h.WaitForServers(['jdtls'], timeout)
+  try
+    # Records need Java 16+.
+    writefile(orig->mapnew((_, l) => l->substitute('>17<', '>11<', '')), pom)
+    execute 'JdtUpdateConfig'
+    h.WaitForDiags((d) => !d->empty(), timeout)
+  finally
+    # Restore the shared server's config without waiting: jdtls does not
+    # revalidate open files on an update sent while it still builds.
+    writefile(orig, pom)
+    execute 'JdtUpdateConfig'
+    bwipe!
+    delete(rec)
+  endtry
+enddef
+
 def g:Test_Java_CompletionAddsImport()
   if !Open('Broken.java')
     return

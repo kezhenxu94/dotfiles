@@ -147,6 +147,16 @@ def OrganizeImports()
     range: {start: pos.position, end: pos.position}, context: {diagnostics: []}})
 enddef
 
+# :JdtUpdateConfig, like jdtls.update_project_config(): reload the build
+# configuration (pom.xml, build.gradle) of the project of the current buffer.
+def UpdateProjectConfig()
+  var server = CurJdtls()
+  if server->empty()
+    return
+  endif
+  server.sendNotification('java/projectConfigurationUpdate', {uri: lsp#util#LspBufnrToUri(bufnr())})
+enddef
+
 # Server request; params.arguments: [uri, ImportSelection[], restoreExisting]. Returns the
 # chosen ImportCandidate of each selection.
 def ChooseImports(args: list<any>): list<any>
@@ -344,5 +354,6 @@ augroup kzx_jdtls
   autocmd FileType java ++once AddJdtls()
   autocmd FileType java nnoremap <buffer> <leader>co <ScriptCmd>OrganizeImports()<CR>
   autocmd FileType java nnoremap <buffer> <C-]> <ScriptCmd>TagJump()<CR>
+  autocmd FileType java command! -buffer JdtUpdateConfig UpdateProjectConfig()
   autocmd BufReadCmd jdt://* ReadClassFile(expand('<amatch>'))
 augroup END
