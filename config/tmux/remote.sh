@@ -18,12 +18,14 @@ quote() {
 }
 
 # attach <host> <session> [dir]: pane command, reconnects while ssh fails (exit 255);
-# dir is where a new remote session starts
+# dir is where a new remote session starts. -D detaches the client of a dropped
+# connection, which sshd may not have reaped yet and which would otherwise keep
+# its stale size and theme (panes get no theme when clients disagree)
 attach() {
   local host=$1 session=$2 dir=${3:-}
   tmux set -p -t "$TMUX_PANE" @remote_host "$host"
   tmux set -p -t "$TMUX_PANE" @remote_session "$session"
-  until ssh -t "$host" "tmux -L $SOCKET -f /dev/null start \; $OPTIONS \; new -A -s $session${dir:+ -c $(quote "$dir")}"; [ $? -ne 255 ]; do
+  until ssh -t "$host" "tmux -L $SOCKET -f /dev/null start \; $OPTIONS \; new -A -D -s $session${dir:+ -c $(quote "$dir")}"; [ $? -ne 255 ]; do
     echo "Connection to $host lost, reconnecting..."
     sleep 2
   done

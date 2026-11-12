@@ -27,6 +27,7 @@ set ignorecase    " case insensitive searching UNLESS /C or capital in search
 set smartcase     " case insensitive searching UNLESS /C or capital in search
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
+set autoread      " Reload files changed outside Vim if the buffer has no unsaved changes
 
 set fillchars+=vert:│,eob:\  " Set the splitter of panels
 

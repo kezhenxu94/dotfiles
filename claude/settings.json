@@ -76,6 +76,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
+  "autoCompactEnabled": false,
   "idleCompaction": false,
   "teammateMode": "in-process",
   "remoteControlAtStartup": true,

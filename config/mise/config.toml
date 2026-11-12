@@ -17,7 +17,6 @@ kubectl = "latest"
 neovim = "nightly"
 tree-sitter = "latest"
 yq = "latest"
-"github:cormacrelf/dark-notify" = { version = "latest", os = ["macos"] }
 "pipx:html2text" = "latest"
 
 # LSP servers, linters and formatters

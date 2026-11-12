@@ -31,9 +31,6 @@ augroup ThemeBackground
   autocmd OptionSet background call s:ApplyTheme(v:option_new)
 augroup END
 
-let s:watcher_job = v:null
-let s:exiting = v:false
-
 function! s:ApplyTheme(mode)
   noautocmd let &background = (a:mode =~? 'dark') ? 'dark' : 'light'
   if a:mode =~? 'dark'
@@ -44,48 +41,46 @@ function! s:ApplyTheme(mode)
   call SetTransparentBg()
 endfunction
 
+function! s:FollowTheme(mode)
+  if a:mode !=# &background
+    call s:ApplyTheme(a:mode)
+  endif
+endfunction
+
+" OSC 11 reply -> dark/light by luminance; components have 1-4 hex digits
+function! s:OnBgResponse(seq) abort
+  let l:rgb = matchlist(a:seq, '\]11;rgba\=:\(\x\+\)/\(\x\+\)/\(\x\+\)')
+  if empty(l:rgb)
+    return
+  endif
+  let [l:r, l:g, l:b] = map(l:rgb[1:3], {_, x -> str2nr(x, 16) / (pow(16, len(x)) - 1.0)})
+  call s:FollowTheme((0.299 * l:r + 0.587 * l:g + 0.114 * l:b) < 0.5 ? 'dark' : 'light')
+endfunction
+
+" Follow the terminal (locally and over ssh/tmux) instead of the OS.
 if has('nvim')
-  " Follow the terminal (locally and over ssh): start from the background Nvim
-  " detected, then on theme changes (mode 2031) Nvim re-queries OSC 11 and fires
-  " TermResponse. Nvim's own detection stops once a colorscheme sets
-  " 'background', so handle the replies here.
-  " Reply -> dark/light by luminance; components have 1-4 hex digits
-  function! s:OnTermResponse(seq) abort
-    let l:rgb = matchlist(a:seq, '\]11;rgba\=:\(\x\+\)/\(\x\+\)/\(\x\+\)')
-    if empty(l:rgb)
-      return
-    endif
-    let [l:r, l:g, l:b] = map(l:rgb[1:3], {_, x -> str2nr(x, 16) / (pow(16, len(x)) - 1.0)})
-    let l:mode = (0.299 * l:r + 0.587 * l:g + 0.114 * l:b) < 0.5 ? 'dark' : 'light'
-    if l:mode !=# &background
-      call s:ApplyTheme(l:mode)
-    endif
-  endfunction
-
-  autocmd ThemeBackground TermResponse * call s:OnTermResponse(v:termresponse)
-  call s:ApplyTheme(&background)
+  " Start from the background Nvim detected; on theme changes (mode 2031) Nvim
+  " re-queries OSC 11 and fires TermResponse. Nvim's own detection stops once
+  " a colorscheme sets 'background', so handle the replies here.
+  autocmd ThemeBackground TermResponse * call s:OnBgResponse(v:termresponse)
 else
-  function! s:OnThemeChange(channel, msg)
-    call s:ApplyTheme(a:msg)
-  endfunction
-
-  function! s:OnWatcherExit(job, status)
-    if a:status != 0 && !s:exiting
-      call s:StartDarkNotify()
-    endif
-  endfunction
-
-  function! s:StartDarkNotify()
-    let s:watcher_job = job_start(['dark-notify'], {
-      \ 'out_cb':  function('s:OnThemeChange'),
-      \ 'exit_cb': function('s:OnWatcherExit'),
-      \ })
-  endfunction
-
-  if has('mac')
-    call s:StartDarkNotify()
-    autocmd VimLeavePre * let s:exiting = v:true | if s:watcher_job isnot v:null | call job_stop(s:watcher_job) | endif
-  else
-    call s:ApplyTheme(empty($THEME) ? 'dark' : $THEME)
+  " Startup: Vim queries the background itself (t_RB) but won't override a
+  " 'background' already set, so apply the reply here.
+  autocmd ThemeBackground TermResponseAll background call s:OnBgResponse(v:termrbgresp)
+  " Changes: Vim has no mode 2031 support, so enable it and catch the
+  " CSI ?997;1n (dark) / ?997;2n (light) notifications as spare key codes.
+  if !has('gui_running')
+    exe "set <F36>=\<Esc>[?997;1n"
+    exe "set <F37>=\<Esc>[?997;2n"
+    for s:cmd in ['map', 'map!', 'tmap']
+      exe s:cmd '<silent> <F36> <Cmd>call <SID>FollowTheme("dark")<CR>'
+      exe s:cmd '<silent> <F37> <Cmd>call <SID>FollowTheme("light")<CR>'
+    endfor
+    " Disable while suspended/exited so the shell doesn't receive the reports
+    autocmd ThemeBackground VimEnter,VimResume * call echoraw("\e[?2031h")
+    autocmd ThemeBackground VimLeave,VimSuspend * call echoraw("\e[?2031l")
+    " The theme may have changed while suspended
+    autocmd ThemeBackground VimResume * call echoraw(&t_RB)
   endif
 endif
+call s:ApplyTheme(&background)
