@@ -36,7 +36,7 @@ yamllint = "latest"
 "npm:@fsouza/prettierd" = "latest"
 "npm:@tailwindcss/language-server" = "latest"
 "npm:@vtsls/language-server" = "latest"
-"npm:@vue/language-server" = "latest"
+"npm:@vue/language-server" = { version = "latest", trust_policy_excludes = ["volar-service-pug@0.0.71"] }
 "npm:bash-language-server" = "latest"
 "npm:eslint_d" = "latest"
 "npm:jsonlint" = "latest"
