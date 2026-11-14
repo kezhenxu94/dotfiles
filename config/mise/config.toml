@@ -18,8 +18,10 @@ neovim = "nightly"
 tree-sitter = "latest"
 yq = "latest"
 "pipx:html2text" = "latest"
-# CLI for the source-built tailscaled LaunchDaemon on macOS; Linux uses the distro package
-"go:tailscale.com/cmd/tailscale" = { version = "latest", os = ["macos"] }
+# Tailscale on macOS without the GUI app (Linux uses the distro package). Keep both versions equal;
+# after bumping, install the daemon: sudo "$(mise which tailscaled)" install-system-daemon
+"go:tailscale.com/cmd/tailscale" = { version = "1.104.7", os = ["macos"] }
+"go:tailscale.com/cmd/tailscaled" = { version = "1.104.7", os = ["macos"] }
 
 # LSP servers, linters and formatters
 actionlint = "latest"
