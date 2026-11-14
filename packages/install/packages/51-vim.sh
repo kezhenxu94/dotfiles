@@ -14,8 +14,9 @@ install_vim() {
 
   # Distro packages lag behind (e.g. Debian 13 ships 9.1.1244, without
   # 'autocomplete'), so accept only vim >= pkg_version and build it otherwise
-  local have
-  have=$(vim --version 2>/dev/null | awk '
+  local have=""
+  # Without vim (fresh machine) the pipeline fails with 127 and set -e would abort the install
+  command -v vim >/dev/null && have=$(vim --version 2>/dev/null | awk '
     /^VIM - Vi IMproved/ { v = $5 }
     /^Included patches:/ { n = $3; sub(/.*-/, "", n) }
     END { if (v) print v (n ? "." n : "") }')
