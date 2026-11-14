@@ -18,6 +18,8 @@ neovim = "nightly"
 tree-sitter = "latest"
 yq = "latest"
 "pipx:html2text" = "latest"
+# CLI for the source-built tailscaled LaunchDaemon on macOS; Linux uses the distro package
+"go:tailscale.com/cmd/tailscale" = { version = "latest", os = ["macos"] }
 
 # LSP servers, linters and formatters
 actionlint = "latest"
