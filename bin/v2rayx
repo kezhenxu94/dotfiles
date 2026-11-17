@@ -9,13 +9,13 @@ setup() {
   networksetup -setwebproxy Wi-Fi host.docker.internal 7890
   networksetup -setsecurewebproxy Wi-Fi host.docker.internal 7890
   networksetup -setsocksfirewallproxy Wi-Fi host.docker.internal 7891
-  networksetup -setproxybypassdomains wi-Fi host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.* *.local *.test
+  networksetup -setproxybypassdomains wi-Fi host.docker.internal 127.0.0.1 '*.apple.com' localhost local-docker-registry '192.*' '*.local' '*.test' '*.douyin.com' douyin.com '*.douyinvod.com' '*.douyinpic.com' '*.douyinstatic.com' '*.bytedance.com' '*.byteimg.com' '*.bytegoofy.com' '*.zijieapi.com' '*.snssdk.com' '*.amemv.com' '*.ibytedtos.com' '*.yhgfb-cn-static.com'
   networksetup -setdnsservers Wi-Fi 127.0.0.1
 
   networksetup -setwebproxy F50 host.docker.internal 7890
   networksetup -setsecurewebproxy F50 host.docker.internal 7890
   networksetup -setsocksfirewallproxy F50 host.docker.internal 7891
-  networksetup -setproxybypassdomains F50 host.docker.internal 127.0.0.1 *.apple.com localhost local-docker-registry 192.* *.local *.test
+  networksetup -setproxybypassdomains F50 host.docker.internal 127.0.0.1 '*.apple.com' localhost local-docker-registry '192.*' '*.local' '*.test' '*.douyin.com' douyin.com '*.douyinvod.com' '*.douyinpic.com' '*.douyinstatic.com' '*.bytedance.com' '*.byteimg.com' '*.bytegoofy.com' '*.zijieapi.com' '*.snssdk.com' '*.amemv.com' '*.ibytedtos.com' '*.yhgfb-cn-static.com'
   networksetup -setdnsservers F50 127.0.0.1
 }
 
