@@ -17,6 +17,7 @@ kubectl = "latest"
 neovim = "nightly"
 tree-sitter = "latest"
 yq = "latest"
+"pipx:ansible" = { version = "latest", uvx_args = "--managed-python --python 3.13 --with-executables-from ansible-core" }
 "pipx:html2text" = "latest"
 # Tailscale on macOS without the GUI app (Linux uses the distro package). Keep both versions equal;
 # after bumping, install the daemon: sudo "$(mise which tailscaled)" install-system-daemon

@@ -33,9 +33,22 @@ attach() {
   done
 }
 
-# new-window <target-window> <host>
+# new-window <target-window> <host> <client>: new remote pane, or, when the host
+# has detached sessions (their local pane was killed or lost), a menu to pick
+# one of them to attach instead
 new_window() {
-  tmux new-window -a -t "$1" "$0 attach $2 $(date +%s)-$RANDOM"
+  local window=$1 host=$2 client=$3 new sessions name path cmd
+  new="$0 attach $host $(date +%s)-$RANDOM"
+  sessions=$(ssh -T "$host" "tmux -L $SOCKET ls -F '#{session_attached} #{session_name} #{pane_current_command} #{pane_current_path}'" 2>/dev/null | awk '$1 == 0 { $1 = ""; print substr($0, 2) }' || true)
+  if [ -z "$sessions" ]; then
+    tmux new-window -a -t "$window" "$new"
+    return
+  fi
+  local items=("New session" n "new-window -a -t $window \"$new\"" "")
+  while read -r name cmd path; do
+    items+=("${cmd} ${path//#/##}" "" "new-window -a -t $window \"$0 attach $host $name\"")
+  done <<<"$sessions"
+  tmux display-menu -c "$client" -T "$host" "${items[@]}"
 }
 
 # split <target-pane> <split-window flags...>: new remote pane on that pane's host
@@ -59,8 +72,8 @@ copy_mode() {
 
 case "${1:-}" in
   attach) attach "$2" "$3" "${4:-}" ;;
-  new-window) new_window "$2" "$3" ;;
+  new-window) new_window "$2" "$3" "$4" ;;
   split) shift; split "$@" ;;
   copy-mode) copy_mode "$2" ;;
-  *) echo "Usage: $0 {attach <host> <session> [dir]|new-window <window> <host>|split <pane> <flags>|copy-mode <pane>}" >&2; exit 1 ;;
+  *) echo "Usage: $0 {attach <host> <session> [dir]|new-window <window> <host> <client>|split <pane> <flags>|copy-mode <pane>}" >&2; exit 1 ;;
 esac
