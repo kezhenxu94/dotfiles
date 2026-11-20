@@ -4,22 +4,17 @@ pkg_name="mise"
 pkg_version="latest"
 
 install_mise() {
-  # Check if mise is already installed
-  if check_installed mise; then
-    echo "mise is already installed ($(mise --version))"
+  # The installer honours MISE_INSTALL_PATH (set in env.sh for the shared prefix)
+  local mise_bin="${MISE_INSTALL_PATH:-$HOME/.local/bin/mise}"
+  export PATH="${mise_bin%/*}:$PATH"
+
+  if [ -x "$mise_bin" ]; then
+    echo "mise is already installed ($("$mise_bin" --version))"
     return 0
   fi
 
   echo "Installing mise..."
-
-  # Download and run mise installer
   curl https://mise.run | sh
-
-  # Mise installs to ~/.local/bin by default
-  # Make sure it's in PATH for the current session
-  if [ -f "$HOME/.local/bin/mise" ] && [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    export PATH="$HOME/.local/bin:$PATH"
-  fi
 
   echo "mise installed successfully"
 }
@@ -32,7 +27,7 @@ install_mise
 install_mise_tools() {
   export MISE_GLOBAL_CONFIG_FILE="$SCRIPT_DIR/../../config/mise/config.toml"
   echo "Installing mise tools from $MISE_GLOBAL_CONFIG_FILE..."
-  mise install || return 1
+  mise install ${MISE_SYSTEM_DATA_DIR:+--system} || return 1
   export PATH="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims:$PATH"
 }
 

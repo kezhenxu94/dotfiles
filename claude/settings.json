@@ -49,7 +49,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/dotfiles/claude/statusline.sh",
+    "command": "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/statusline.sh",
     "refreshInterval": 60
   },
   "enabledPlugins": {

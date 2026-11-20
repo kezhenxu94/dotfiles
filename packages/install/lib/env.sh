@@ -1,8 +1,30 @@
 #!/usr/bin/env bash
 # Environment detection and configuration
 
-# User-local installation directory
-export USR_HOME="${USR_HOME:-$HOME/usr/local}"
+# Installation prefix: /opt/staff is shared with the staff group so every user on the machine reuses
+# one build of each package and mise tool. Only its owner writes; staff members read and run, so they
+# can't plant binaries the owner (a sudoer) would execute. Others fall back to a per-user prefix.
+STAFF_HOME=/opt/staff
+
+setup_staff_home() {
+  [ -d "$STAFF_HOME" ] && return 0
+  sudo -n true 2>/dev/null || return 1
+  sudo install -d -o "$USER" -g staff -m 2750 "$STAFF_HOME"
+}
+
+if [ -z "${USR_HOME:-}" ]; then
+  if setup_staff_home && [ -w "$STAFF_HOME" ]; then
+    USR_HOME=$STAFF_HOME
+  else
+    USR_HOME=$HOME/usr/local
+  fi
+fi
+export USR_HOME
+
+# mise tools go to the shared system dir, which every user's mise reads
+if [ "$USR_HOME" = "$STAFF_HOME" ]; then
+  export MISE_SYSTEM_DATA_DIR="$USR_HOME/share/mise" MISE_INSTALL_PATH="$USR_HOME/bin/mise"
+fi
 
 # Detect operating system (darwin, linux, etc.)
 os="$(uname | tr '[:upper:]' '[:lower:]')"

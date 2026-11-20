@@ -15,9 +15,10 @@ should_ignore() {
   return 1
 }
 
-git -C "$SCRIPT_DIR" submodule update --init
+# The checkout may be shared read-only (e.g. /opt/staff/dotfiles); only its owner updates it
+[[ -w "$SCRIPT_DIR/.git" ]] && git -C "$SCRIPT_DIR" submodule update --init
 
-git -C "$SCRIPT_DIR" ls-files | while read -r file; do
+git -c safe.directory="$SCRIPT_DIR" -C "$SCRIPT_DIR" ls-files | while read -r file; do
   should_ignore "$file" && continue
 
   target="$HOME/.$file"
