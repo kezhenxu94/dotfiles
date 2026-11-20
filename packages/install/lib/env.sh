@@ -8,7 +8,8 @@ STAFF_HOME=/opt/staff
 
 setup_staff_home() {
   [ -d "$STAFF_HOME" ] && return 0
-  sudo -n true 2>/dev/null || return 1
+  # macOS sudo usually wants a password: ask when interactive
+  sudo -n true 2>/dev/null || { [ -t 0 ] && sudo -v; } || return 1
   sudo install -d -o "$USER" -g staff -m 2750 "$STAFF_HOME"
 }
 

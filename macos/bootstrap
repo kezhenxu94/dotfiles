@@ -2,15 +2,21 @@
 
 osascript -e 'tell application "System Preferences" to quit'
 
-# Ask for the administrator password in advance
-sudo -v
+# Machine-wide settings need an admin; other users still get their per-user settings
+is_admin=false
+if dseditgroup -o checkmember -m "$USER" admin >/dev/null 2>&1; then
+  is_admin=true
 
-# Keep-alive: update existing `sudo` timestamp until `bootstrap` has finished
-while true; do
-  sudo -n true
-  sleep 60
-  kill -0 "$$" || exit
-done 2>/dev/null &
+  # Ask for the administrator password in advance
+  sudo -v
+
+  # Keep-alive: update existing `sudo` timestamp until `bootstrap` has finished
+  while true; do
+    sudo -n true
+    sleep 60
+    kill -0 "$$" || exit
+  done 2>/dev/null &
+fi
 
 ###############################################################################
 # General UI/UX                                                               #
@@ -85,7 +91,7 @@ defaults write -globalDomain com.apple.trackpad.scaling -int 2.5
 defaults write -globalDomain AppleWindowTabbingMode -string always
 
 # Hide language menu in the top right corner of the boot screen
-sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool false
+$is_admin && sudo defaults write /Library/Preferences/com.apple.loginwindow showInputMenu -bool false
 
 # Click scroll bar to scroll to the position clicked
 defaults write -globalDomain AppleScrollerPagingBehavior -int 1
@@ -269,7 +275,7 @@ defaults write com.apple.terminal StringEncodings -array 4
 defaults write com.apple.Terminal ShowLineMarks -int 0
 
 # Set Terminal profile
-open ~/dotfiles/macos/terminal/kezhenxu94.terminal -a Terminal
+open "$(dirname "$0")/terminal/kezhenxu94.terminal" -a Terminal
 until defaults read com.apple.Terminal "Window Settings" 2>/dev/null | grep -q '^    kezhenxu94 = '; do sleep 1; done # wait for the profile to be loaded
 defaults -currentHost write com.apple.terminal "Default Window Settings" "kezhenxu94"
 defaults -currentHost write com.apple.terminal "Startup Window Settings" "kezhenxu94"
@@ -337,7 +343,7 @@ defaults -currentHost write com.apple.controlcenter Display -int 8
 ###############################################################################
 
 # Disable guest user login
-sudo sysadminctl -guestAccount off
+$is_admin && sudo sysadminctl -guestAccount off
 
 # Touchbar as function keys
 defaults write com.apple.touchbar.agent PresentationModeGlobal "functionKeys"
