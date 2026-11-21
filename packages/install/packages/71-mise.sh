@@ -27,7 +27,12 @@ install_mise
 install_mise_tools() {
   export MISE_GLOBAL_CONFIG_FILE="$SCRIPT_DIR/../../config/mise/config.toml"
   echo "Installing mise tools from $MISE_GLOBAL_CONFIG_FILE..."
-  mise install ${MISE_SYSTEM_DATA_DIR:+--system} || return 1
+  # For the shared dir, hide the owner's own installs, or mise skips tools it finds there as already installed
+  if [ -n "${MISE_SYSTEM_DATA_DIR:-}" ]; then
+    MISE_DATA_DIR="$MISE_SYSTEM_DATA_DIR" mise install --system || return 1
+  else
+    mise install || return 1
+  fi
   export PATH="${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims:$PATH"
 }
 

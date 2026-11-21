@@ -18,9 +18,11 @@ install_pkg_config() {
     return 0
   fi
 
-  # Fall back to building from source
+  # Fall back to building from source. pkgconf strips -I/-L for its "system" dirs, which default to its
+  # own prefix; point them at the real system dirs so packages built into $USR_HOME stay visible.
   install_gnu_tool "$pkg_name" "$pkg_version" \
     "https://github.com/pkgconf/pkgconf/releases/download/pkgconf-${pkg_version}/pkgconf-${pkg_version}.tar.xz" \
+    --with-system-libdir=/usr/lib --with-system-includedir=/usr/include \
     || return 1
 
   ln -sf pkgconf "$USR_HOME/bin/pkg-config"

@@ -6,8 +6,9 @@ pkg_version="${TMUX_VERSION:-3.8}"
 install_tmux() {
   # Distro packages lag behind (e.g. Debian 13 ships 3.5a, without theme
   # reporting), so accept only tmux >= pkg_version and build it otherwise
-  local have
-  have=$(tmux -V 2>/dev/null | cut -d' ' -f2)
+  local have=""
+  # Without tmux (fresh machine) the pipeline fails with 127 and set -e would abort the install
+  command -v tmux >/dev/null && have=$(tmux -V 2>/dev/null | cut -d' ' -f2)
   if [ -n "$have" ] && [ "$(printf '%s\n%s\n' "$pkg_version" "$have" | sort -V | head -1)" = "$pkg_version" ]; then
     return 0
   fi
