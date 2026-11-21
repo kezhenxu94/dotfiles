@@ -25,6 +25,8 @@ export USR_HOME
 # mise tools go to the shared system dir, which every user's mise reads
 if [ "$USR_HOME" = "$STAFF_HOME" ]; then
   export MISE_SYSTEM_DATA_DIR="$USR_HOME/share/mise" MISE_INSTALL_PATH="$USR_HOME/bin/mise"
+  # mise installs Rust with rustup into these homes, not the installing user's ~/.rustup and ~/.cargo
+  export RUSTUP_HOME="$USR_HOME/share/rustup" CARGO_HOME="$USR_HOME/share/cargo"
 fi
 
 # Detect operating system (darwin, linux, etc.)

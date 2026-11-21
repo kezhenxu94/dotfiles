@@ -4,7 +4,11 @@ if [[ -z $USR_HOME ]]; then
   if [[ -r /opt/staff ]]; then USR_HOME=/opt/staff; else USR_HOME=~/usr/local; fi
 fi
 export USR_HOME
-[[ $USR_HOME == /opt/staff ]] && export MISE_SYSTEM_DATA_DIR=$USR_HOME/share/mise
+if [[ $USR_HOME == /opt/staff ]]; then
+  export MISE_SYSTEM_DATA_DIR=$USR_HOME/share/mise
+  # Rust toolchains are shared too; CARGO_HOME stays per user (setup.sh links the rustup proxies into it)
+  export RUSTUP_HOME=$USR_HOME/share/rustup
+fi
 
 export PATH="$HOME/.bin:$HOME/.local/bin:$USR_HOME/bin:$PATH"
 export PATH="$HOME/.bin/kfc:$PATH"
