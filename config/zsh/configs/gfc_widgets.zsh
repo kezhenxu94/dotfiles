@@ -22,7 +22,7 @@ __gfc_pick_branch__() {
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
     --bind="ctrl-r:reload(git branch --all --sort=-committerdate --format='%(refname:short)')" \
-    | tr '\0' '\n' | paste -sd' '
+    | tr '\0' '\n' | paste -sd' ' -
 }
 
 __gfc_pick_commit__() {
@@ -40,7 +40,7 @@ __gfc_pick_commit__() {
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
     --bind="ctrl-r:reload(git log --oneline --graph --color=always --decorate -100)" \
-    | tr '\0' '\n' | grep -oE '[a-f0-9]{7,}' | paste -sd' '
+    | tr '\0' '\n' | grep -oE '[a-f0-9]{7,}' | paste -sd' ' -
 }
 
 __gfc_pick_tag__() {
@@ -61,7 +61,7 @@ __gfc_pick_tag__() {
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
     --bind="ctrl-r:reload(git tag --sort=-creatordate)" \
-    | tr '\0' '\n' | paste -sd' '
+    | tr '\0' '\n' | paste -sd' ' -
 }
 
 __gfc_pick_worktree__() {
@@ -82,7 +82,7 @@ __gfc_pick_worktree__() {
     --bind="ctrl-u:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-up || echo half-page-up)" \
     --bind="ctrl-d:transform([[ \$(cat $state_file) = visible ]] && echo preview-half-page-down || echo half-page-down)" \
     --bind="ctrl-r:reload(git worktree list)" \
-    | tr '\0' '\n' | awk '{print $1}' | paste -sd' '
+    | tr '\0' '\n' | awk '{print $1}' | paste -sd' ' -
 }
 
 _gfc_branch_widget() {
