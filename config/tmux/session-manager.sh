@@ -12,8 +12,11 @@ save() {
   local dated_file="${SESSION_DIR}/sessions-$(date +%Y%m%d).txt"
   tmux list-panes -a -F \
     '#{session_name}	#{window_index}	#{window_name}	#{window_active}	#{window_layout}	#{pane_index}	#{pane_active}	#{pane_current_path}	#{@remote_host}	#{@remote_session}' \
-    > "$dated_file"
-  ln -sf "$dated_file" "$SESSION_FILE"
+    > "$dated_file.$$"
+  # Hooks fire several saves at once: replace files via rename so they never race
+  mv -f "$dated_file.$$" "$dated_file"
+  ln -sf "$dated_file" "$SESSION_FILE.$$"
+  mv -f "$SESSION_FILE.$$" "$SESSION_FILE"
 }
 
 # Respawn the newly created (active) pane of a window as a remote pane (remote.sh)
