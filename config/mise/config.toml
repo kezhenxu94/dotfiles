@@ -1,7 +1,7 @@
 [tools]
 # Runtimes
 go = "latest"
-java = "21"
+java = ["21", "25"] # 25 only to run jdtls (config/vim/config/vim9/jdtls.vim)
 node = "24.8.0"
 python = "3.10.16"
 ruby = "latest"
@@ -12,9 +12,11 @@ uv = "latest"
 fd = "latest"
 fzf = "latest"
 gh = "latest"
+gopass = "latest"
 jq = "latest"
 kubectl = "latest"
 neovim = "nightly"
+ripgrep = "latest"
 tree-sitter = "latest"
 yq = "latest"
 "pipx:ansible" = { version = "latest", uvx_args = "--managed-python --python 3.13 --with-executables-from ansible-core" }
