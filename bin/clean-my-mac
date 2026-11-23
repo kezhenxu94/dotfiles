@@ -189,6 +189,12 @@ find_and_clean "$HOME" "target" "Rust build artifacts" "$AGE_DAYS"
 # Java/Gradle artifacts
 find_and_clean "$HOME" ".gradle" "Gradle cache" "$AGE_DAYS"
 
+# Temp packs left by interrupted git fetch/clone, never reused by git; the age
+# guard avoids racing a fetch in progress
+while IFS= read -r path; do
+  clean_path "$path" "Stale git temp pack"
+done < <(fd --type f --hidden --no-ignore --changed-before 1d --full-path '/\.git/(modules/.+/)?objects/pack/tmp_[^/]+$' "$HOME" 2>/dev/null)
+
 echo ""
 echo "==> Cleaning package manager caches..."
 
@@ -210,6 +216,10 @@ fi
 # Yarn cache, removed directly: `yarn` may be a Corepack shim that silently
 # prompts to download Yarn once ~/.cache (where Corepack keeps it) is wiped
 clean_path "$HOME/Library/Caches/Yarn" "Yarn cache"
+clean_path "$HOME/.yarn/berry/cache" "Yarn Berry cache"
+
+# mise download cache (installed tools live in ~/.local/share/mise, untouched)
+clean_path "$HOME/Library/Caches/mise" "mise cache"
 
 # uv cache (Python)
 if command -v uv &>/dev/null; then
