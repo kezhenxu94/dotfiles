@@ -9,6 +9,7 @@ rust = { version = "stable", components = "rust-analyzer" }
 uv = "latest"
 
 # CLI tools
+crane = "latest"
 fd = "latest"
 fzf = "latest"
 gh = "latest"
