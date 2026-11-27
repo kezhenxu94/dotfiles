@@ -8,6 +8,7 @@
 # Tools preferences
 
 - Never use Homebrew; ask me to install anything needed.
+- Never use Playwright or Chromium, and never offer to install or run them.
 - Prefer using `jq`, `yq` and other common command line tools over Python scripts.
 - Use `git mv` to move or rename tracked files.
 

@@ -2,7 +2,7 @@
 # Runtimes
 go = "latest"
 java = ["21", "25"] # 25 only to run jdtls (config/vim/config/vim9/jdtls.vim)
-node = "24.8.0"
+node = "24"
 python = "3.10.16"
 ruby = "latest"
 rust = { version = "stable", components = "rust-analyzer" }
@@ -16,6 +16,7 @@ gh = "latest"
 gopass = "latest"
 jq = "latest"
 kubectl = "latest"
+mvnd = "latest"
 neovim = "nightly"
 ripgrep = "latest"
 tree-sitter = "latest"
